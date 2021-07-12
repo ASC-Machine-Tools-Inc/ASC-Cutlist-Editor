@@ -24,5 +24,26 @@ namespace ASC_Cutlist_Editor
         {
             InitializeComponent();
         }
+
+        private void ButtonAddName_Click(object sender, RoutedEventArgs e)
+        {
+            // Create OpenFileDialog.
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+            {
+                // Set filter for file extension and default file extension.
+                DefaultExt = ".csv",
+                Filter = "CSV Files (*.csv)|*.csv"
+            };
+
+            // Display OpenFileDialog by calling ShowDialog method.
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Get the selected file name and display in a TextBox.
+            if (result == true)
+            {
+                string filename = dlg.FileName;
+                lstNames.Items.Add(filename);
+            }
+        }
     }
 }
