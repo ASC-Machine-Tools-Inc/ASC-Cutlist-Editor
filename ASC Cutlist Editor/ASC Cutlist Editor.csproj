@@ -8,14 +8,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Models\Cutlist" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Include="Models\Cutlist" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="exceldatareader" Version="3.6.0" />
 		<PackageReference Include="exceldatareader.dataset" Version="3.6.0" />
 		<PackageReference Include="ModernWpfUI" Version="0.9.4" />

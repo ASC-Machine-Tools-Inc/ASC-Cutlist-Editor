@@ -26,6 +26,8 @@ namespace ASC_Cutlist_Editor
         public MainWindow()
         {
             InitializeComponent();
+
+            CutlistGrid.DataContext = new List<Cutlist>();
         }
 
         private void ButtonAddName_Click(object sender, RoutedEventArgs e)
@@ -86,10 +88,11 @@ namespace ASC_Cutlist_Editor
                             "ASC Cutlist Editor", MessageBoxButton.OK,
                             MessageBoxImage.Error);
                         Console.WriteLine("Format parsing error.");
-                        break;
+                        return;
                     }
                 }
 
+                CutlistFilename.Text = System.IO.Path.GetFileName(dlg.FileName);
                 CutlistGrid.DataContext = cutlists;
             }
         }
