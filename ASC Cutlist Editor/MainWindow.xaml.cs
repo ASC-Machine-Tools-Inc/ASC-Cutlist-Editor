@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ASC_Cutlist_Editor.Models;
+using ExcelDataReader;
 
 namespace ASC_Cutlist_Editor
 {
@@ -36,13 +39,58 @@ namespace ASC_Cutlist_Editor
             };
 
             // Display OpenFileDialog by calling ShowDialog method.
-            Nullable<bool> result = dlg.ShowDialog();
+            bool? result = dlg.ShowDialog();
 
-            // Get the selected file name and display in a TextBox.
+            // Get the selected file name and display its contents in a DataGrid.
             if (result == true)
             {
-                string filename = dlg.FileName;
-                lstNames.Items.Add(filename);
+                // Needed for .NET core to fix this exception: "No data is available for encoding 1252".
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                using var stream = File.Open(dlg.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using var reader = ExcelReaderFactory.CreateCsvReader(stream);
+
+                var cutlists = new List<Cutlist>();
+
+                // Skip rows before header
+                for (int i = 0; i < 18; i++)
+                {
+                    if (!reader.Read()) return;
+                }
+
+                while (reader.Read())
+                {
+                    try
+                    {
+                        // Skip empty rows
+                        int qty = int.Parse(reader.GetString(3));
+                        if (qty == 0)
+                        {
+                            continue;
+                        }
+
+                        cutlists.Add(new Cutlist
+                        {
+                            Id = int.Parse(reader.GetString(0)),
+                            Name = reader.GetString(1),
+                            Length = double.Parse(reader.GetString(2)),
+                            Quantity = qty,
+                            Made = int.Parse(reader.GetString(4)),
+                            Left = int.Parse(reader.GetString(5)),
+                            Bundle = int.Parse(reader.GetString(6)),
+                        });
+                    }
+                    catch (FormatException)
+                    {
+                        MessageBox.Show(
+                            "The chosen file could not be parsed properly.",
+                            "ASC Cutlist Editor", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        Console.WriteLine("Format parsing error.");
+                        break;
+                    }
+                }
+
+                CutlistGrid.DataContext = cutlists;
             }
         }
     }

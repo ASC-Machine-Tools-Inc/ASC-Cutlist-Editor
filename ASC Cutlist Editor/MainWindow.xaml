@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ASC_Cutlist_Editor"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="ASC Cutlist Editor" Height="450" Width="800"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True">
     <Grid>
@@ -14,21 +14,37 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="5" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+        <Menu>
+            <MenuItem Header="_File">
+            </MenuItem>
+            <MenuItem Header="_Edit">
+            </MenuItem>
+            <MenuItem Header="_View">
+            </MenuItem>
+        </Menu>
 
-        <TextBlock Text="Names" Style="{StaticResource HeaderTextBlockStyle}" />
+        <Border BorderBrush="Black"
+                BorderThickness="0 0 0 1"></Border>
 
-        <ListBox Grid.Row="1" x:Name="lstNames" />
-        <GridSplitter Grid.Row="1" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="100" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" MinWidth="100" />
+            </Grid.ColumnDefinitions>
 
-        <ui:SimpleStackPanel Grid.Row="1" Grid.Column="2" Margin="5,0,0,0">
-            <Button x:Name="btnAdd" Content="Add File" Margin="0,5,0,0"
-                    Style="{StaticResource AccentButtonStyle}"
-                    Click="ButtonAddName_Click" />
-        </ui:SimpleStackPanel>
+            <DataGrid x:Name="CutlistGrid"
+                      AutoGenerateColumns="True"
+                      ItemsSource="{Binding }"
+                      HorizontalAlignment="Stretch"></DataGrid>
+
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+
+            <ui:SimpleStackPanel Grid.Column="2" Margin="5,0,0,0">
+                <Button x:Name="btnAdd" Content="Add File" Margin="0,5,0,0"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Click="ButtonAddName_Click" />
+            </ui:SimpleStackPanel>
+        </Grid>
     </Grid>
 </Window>
