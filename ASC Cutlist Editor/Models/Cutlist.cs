@@ -6,7 +6,7 @@ namespace ASC_Cutlist_Editor.Models
 {
 	public class Cutlist
 	{
-		public int Id { get; set; }
+		public int ID { get; set; }
 
 		public string Name { get; set; }
 

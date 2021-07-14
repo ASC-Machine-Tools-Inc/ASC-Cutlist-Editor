@@ -34,6 +34,8 @@
                 <ColumnDefinition Width="*" MinWidth="100" />
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" MinWidth="100" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" MinWidth="100" />
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
@@ -42,10 +44,10 @@
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
 
-                <WrapPanel Margin="5">
+                <DockPanel Margin="5">
                     <TextBlock Text="Current file: " FontWeight="Bold" />
                     <TextBlock x:Name="CutlistFilename"></TextBlock>
-                </WrapPanel>
+                </DockPanel>
 
                 <Border BorderBrush="Gray"
                         BorderThickness="0 0 0 1"></Border>
@@ -62,14 +64,39 @@
 
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
 
-            <ui:SimpleStackPanel Grid.Column="2" Margin="8,5,0,0">
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
 
-                <Button x:Name="btnAdd"
-                        Content="Add File"
-                        Margin="0,5,0,0"
-                        Style="{StaticResource AccentButtonStyle}"
-                        Click="ButtonAddName_Click" />
-            </ui:SimpleStackPanel>
+                <DockPanel Margin="5">
+                    <TextBlock Text="2D Flat Part View"
+                               FontWeight="Bold"
+                               TextAlignment="Center" />
+                </DockPanel>
+
+                <Border BorderBrush="Gray"
+                        BorderThickness="0 0 0 1"></Border>
+            </Grid>
+
+            <GridSplitter Grid.Column="3" Width="5" HorizontalAlignment="Stretch" />
+
+            <Grid Grid.Column="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <DockPanel Margin="5">
+                    <TextBlock Text="3D Bundle View"
+                               FontWeight="Bold"
+                               TextAlignment="Center" />
+                </DockPanel>
+
+                <Border BorderBrush="Gray"
+                        BorderThickness="0 0 0 1"></Border>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

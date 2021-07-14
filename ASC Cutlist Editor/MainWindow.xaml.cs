@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using ASC_Cutlist_Editor.Models;
 using ExcelDataReader;
+using Microsoft.Win32;
 
 namespace ASC_Cutlist_Editor
 {
@@ -33,7 +24,7 @@ namespace ASC_Cutlist_Editor
         private void ButtonAddName_Click(object sender, RoutedEventArgs e)
         {
             // Create OpenFileDialog.
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+            OpenFileDialog dlg = new OpenFileDialog
             {
                 // Set filter for file extension and default file extension.
                 DefaultExt = ".csv",
@@ -47,7 +38,7 @@ namespace ASC_Cutlist_Editor
             if (result == true)
             {
                 // Needed for .NET core to fix this exception: "No data is available for encoding 1252".
-                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
                 using var stream = File.Open(dlg.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 using var reader = ExcelReaderFactory.CreateCsvReader(stream);
 
@@ -72,7 +63,7 @@ namespace ASC_Cutlist_Editor
 
                         cutlists.Add(new Cutlist
                         {
-                            Id = int.Parse(reader.GetString(0)),
+                            ID = int.Parse(reader.GetString(0)),
                             Name = reader.GetString(1),
                             Length = double.Parse(reader.GetString(2)),
                             Quantity = qty,
@@ -92,7 +83,7 @@ namespace ASC_Cutlist_Editor
                     }
                 }
 
-                CutlistFilename.Text = System.IO.Path.GetFileName(dlg.FileName);
+                CutlistFilename.Text = Path.GetFileName(dlg.FileName);
                 CutlistGrid.DataContext = cutlists;
             }
         }
