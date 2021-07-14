@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows;
+using ASC_Cutlist_Editor.Common;
 using ASC_Cutlist_Editor.Models;
 using ExcelDataReader;
 using Microsoft.Win32;
@@ -65,7 +66,7 @@ namespace ASC_Cutlist_Editor
                         {
                             ID = int.Parse(reader.GetString(0)),
                             Name = reader.GetString(1),
-                            Length = double.Parse(reader.GetString(2)),
+                            Length = LengthParser.ParseString(reader.GetString(2)),
                             Quantity = qty,
                             Made = int.Parse(reader.GetString(4)),
                             Left = int.Parse(reader.GetString(5)),
