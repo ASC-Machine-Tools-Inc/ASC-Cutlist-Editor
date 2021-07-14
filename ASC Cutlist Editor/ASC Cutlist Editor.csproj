@@ -8,6 +8,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="exceldatareader" Version="3.6.0" />
+		<PackageReference Include="exceldatareader.dataset" Version="3.6.0" />
 		<PackageReference Include="ModernWpfUI" Version="0.9.4" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Assets\" />
+	  <Folder Include="Common\" />
+	  <Folder Include="ViewModels\" />
+	  <Folder Include="Views\" />
 	</ItemGroup>
 </Project>
