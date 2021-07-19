@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="ASC Cutlist Editor" Height="450" Width="800"
         xmlns:ui="http://schemas.modernwpf.com/2019"
+        xmlns:views="clr-namespace:ASC_Cutlist_Editor.Views"
         ui:WindowHelper.UseModernWindowStyle="True">
     <Grid>
         <Grid.RowDefinitions>
@@ -17,12 +18,18 @@
         <Menu>
             <MenuItem Header="_File">
                 <MenuItem Header="_Open"
-                          Click="ButtonAddName_Click">
+                          Command="{Binding ImportCutlistCommand}">
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="_Edit">
             </MenuItem>
             <MenuItem Header="_View">
+                <MenuItem Header="Cutlist Data View"
+                          IsCheckable="True"></MenuItem>
+                <MenuItem Header="2D View"
+                          IsCheckable="True"></MenuItem>
+                <MenuItem Header="3D View"
+                          IsCheckable="True"></MenuItem>
             </MenuItem>
         </Menu>
 
@@ -39,27 +46,7 @@
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                </Grid.RowDefinitions>
-
-                <DockPanel Margin="5">
-                    <TextBlock Text="Current file: " FontWeight="Bold" />
-                    <TextBlock x:Name="CutlistFilename"></TextBlock>
-                </DockPanel>
-
-                <Border BorderBrush="Gray"
-                        BorderThickness="0 0 0 1"></Border>
-
-                <DataGrid Grid.Row="1"
-                          x:Name="CutlistGrid"
-                          AutoGenerateColumns="True"
-                          ColumnWidth="*"
-                          ItemsSource="{Binding}"
-                          HeadersVisibility="Column"
-                          HorizontalAlignment="Stretch"
-                          GridLinesVisibility="All" />
+                <views:CutlistDataControl />
             </Grid>
 
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />

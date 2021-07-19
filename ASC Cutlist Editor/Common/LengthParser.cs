@@ -19,14 +19,11 @@ namespace ASC_Cutlist_Editor.Common
             string unconverted = length[..suffixCutoff];
             string suffix = length[suffixCutoff..];
 
-            switch (suffix)
+            return suffix switch
             {
-                case "mm":
-                    return double.Parse(unconverted) / 25.4;
-
-                default:
-                    return double.Parse(length);
-            }
+                "mm" => double.Parse(unconverted) / 25.4,
+                _ => double.Parse(length)
+            };
         }
     }
 }
