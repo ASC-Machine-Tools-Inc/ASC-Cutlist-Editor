@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ASC_Cutlist_Editor.Views
+namespace AscCutlistEditor.Views
 {
     /// <summary>
     /// Interaction logic for CutlistDataControl.xaml

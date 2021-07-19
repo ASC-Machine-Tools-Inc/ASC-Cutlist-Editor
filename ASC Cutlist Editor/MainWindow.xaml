@@ -1,13 +1,13 @@
-﻿<Window x:Class="ASC_Cutlist_Editor.MainWindow"
+﻿<Window x:Class="AscCutlistEditor.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ASC_Cutlist_Editor"
+        xmlns:local="clr-namespace:AscCutlistEditor"
         mc:Ignorable="d"
         Title="ASC Cutlist Editor" Height="450" Width="800"
         xmlns:ui="http://schemas.modernwpf.com/2019"
-        xmlns:views="clr-namespace:ASC_Cutlist_Editor.Views"
+        xmlns:views="clr-namespace:AscCutlistEditor.Views"
         ui:WindowHelper.UseModernWindowStyle="True">
     <Grid>
         <Grid.RowDefinitions>

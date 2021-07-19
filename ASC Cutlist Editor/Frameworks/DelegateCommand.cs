@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
 
-namespace ASC_Cutlist_Editor.Frameworks
+namespace AscCutlistEditor.Frameworks
 {
     // Base class for binding commands in the view to that implements the ICommand interface.
     public class DelegateCommand : ICommand

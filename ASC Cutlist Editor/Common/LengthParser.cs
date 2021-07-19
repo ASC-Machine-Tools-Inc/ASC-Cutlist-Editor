@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Windows.Foundation.Metadata;
 
-namespace ASC_Cutlist_Editor.Common
+namespace AscCutlistEditor.Common
 {
     internal class LengthParser
     {

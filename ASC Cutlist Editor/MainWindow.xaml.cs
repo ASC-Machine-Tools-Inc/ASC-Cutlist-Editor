@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows;
-using ASC_Cutlist_Editor.Common;
-using ASC_Cutlist_Editor.Models;
+using AscCutlistEditor.Common;
+using AscCutlistEditor.Models;
 using ExcelDataReader;
 using Microsoft.Win32;
 
-namespace ASC_Cutlist_Editor
+namespace AscCutlistEditor
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

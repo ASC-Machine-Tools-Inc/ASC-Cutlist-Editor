@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ASC_Cutlist_Editor.Models
+namespace AscCutlistEditor.Models
 {
     public class Cutlist
     {

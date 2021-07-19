@@ -4,13 +4,13 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using ASC_Cutlist_Editor.Common;
-using ASC_Cutlist_Editor.Frameworks;
-using ASC_Cutlist_Editor.Models;
+using AscCutlistEditor.Common;
+using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.Models;
 using ExcelDataReader;
 using Microsoft.Win32;
 
-namespace ASC_Cutlist_Editor.ViewModels
+namespace AscCutlistEditor.ViewModels
 {
     internal class CutlistViewModel : ObservableObject
     {

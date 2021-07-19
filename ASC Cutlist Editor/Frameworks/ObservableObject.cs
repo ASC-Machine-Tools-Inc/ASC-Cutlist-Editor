@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace ASC_Cutlist_Editor.Frameworks
+namespace AscCutlistEditor.Frameworks
 {
     // Base class for ViewModels that implements the INotifyPropertyChanged interface.
     public abstract class ObservableObject : INotifyPropertyChanged

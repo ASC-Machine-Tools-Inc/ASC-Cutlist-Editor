@@ -1,8 +1,8 @@
 ﻿<Application
-        x:Class="ASC_Cutlist_Editor.App"
+        x:Class="AscCutlistEditor.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ASC_Cutlist_Editor"
+             xmlns:local="clr-namespace:AscCutlistEditor"
              StartupUri="MainWindow.xaml"
         xmlns:ui="http://schemas.modernwpf.com/2019">
     <Application.Resources>
