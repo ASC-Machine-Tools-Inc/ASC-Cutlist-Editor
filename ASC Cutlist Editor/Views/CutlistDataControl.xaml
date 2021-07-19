@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:AscCutlistEditor.Views" xmlns:viewmodels="clr-namespace:AscCutlistEditor.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:CutlistViewModel}"
+             xmlns:local="clr-namespace:AscCutlistEditor.Views"
+             xmlns:viewmodels="clr-namespace:AscCutlistEditor.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -14,7 +16,7 @@
 
         <DockPanel Margin="5">
             <TextBlock Text="Current file: " FontWeight="Bold" />
-            <TextBlock Text="{Binding Filename,
+            <TextBlock Text="{Binding CutlistViewModel.Filename,
                 UpdateSourceTrigger=PropertyChanged}"></TextBlock>
         </DockPanel>
 
@@ -24,7 +26,7 @@
         <DataGrid Grid.Row="1"
                   AutoGenerateColumns="True"
                   ColumnWidth="*"
-                  ItemsSource="{Binding Cutlists,
+                  ItemsSource="{Binding CutlistViewModel.Cutlists,
                   UpdateSourceTrigger=PropertyChanged}"
                   HeadersVisibility="Column"
                   HorizontalAlignment="Stretch"

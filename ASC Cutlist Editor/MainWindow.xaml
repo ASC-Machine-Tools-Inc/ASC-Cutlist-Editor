@@ -8,6 +8,8 @@
         Title="ASC Cutlist Editor" Height="450" Width="800"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         xmlns:views="clr-namespace:AscCutlistEditor.Views"
+        xmlns:viewmodels="clr-namespace:AscCutlistEditor.ViewModels"
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
         ui:WindowHelper.UseModernWindowStyle="True">
     <Grid>
         <Grid.RowDefinitions>
@@ -18,7 +20,8 @@
         <Menu>
             <MenuItem Header="_File">
                 <MenuItem Header="_Open"
-                          Command="{Binding ImportCutlistCommand}">
+                          Command="{Binding
+                    CutlistViewModel.ImportCutlistCommand}">
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="_Edit">

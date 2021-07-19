@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using AscCutlistEditor.Common;
 using AscCutlistEditor.Models;
+using AscCutlistEditor.ViewModels;
 using ExcelDataReader;
 using Microsoft.Win32;
 
@@ -18,6 +19,7 @@ namespace AscCutlistEditor
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();
         }
     }
 }
