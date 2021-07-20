@@ -80,6 +80,7 @@ namespace AscCutlistEditor.ViewModels
                 try
                 {
                     // Skip empty rows in the file.
+                    // TODO: handle different formats
                     int qty = int.Parse(reader.GetString(3));
                     if (qty == 0)
                     {

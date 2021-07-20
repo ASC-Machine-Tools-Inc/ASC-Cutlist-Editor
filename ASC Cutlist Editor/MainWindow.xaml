@@ -9,8 +9,12 @@
         xmlns:ui="http://schemas.modernwpf.com/2019"
         xmlns:views="clr-namespace:AscCutlistEditor.Views"
         xmlns:viewmodels="clr-namespace:AscCutlistEditor.ViewModels"
+        xmlns:views1="clr-namespace:ASC_Cutlist_Editor.Views"
         d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
         ui:WindowHelper.UseModernWindowStyle="True">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -28,7 +32,8 @@
             </MenuItem>
             <MenuItem Header="_View">
                 <MenuItem Header="Cutlist Data View"
-                          IsCheckable="True"></MenuItem>
+                          Command="{Binding ToggleCutlistCommand}"
+                          IsChecked="{Binding CutlistVisibility}"></MenuItem>
                 <MenuItem Header="2D View"
                           IsCheckable="True"></MenuItem>
                 <MenuItem Header="3D View"
@@ -49,25 +54,15 @@
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
-                <views:CutlistDataControl />
+                <views:CutlistDataControl
+                    Visibility="{Binding CutlistVisibility,
+                    Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
 
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
 
             <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                </Grid.RowDefinitions>
-
-                <DockPanel Margin="5">
-                    <TextBlock Text="2D Flat Part View"
-                               FontWeight="Bold"
-                               TextAlignment="Center" />
-                </DockPanel>
-
-                <Border BorderBrush="Gray"
-                        BorderThickness="0 0 0 1"></Border>
+                <views1:_2DPartControl />
             </Grid>
 
             <GridSplitter Grid.Column="3" Width="5" HorizontalAlignment="Stretch" />
