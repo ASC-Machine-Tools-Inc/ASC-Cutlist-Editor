@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -14,37 +15,30 @@ namespace AscCutlistEditor.ViewModels
 {
     internal class MainViewModel : ObservableObject
     {
-        private bool _cutlistVisibility = true;
-
-        public bool CutlistVisibility
-        {
-            get => _cutlistVisibility;
-            set
-            {
-                _cutlistVisibility = value;
-                RaisePropertyChangedEvent("CutlistVisibility");
-            }
-        }
-
-        private bool _2DVisibility;
-        private bool _3DVisibility;
-        private bool splitter1Visibility;
-        private bool splitter2Visibility;
+        // Collection that tracks the visibility of the UI elements.
+        // Visibility order: Cutlist, 2D, 3D.
+        public ObservableCollection<bool> UiVisibility { get; set; } =
+            new ObservableCollection<bool>(new[] { true, true, true });
 
         public CutlistViewModel CutlistViewModel { get; }
 
         public MainViewModel()
         {
-            CutlistVisibility = true;
-
             CutlistViewModel = new CutlistViewModel();
         }
 
-        public ICommand ToggleCutlistCommand => new DelegateCommand(ToggleCutlist);
+        // Toggles the cutlist and its corresponding splitter's visibility.
+        public ICommand ToggleCutlistCommand => new DelegateCommand(() => ToggleView(0));
 
-        private void ToggleCutlist()
+        // Toggles the 2D view and its corresponding splitters' visibility.
+        public ICommand Toggle2DCommand => new DelegateCommand(() => ToggleView(1));
+
+        // Toggles the 3D view and its corresponding splitter's visibility.
+        public ICommand Toggle3DCommand => new DelegateCommand(() => ToggleView(2));
+
+        private void ToggleView(int index)
         {
-            CutlistVisibility = !CutlistVisibility;
+            UiVisibility[index] = !UiVisibility[index];
         }
     }
 }

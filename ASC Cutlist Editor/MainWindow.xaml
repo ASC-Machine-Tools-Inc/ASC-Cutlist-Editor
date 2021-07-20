@@ -31,13 +31,14 @@
             <MenuItem Header="_Edit">
             </MenuItem>
             <MenuItem Header="_View">
+                <!-- TODO: get checkmark working -->
                 <MenuItem Header="Cutlist Data View"
                           Command="{Binding ToggleCutlistCommand}"
-                          IsChecked="{Binding CutlistVisibility}"></MenuItem>
+                          IsChecked="{Binding UiVisibility[0]}"></MenuItem>
                 <MenuItem Header="2D View"
-                          IsCheckable="True"></MenuItem>
+                          Command="{Binding Toggle2DCommand}"></MenuItem>
                 <MenuItem Header="3D View"
-                          IsCheckable="True"></MenuItem>
+                          Command="{Binding Toggle3DCommand}"></MenuItem>
             </MenuItem>
         </Menu>
 
@@ -46,23 +47,25 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="100" />
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="*" MinWidth="100" />
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="*" MinWidth="100" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
                 <views:CutlistDataControl
-                    Visibility="{Binding CutlistVisibility,
+                    Visibility="{Binding UiVisibility[0],
                     Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
 
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
 
             <Grid Grid.Column="2">
-                <views1:_2DPartControl />
+                <views1:_2DPartControl
+                    Visibility="{Binding UiVisibility[1],
+                    Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
 
             <GridSplitter Grid.Column="3" Width="5" HorizontalAlignment="Stretch" />
