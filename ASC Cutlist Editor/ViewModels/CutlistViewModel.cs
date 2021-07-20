@@ -16,6 +16,12 @@ namespace AscCutlistEditor.ViewModels
     {
         private List<Cutlist> _cutlists = new List<Cutlist>();
         private string _filename;
+        private readonly Action _drawParts;
+
+        public CutlistViewModel(Action drawParts)
+        {
+            _drawParts = drawParts;
+        }
 
         public List<Cutlist> Cutlists
         {
@@ -58,6 +64,9 @@ namespace AscCutlistEditor.ViewModels
 
             Filename = Path.GetFileName(dlg.FileName);
             ParseCsv(dlg);
+
+            // Send the call up to the main viewmodel for drawing the 2D parts.
+            _drawParts.Invoke();
         }
 
         private void ParseCsv(OpenFileDialog dlg)

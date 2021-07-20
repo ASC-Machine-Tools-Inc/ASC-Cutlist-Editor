@@ -21,17 +21,19 @@ namespace AscCutlistEditor.ViewModels
             new ObservableCollection<bool>(new[] { true, true, true });
 
         public CutlistViewModel CutlistViewModel { get; }
+        public FlatPartViewModel FlatPartViewModel { get; }
 
         public MainViewModel()
         {
-            CutlistViewModel = new CutlistViewModel();
+            CutlistViewModel = new CutlistViewModel(DrawParts);
+            FlatPartViewModel = new FlatPartViewModel();
         }
 
         // Toggles the cutlist and its corresponding splitter's visibility.
         public ICommand ToggleCutlistCommand => new DelegateCommand(() => ToggleView(0));
 
-        // Toggles the 2D view and its corresponding splitters' visibility.
-        public ICommand Toggle2DCommand => new DelegateCommand(() => ToggleView(1));
+        // Toggles the flat part view and its corresponding splitters' visibility.
+        public ICommand ToggleFlatViewCommand => new DelegateCommand(() => ToggleView(1));
 
         // Toggles the 3D view and its corresponding splitter's visibility.
         public ICommand Toggle3DCommand => new DelegateCommand(() => ToggleView(2));
@@ -39,6 +41,13 @@ namespace AscCutlistEditor.ViewModels
         private void ToggleView(int index)
         {
             UiVisibility[index] = !UiVisibility[index];
+        }
+
+        // Catch the request from the cutlist view model
+        // to draw the parts after parsing a valid csv.
+        private void DrawParts()
+        {
+            FlatPartViewModel.DrawParts(CutlistViewModel.Cutlists);
         }
     }
 }

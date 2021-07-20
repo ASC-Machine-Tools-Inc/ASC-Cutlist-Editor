@@ -36,7 +36,7 @@
                           Command="{Binding ToggleCutlistCommand}"
                           IsChecked="{Binding UiVisibility[0]}"></MenuItem>
                 <MenuItem Header="2D View"
-                          Command="{Binding Toggle2DCommand}"></MenuItem>
+                          Command="{Binding ToggleFlatViewCommand}"></MenuItem>
                 <MenuItem Header="3D View"
                           Command="{Binding Toggle3DCommand}"></MenuItem>
             </MenuItem>
@@ -63,7 +63,7 @@
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
 
             <Grid Grid.Column="2">
-                <views1:_2DPartControl
+                <views1:FlatPartControl
                     Visibility="{Binding UiVisibility[1],
                     Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
