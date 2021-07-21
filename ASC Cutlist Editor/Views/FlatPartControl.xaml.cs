@@ -48,9 +48,10 @@ namespace ASC_Cutlist_Editor.Views
              * into setting up some sort of template so we can display the 2D
              * part representations from a list, so that when we modify it in
              * the UI it modifies that list as well.
-             */
+
             List<Cutlist> cutlist = ((CutlistViewModel)(this.DataContext)).Cutlists;
             FlatPartList.Children.Add();
+            */
         }
     }
 }

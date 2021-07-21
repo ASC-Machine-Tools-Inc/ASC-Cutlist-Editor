@@ -6,8 +6,8 @@ namespace AscCutlistEditor.Models
 {
     public class Part
     {
-        public string Profile { get; set; }
+        public string DisplayLabel { get; set; }
 
-        public double Length { get; set; }
+        public int DisplayLength { get; set; }
     }
 }

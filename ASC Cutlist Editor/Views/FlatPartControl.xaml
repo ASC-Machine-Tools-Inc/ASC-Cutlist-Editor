@@ -6,9 +6,16 @@
              xmlns:local="clr-namespace:AscCutlistEditor.Views"
              xmlns:dd="urn:gong-wpf-dragdrop"
              xmlns:viewmodels="clr-namespace:AscCutlistEditor.ViewModels"
-             d:DataContext="{d:DesignInstance Type=viewmodels:FlatPartViewModel}"
+             d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <!-- Adjust padding for ListBox 2D parts -->
+        <Style x:Key="LessPadListBox" TargetType="ListBoxItem">
+            <Setter Property="Padding" Value="5, 10" />
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -26,15 +33,16 @@
                 BorderThickness="0 0 0 1"></Border>
 
         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding
-                Parts}">
+            <ItemsControl ItemsSource="{Binding Path=
+                FlatPartViewModel.Parts,
+                  UpdateSourceTrigger=PropertyChanged}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-                <!-- Replace with resource? -->
                 <ItemsControl.ItemTemplate>
+                    <!-- 2D flat part row template -->
                     <DataTemplate>
                         <ListBox
                             Height="Auto"
@@ -51,10 +59,9 @@
                             </ListBox.ItemsPanel>
 
                             <Border BorderBrush="Black" BorderThickness="2">
-                                <Grid Width="{Binding Parts.PartLength}"
-                                      Height="60">
+                                <Grid Width="{Binding DisplayLength}"  Height="60">
                                     <Rectangle Fill="Orange"></Rectangle>
-                                    <TextBlock Text="{Binding FlatPartViewModel.}"
+                                    <TextBlock Text="{Binding DisplayLabel}"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"></TextBlock>
                                 </Grid>
