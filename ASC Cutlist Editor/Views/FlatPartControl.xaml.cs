@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +21,11 @@ namespace ASC_Cutlist_Editor.Views
     /// </summary>
     public partial class FlatPartControl : UserControl
     {
+        public class PartRow
+        {
+            public ObservableCollection<AscCutlistEditor.Models.PartRow> Parts { get; set; }
+        }
+
         public FlatPartControl()
         {
             InitializeComponent();

@@ -19,8 +19,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
         <DockPanel Margin="5">
@@ -32,44 +31,52 @@
         <Border BorderBrush="Gray"
                 BorderThickness="0 0 0 1"></Border>
 
-        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding Path=
-                FlatPartViewModel.Parts,
-                  UpdateSourceTrigger=PropertyChanged}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <!-- 2D flat part row template -->
-                    <DataTemplate>
-                        <ListBox
-                            Height="Auto"
-                            dd:DragDrop.IsDragSource="True"
-                            dd:DragDrop.IsDropTarget="True"
-                            dd:DragDrop.UseDefaultDragAdorner="True"
-                            ItemContainerStyle="{StaticResource LessPadListBox}"
-                            RenderTransformOrigin="0.5,0.5"
-                            SelectionMode="Extended">
-                            <ListBox.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Margin="1" Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ListBox.ItemsPanel>
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- 1st level of item control binds to the rows, while the
+                     second level binds to the actual parts themselves -->
+                <ItemsControl ItemsSource="{Binding
+                    Path=FlatPartRowsViewModel.PartRows,
+                    UpdateSourceTrigger=PropertyChanged}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ListBox
+                                Height="Auto"
+                                dd:DragDrop.IsDragSource="True"
+                                dd:DragDrop.IsDropTarget="True"
+                                dd:DragDrop.UseDefaultDragAdorner="True"
+                                ItemContainerStyle="{StaticResource LessPadListBox}"
+                                RenderTransformOrigin="0.5,0.5"
+                                SelectionMode="Extended">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Margin="1" Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
 
-                            <Border BorderBrush="Black" BorderThickness="2">
-                                <Grid Width="{Binding DisplayLength}"  Height="60">
-                                    <Rectangle Fill="Orange"></Rectangle>
-                                    <TextBlock Text="{Binding DisplayLabel}"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"></TextBlock>
-                                </Grid>
-                            </Border>
-                        </ListBox>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding Path=
+                Parts,
+                  UpdateSourceTrigger=PropertyChanged}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="Black" BorderThickness="2">
+                                                <Grid Width="{Binding DisplayLength}"  Height="60">
+                                                    <Rectangle Fill="#abc732"></Rectangle>
+                                                    <TextBlock Text="{Binding DisplayLabel}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"></TextBlock>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ListBox>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </UserControl>

@@ -21,11 +21,13 @@ namespace AscCutlistEditor.ViewModels
             new ObservableCollection<bool>(new[] { true, true, true });
 
         public CutlistViewModel CutlistViewModel { get; }
+        public FlatPartRowsViewModel FlatPartRowsViewModel { get; }
         public FlatPartViewModel FlatPartViewModel { get; }
 
         public MainViewModel()
         {
             CutlistViewModel = new CutlistViewModel(DrawParts);
+            FlatPartRowsViewModel = new FlatPartRowsViewModel();
             FlatPartViewModel = new FlatPartViewModel();
         }
 
@@ -47,7 +49,7 @@ namespace AscCutlistEditor.ViewModels
         // to draw the parts after parsing a valid csv.
         private void DrawParts()
         {
-            FlatPartViewModel.DrawParts(CutlistViewModel.Cutlists);
+            FlatPartRowsViewModel.CreateRows(CutlistViewModel.Cutlists);
         }
     }
 }
