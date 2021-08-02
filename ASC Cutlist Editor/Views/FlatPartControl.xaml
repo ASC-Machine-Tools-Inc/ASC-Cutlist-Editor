@@ -18,6 +18,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
@@ -26,11 +27,16 @@
                        FontWeight="Bold"
                        TextAlignment="Center" />
         </DockPanel>
-
         <Border BorderBrush="Gray"
                 BorderThickness="0 0 0 1"></Border>
 
-        <ScrollViewer Grid.Row="1"
+        <DockPanel Grid.Row="1" Margin="5">
+            <Button Command="{Binding DrawPartsCommand}">Reset To Cutlist</Button>
+        </DockPanel>
+        <Border Grid.Row="1" BorderBrush="Gray"
+                BorderThickness="0 0 0 1"></Border>
+
+        <ScrollViewer Grid.Row="2"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Auto">
             <StackPanel>

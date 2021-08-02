@@ -31,6 +31,9 @@ namespace AscCutlistEditor.ViewModels
         // Toggles the 3D view and its corresponding splitter's visibility.
         public ICommand Toggle3DCommand => new DelegateCommand(() => ToggleView(2));
 
+        // Draw the 2D and 3D views from the current cutlist.
+        public ICommand DrawPartsCommand => new DelegateCommand(DrawParts);
+
         private void ToggleView(int index)
         {
             UiVisibility[index] = !UiVisibility[index];

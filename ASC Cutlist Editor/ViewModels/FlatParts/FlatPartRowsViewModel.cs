@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Input;
+using ASC_Cutlist_Editor.Views;
 
 namespace AscCutlistEditor.ViewModels
 {
@@ -47,12 +49,9 @@ namespace AscCutlistEditor.ViewModels
                 }
             }
 
-            Debug.WriteLine("Calling CutlistsToDisplayLengths...");
+            // Calculate the lengths for all of the cutlists.
+            // TODO: maybe can do that in method?
             CutlistsToDisplayLengths(cutlists);
-
-            // DEBUG write part message
-            Debug.WriteLine(string.Concat(PartRows.Select(p =>
-                p.Parts[0].PartLabel.Text + " " + p.Parts[0].PartGrid.Width + "\n")));
         }
 
         // Recalculates the length for all the parts, scaling accordingly so
