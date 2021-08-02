@@ -48,6 +48,7 @@
                                 dd:DragDrop.IsDropTarget="True"
                                 dd:DragDrop.UseDefaultDragAdorner="True"
                                 ItemContainerStyle="{StaticResource LessPadListBox}"
+                                ItemsSource="{Binding Parts}"
                                 RenderTransformOrigin="0.5,0.5"
                                 SelectionMode="Extended">
                                 <ListBox.ItemsPanel>
@@ -56,7 +57,28 @@
                                     </ItemsPanelTemplate>
                                 </ListBox.ItemsPanel>
 
-                                <ItemsControl ItemsSource="{Binding Path=
+                                <!--
+                                <Border BorderBrush="Black" BorderThickness="2">
+                                    <Grid Width="100"  Height="60">
+                                        <Rectangle Fill="#abc732"></Rectangle>
+                                        <TextBlock Text="Test 1"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"></TextBlock>
+                                    </Grid>
+                                </Border>
+
+                                <Border BorderBrush="Black" BorderThickness="2">
+                                    <Grid Width="200"  Height="60">
+                                        <Rectangle Fill="DarkRed"></Rectangle>
+                                        <TextBlock Text="Test 2"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"></TextBlock>
+                                    </Grid>
+                                </Border>
+
+                                 Maybe replace all of this?
+                                <ItemsControl
+                                    ItemsSource="{Binding Path=
                 Parts,
                   UpdateSourceTrigger=PropertyChanged}">
                                     <ItemsControl.ItemTemplate>
@@ -72,6 +94,7 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
+                                -->
                             </ListBox>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

@@ -8,6 +8,8 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using ASC_Cutlist_Editor.Views;
 using AscCutlistEditor.Common;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
@@ -20,9 +22,9 @@ namespace AscCutlistEditor.ViewModels
     // Represents a list of parts in a part row.
     internal class FlatPartViewModel : ObservableObject
     {
-        private ObservableCollection<Part> _parts = new ObservableCollection<Part>();
+        private ObservableCollection<SinglePartControl> _parts = new ObservableCollection<SinglePartControl>();
 
-        public ObservableCollection<Part> Parts
+        public ObservableCollection<SinglePartControl> Parts
         {
             get => _parts;
             set
@@ -36,16 +38,19 @@ namespace AscCutlistEditor.ViewModels
         public static FlatPartViewModel Instance { get; } = new FlatPartViewModel();
 
         // Draws a 2D view of the parts from a cutlist.
-        public ObservableCollection<Part> CreatePart(Cutlist cutlist)
+        public ObservableCollection<SinglePartControl> CreatePart(Cutlist cutlist)
         {
             // Refresh the current list of parts.
-            Parts = new ObservableCollection<Part>();
+            Parts = new ObservableCollection<SinglePartControl>();
 
-            Parts.Add(new Part
+            SinglePartControl part = new SinglePartControl
             {
-                DisplayLabel = GetPartLabel(cutlist)
-            });
+                PartGrid = { Width = 300 },
+                PartRect = { Fill = (SolidColorBrush)new BrushConverter().ConvertFromString("#76EB7E") },
+                PartLabel = { Text = GetPartLabel(cutlist) }
+            };
 
+            Parts.Add(part);
             return Parts;
         }
 

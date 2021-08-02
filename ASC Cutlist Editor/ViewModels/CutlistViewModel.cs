@@ -109,6 +109,7 @@ namespace AscCutlistEditor.ViewModels
                 }
                 catch (FormatException)
                 {
+                    // TODO: handle some kind of error for empty cutlists?
                     MessageBox.Show(
                         "The chosen file could not be parsed properly.",
                         "ASC Cutlist Editor", MessageBoxButton.OK,

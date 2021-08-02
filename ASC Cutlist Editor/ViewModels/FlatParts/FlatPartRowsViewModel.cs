@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using ASC_Cutlist_Editor.Views;
 using AscCutlistEditor.Common;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
@@ -52,7 +55,8 @@ namespace AscCutlistEditor.ViewModels
                 {
                     PartRows.Add(new PartRow
                     {
-                        Parts = FlatPartViewModel.Instance.CreatePart(cutlist)
+                        Parts = FlatPartViewModel.Instance.CreatePart(cutlist),
+                        ListBoxName = "ListBox" + partsToAdd
                     });
                     partsToAdd++;
                 }
@@ -63,7 +67,7 @@ namespace AscCutlistEditor.ViewModels
 
             // DEBUG write part message
             Debug.WriteLine(string.Concat(PartRows.Select(p =>
-                p.Parts[0].DisplayLabel + " " + p.Parts[0].DisplayLength + "\n")));
+                p.Parts[0].PartLabel.Text + " " + p.Parts[0].PartGrid.Width + "\n")));
         }
 
         /* Recalculates the length for all the parts, scaling accordingly so
@@ -73,15 +77,7 @@ namespace AscCutlistEditor.ViewModels
 
         private void CutlistsToDisplayLengths(List<Cutlist> cutlists)
         {
-            /*
-            if (cutlists.Count != PartRows.Count)
-            {
-                return;
-            }
-            */
-
             double maxLength = cutlists.Max(c => c.Length);
-            Debug.WriteLine("Max: " + maxLength);
 
             // Calculate the part lengths based on the corresponding cutlist.
             // Example: the max length part will be 300px wide, while one 2/3rds
@@ -100,19 +96,11 @@ namespace AscCutlistEditor.ViewModels
                     // change the length for the single part in Parts.
                     int partLength = Convert.ToInt32(cutlist.Length /
                         maxLength * DefaultDisplayWidthPx);
-                    PartRows[partRowIndex].Parts[0].DisplayLength = partLength;
+                    PartRows[partRowIndex].Parts[0].PartGrid.Width = partLength;
                 }
 
                 currRowIndex += cutlist.Quantity;
             }
         }
     }
-
-    /*
-    // TODO: handle reassigning parts
-    // SEE: https://github.com/punker76/gong-wpf-dragdrop/wiki/Usage
-    internal class FlatPartDragDropModel : IDropTarget
-    {
-    }
-    */
 }
