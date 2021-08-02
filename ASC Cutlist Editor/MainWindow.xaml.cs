@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using AscCutlistEditor.ViewModels;
 using System.Windows;
-using AscCutlistEditor.Common;
-using AscCutlistEditor.Models;
-using AscCutlistEditor.ViewModels;
-using ExcelDataReader;
-using Microsoft.Win32;
 
 namespace AscCutlistEditor
 {

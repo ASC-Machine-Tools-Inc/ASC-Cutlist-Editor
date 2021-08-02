@@ -1,29 +1,17 @@
-﻿using System;
+﻿using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using ASC_Cutlist_Editor.Views;
-using AscCutlistEditor.Common;
-using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.Models;
-using ExcelDataReader;
-using GongSolutions.Wpf.DragDrop;
-using Microsoft.Win32;
 
 namespace AscCutlistEditor.ViewModels
 {
-    // Represents a list of rows that can contain a list of drag n' droppable parts.
+    // Represents a list of rows in the 2D view panel that can contain a list of drag n' droppable parts.
     internal class FlatPartRowsViewModel : ObservableObject
     {
-        private const int DefaultDisplayWidthPx = 300;
+        public const int DefaultDisplayWidthPx = 500;
 
         private ObservableCollection<PartRow> _partRows = new ObservableCollection<PartRow>();
 
@@ -50,15 +38,12 @@ namespace AscCutlistEditor.ViewModels
              */
             foreach (Cutlist cutlist in cutlists)
             {
-                int partsToAdd = 0;
-                while (partsToAdd < cutlist.Quantity)
+                for (int i = 0; i < cutlist.Quantity; i++)
                 {
                     PartRows.Add(new PartRow
                     {
-                        Parts = FlatPartViewModel.Instance.CreatePart(cutlist),
-                        ListBoxName = "ListBox" + partsToAdd
+                        Parts = FlatPartViewModel.Instance.CreatePart(cutlist)
                     });
-                    partsToAdd++;
                 }
             }
 
@@ -70,11 +55,9 @@ namespace AscCutlistEditor.ViewModels
                 p.Parts[0].PartLabel.Text + " " + p.Parts[0].PartGrid.Width + "\n")));
         }
 
-        /* Recalculates the length for all the parts, scaling accordingly so
-         * the longest part matches the default length and all the shorter
-         * ones scale to that.
-         */
-
+        // Recalculates the length for all the parts, scaling accordingly so
+        // the longest part matches the default length and all the shorter
+        // ones scale to that.
         private void CutlistsToDisplayLengths(List<Cutlist> cutlists)
         {
             double maxLength = cutlists.Max(c => c.Length);

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ASC_Cutlist_Editor.Views;
 using System.Collections.ObjectModel;
-using System.Text;
-using ASC_Cutlist_Editor.Views;
 
 namespace AscCutlistEditor.Models
 {
+    // Represents a row that we can place SingePartControls in and move around.
     public class PartRow
     {
         public ObservableCollection<SinglePartControl> Parts { get; set; }
-
-        public string ListBoxName { get; set; }
     }
 }

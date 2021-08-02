@@ -1,11 +1,10 @@
 ﻿<UserControl x:Class="ASC_Cutlist_Editor.Views.FlatPartControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:AscCutlistEditor.Views"
-             xmlns:dd="urn:gong-wpf-dragdrop"
              xmlns:viewmodels="clr-namespace:AscCutlistEditor.ViewModels"
+             xmlns:dd="urn:gong-wpf-dragdrop"
              d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -35,9 +34,10 @@
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Auto">
             <StackPanel>
-                <!-- 1st level of item control binds to the rows, while the
-                     second level binds to the actual parts themselves -->
-                <ItemsControl ItemsSource="{Binding
+                <!-- The item control binds to the rows, while the
+                     ListBoxes bind to the actual parts. -->
+                <ItemsControl
+                    ItemsSource="{Binding
                     Path=FlatPartRowsViewModel.PartRows,
                     UpdateSourceTrigger=PropertyChanged}">
                     <ItemsControl.ItemTemplate>
@@ -56,45 +56,6 @@
                                         <StackPanel Margin="1" Orientation="Horizontal" />
                                     </ItemsPanelTemplate>
                                 </ListBox.ItemsPanel>
-
-                                <!--
-                                <Border BorderBrush="Black" BorderThickness="2">
-                                    <Grid Width="100"  Height="60">
-                                        <Rectangle Fill="#abc732"></Rectangle>
-                                        <TextBlock Text="Test 1"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"></TextBlock>
-                                    </Grid>
-                                </Border>
-
-                                <Border BorderBrush="Black" BorderThickness="2">
-                                    <Grid Width="200"  Height="60">
-                                        <Rectangle Fill="DarkRed"></Rectangle>
-                                        <TextBlock Text="Test 2"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"></TextBlock>
-                                    </Grid>
-                                </Border>
-
-                                 Maybe replace all of this?
-                                <ItemsControl
-                                    ItemsSource="{Binding Path=
-                Parts,
-                  UpdateSourceTrigger=PropertyChanged}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border BorderBrush="Black" BorderThickness="2">
-                                                <Grid Width="{Binding DisplayLength}"  Height="60">
-                                                    <Rectangle Fill="#abc732"></Rectangle>
-                                                    <TextBlock Text="{Binding DisplayLabel}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"></TextBlock>
-                                                </Grid>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                                -->
                             </ListBox>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

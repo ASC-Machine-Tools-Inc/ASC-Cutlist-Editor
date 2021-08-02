@@ -1,21 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using ASC_Cutlist_Editor.Views;
-using AscCutlistEditor.Common;
+﻿using ASC_Cutlist_Editor.Views;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
-using ExcelDataReader;
-using GongSolutions.Wpf.DragDrop;
-using Microsoft.Win32;
+using System;
+using System.Collections.ObjectModel;
+using System.Reflection;
+using System.Windows.Media;
 
 namespace AscCutlistEditor.ViewModels
 {
@@ -43,10 +32,15 @@ namespace AscCutlistEditor.ViewModels
             // Refresh the current list of parts.
             Parts = new ObservableCollection<SinglePartControl>();
 
+            // Convert the cutlist length into a color for that part.
+            PropertyInfo[] properties = typeof(Brushes).GetProperties();
+            int randomIndex = Convert.ToInt32(cutlist.Length) % properties.Length;
+            Brush brush = (SolidColorBrush)properties[randomIndex].GetValue(null, null);
+
             SinglePartControl part = new SinglePartControl
             {
-                PartGrid = { Width = 300 },
-                PartRect = { Fill = (SolidColorBrush)new BrushConverter().ConvertFromString("#76EB7E") },
+                PartGrid = { Width = FlatPartRowsViewModel.DefaultDisplayWidthPx },
+                PartRect = { Fill = brush },
                 PartLabel = { Text = GetPartLabel(cutlist) }
             };
 

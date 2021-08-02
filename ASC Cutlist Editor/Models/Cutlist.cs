@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AscCutlistEditor.Models
+﻿namespace AscCutlistEditor.Models
 {
     public class Cutlist
     {
