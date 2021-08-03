@@ -68,7 +68,6 @@ namespace AscCutlistEditor.ViewModels
         // its contents into the program.
         private void ImportCutlist()
         {
-            // Create OpenFileDialog.
             OpenFileDialog dlg = new OpenFileDialog
             {
                 // Set filter for file extension and default file extension.
@@ -76,11 +75,7 @@ namespace AscCutlistEditor.ViewModels
                 Filter = "CSV Files (*.csv)|*.csv"
             };
 
-            // Display OpenFileDialog by calling ShowDialog method.
             bool? result = dlg.ShowDialog();
-
-            // Get the selected file name and display its contents in a DataGrid,
-            // but exit if a file wasn't selected.
             if (result != true) return;
 
             Filename = Path.GetFileName(dlg.FileName);
@@ -194,18 +189,13 @@ namespace AscCutlistEditor.ViewModels
                     {
                         try
                         {
-                            // Handle custom length.
-                            string lengthStr = reader.GetString(4);
-                            // Grab the last two digits of the length - may need better method.
-                            double length = double.Parse(lengthStr[^2..]);
-
                             cutlists.Add(new Cutlist
                             {
                                 ID = int.Parse(reader.GetString(0)),
-                                Length = Math.Round(length, 2),
-                                Quantity = Convert.ToInt32(double.Parse(reader.GetString(5))),
-                                Made = int.Parse(reader.GetString(6)),
-                                Bundle = int.Parse(reader.GetString(7)),
+                                Length = double.Parse(reader.GetString(5)),
+                                Quantity = int.Parse(reader.GetString(6)),
+                                Made = int.Parse(reader.GetString(7)),
+                                Bundle = int.Parse(reader.GetString(8)),
                             });
 
                             // Skip feed info.
