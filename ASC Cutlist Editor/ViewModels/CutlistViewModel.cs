@@ -89,9 +89,7 @@ namespace AscCutlistEditor.ViewModels
             // Send the call up to the main viewmodel for drawing the 2D parts.
             _drawParts.Invoke();
 
-            // If everything was successful, hide the main button for importing
-            // cutlists. They can still import another through the menu, or close
-            // the current cutlist to reshow the button.
+            // If everything was successful, hide the main button for importing cutlists.
             ImportVisibility = false;
         }
 
@@ -101,50 +99,132 @@ namespace AscCutlistEditor.ViewModels
         {
             // Needed for .NET core to fix this exception: "No data is available for encoding 1252".
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            using FileStream stream = File.Open(dlg.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using FileStream stream = File.Open(dlg.FileName, FileMode.Open,
+                FileAccess.Read, FileShare.ReadWrite);
             using IExcelDataReader reader = ExcelReaderFactory.CreateCsvReader(stream);
+
+            reader.Read();
+            string header = reader.GetString(0);
+            switch (header)
+            {
+                case "HEADER 1:":  // Bryan's format.
+                    ParseCsvFormat(reader, 0);
+                    break;
+
+                case "CUTLIST":  // Andrew's format.
+                    ParseCsvFormat(reader, 1);
+                    break;
+
+                default:  // Invalid format.
+                    MessageBox.Show(
+                        "The chosen file's format could not be parsed properly.",
+                        "ASC Cutlist Editor",
+                        button: MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    Console.WriteLine("Format parsing error.");
+                    break;
+            }
+        }
+
+        /**
+         * Populate the cutlists from the reader using a given cutlist file format.
+         * @param  reader The IExcelDataReader instance that  contains the cutlist to process.
+         * @param  format The int representing the format to parse the file through.
+         *              - 0: Bryan's file format. See BryanCutlist.csv under ExampleCutlists.
+         *              - 1: Andrew's file format. See AndrewCutlist.csv under ExampleCutlists.
+         */
+
+        private void ParseCsvFormat(IExcelDataReader reader, int format)
+        {
+            if (format != 0 && format != 1)
+            {
+                throw new ArgumentException("Invalid format parameter!");
+            }
 
             var cutlists = new List<Cutlist>();
 
-            // Skip rows before the cutlist header.
-            for (int i = 0; i < 18; i++)
+            switch (format)
             {
-                if (!reader.Read()) return;
-            }
-
-            while (reader.Read())
-            {
-                try
-                {
-                    // Skip empty rows in the file.
-                    // TODO: handle different formats
-                    int qty = int.Parse(reader.GetString(3));
-                    if (qty == 0)
+                case 0:  // Bryan's format.
+                    // Skip rows before the cutlists.
+                    for (int i = 0; i < 17; i++)
                     {
-                        continue;
+                        if (!reader.Read()) return;
                     }
 
-                    cutlists.Add(new Cutlist
+                    while (reader.Read())
                     {
-                        ID = int.Parse(reader.GetString(0)),
-                        Name = reader.GetString(1),
-                        Length = Math.Round(LengthParser.ParseString(reader.GetString(2)), 2),
-                        Quantity = qty,
-                        Made = int.Parse(reader.GetString(4)),
-                        Left = int.Parse(reader.GetString(5)),
-                        Bundle = int.Parse(reader.GetString(6)),
-                    });
-                }
-                catch (FormatException)
-                {
-                    // TODO: handle some kind of error for empty cutlists?
-                    MessageBox.Show(
-                        "The chosen file could not be parsed properly.",
-                        "ASC Cutlist Editor", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-                    Console.WriteLine("Format parsing error.");
-                    return;
-                }
+                        try
+                        {
+                            // Skip empty rows in the file.
+                            int qty = int.Parse(reader.GetString(3));
+                            if (qty == 0)
+                            {
+                                continue;
+                            }
+
+                            cutlists.Add(new Cutlist
+                            {
+                                ID = int.Parse(reader.GetString(0)),
+                                Name = reader.GetString(1),
+                                Length = Math.Round(LengthParser.ParseString(reader.GetString(2)), 2),
+                                Quantity = qty,
+                                Made = int.Parse(reader.GetString(4)),
+                                Left = int.Parse(reader.GetString(5)),
+                                Bundle = int.Parse(reader.GetString(6)),
+                            });
+                        }
+                        catch (FormatException)
+                        {
+                            MessageBox.Show(
+                                "The chosen file could not be parsed properly.",
+                                "ASC Cutlist Editor", MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                            Console.WriteLine("Format parsing error.");
+                            return;
+                        }
+                    }
+                    break;
+
+                case 1:  // Andrew's format.
+                    // Skip row before the cutlists.
+                    reader.Read();
+
+                    while (reader.Read())
+                    {
+                        try
+                        {
+                            // Handle custom length.
+                            string lengthStr = reader.GetString(4);
+                            // Grab the last two digits of the length - may need better method.
+                            double length = double.Parse(lengthStr[^2..]);
+
+                            cutlists.Add(new Cutlist
+                            {
+                                ID = int.Parse(reader.GetString(0)),
+                                Length = Math.Round(length, 2),
+                                Quantity = Convert.ToInt32(double.Parse(reader.GetString(5))),
+                                Made = int.Parse(reader.GetString(6)),
+                                Bundle = int.Parse(reader.GetString(7)),
+                            });
+
+                            // Skip feed info.
+                            for (int i = 0; i < 11; i++)
+                            {
+                                reader.Read();
+                            }
+                        }
+                        catch (FormatException)
+                        {
+                            MessageBox.Show(
+                                "The chosen file could not be parsed properly.",
+                                "ASC Cutlist Editor", MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                            Console.WriteLine("Format parsing error.");
+                            return;
+                        }
+                    }
+                    break;
             }
 
             Cutlists = cutlists;

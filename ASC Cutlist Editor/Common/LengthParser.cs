@@ -10,17 +10,24 @@ namespace AscCutlistEditor.Common
 
         public static double ParseString(string length)
         {
-            // Denotes what index to cut off for the suffix.
-            int suffixCutoff = Math.Max(0, length.Length - 2);
-
-            string unconverted = length[..suffixCutoff];
-            string suffix = length[suffixCutoff..];
-
-            return suffix switch
+            // Attempt regular parsing first.
+            try
             {
-                "mm" => double.Parse(unconverted) / 25.4,
-                _ => double.Parse(length)
-            };
+                return double.Parse(length);
+            }
+            catch (FormatException)
+            {
+                // Denotes what index to cut off for the suffix.
+                int suffixCutoff = Math.Max(0, length.Length - 2);
+
+                string unconverted = length[..suffixCutoff];
+                string suffix = length[suffixCutoff..];
+
+                return suffix switch
+                {
+                    "mm" => double.Parse(unconverted) / 25.4
+                };
+            }
         }
     }
 }
