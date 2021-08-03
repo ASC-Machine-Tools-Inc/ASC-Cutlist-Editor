@@ -5,6 +5,7 @@ using ExcelDataReader;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -14,14 +15,16 @@ namespace AscCutlistEditor.ViewModels
 {
     internal class CutlistViewModel : ObservableObject
     {
-        private List<Cutlist> _cutlists = new List<Cutlist>();
-        private string _filename;
+        // Method for rendering the part views.
         private readonly Action _drawParts;
 
         public CutlistViewModel(Action drawParts)
         {
             _drawParts = drawParts;
         }
+
+        // The list of cutlists read in from a given file.
+        private List<Cutlist> _cutlists = new List<Cutlist>();
 
         public List<Cutlist> Cutlists
         {
@@ -33,6 +36,9 @@ namespace AscCutlistEditor.ViewModels
             }
         }
 
+        // The filename containing the current cutlists.
+        private string _filename;
+
         public string Filename
         {
             get => _filename;
@@ -43,8 +49,23 @@ namespace AscCutlistEditor.ViewModels
             }
         }
 
+        // The current visibility of the "import cutlist" button and label.
+        private bool _importVisibility = true;
+
+        public bool ImportVisibility
+        {
+            get => _importVisibility;
+            set
+            {
+                _importVisibility = value;
+                RaisePropertyChangedEvent("ImportVisibility");
+            }
+        }
+
         public ICommand ImportCutlistCommand => new DelegateCommand(ImportCutlist);
 
+        // Prompt the user to select a file in a valid cutlist format and read
+        // its contents into the program.
         private void ImportCutlist()
         {
             // Create OpenFileDialog.
@@ -67,8 +88,15 @@ namespace AscCutlistEditor.ViewModels
 
             // Send the call up to the main viewmodel for drawing the 2D parts.
             _drawParts.Invoke();
+
+            // If everything was successful, hide the main button for importing
+            // cutlists. They can still import another through the menu, or close
+            // the current cutlist to reshow the button.
+            ImportVisibility = false;
         }
 
+        // Process the given file, checking that it's in a valid cutlist format
+        // and if so, copy its contents into the list of cutlists.
         private void ParseCsv(OpenFileDialog dlg)
         {
             // Needed for .NET core to fix this exception: "No data is available for encoding 1252".

@@ -11,6 +11,8 @@
                 <ui:XamlControlsResources />
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <!-- Other app resources here -->
         </ResourceDictionary>
     </Application.Resources>

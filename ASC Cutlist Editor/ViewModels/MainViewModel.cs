@@ -1,5 +1,6 @@
 ﻿using AscCutlistEditor.Frameworks;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 
 namespace AscCutlistEditor.ViewModels
@@ -43,6 +44,12 @@ namespace AscCutlistEditor.ViewModels
         // to draw the parts after parsing a valid csv.
         private void DrawParts()
         {
+            // Do nothing for empty cutlists.
+            if (CutlistViewModel.Cutlists.Count == 0)
+            {
+                return;
+            }
+
             FlatPartRowsViewModel.CreateRows(CutlistViewModel.Cutlists);
         }
     }

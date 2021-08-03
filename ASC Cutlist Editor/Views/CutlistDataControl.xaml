@@ -22,15 +22,36 @@
         <Border BorderBrush="Gray"
                 BorderThickness="0 0 0 1"></Border>
 
-        <DataGrid Grid.Row="1"
-                  AutoGenerateColumns="True"
-                  ColumnWidth="*"
-                  ItemsSource="{Binding CutlistViewModel.Cutlists,
+        <StackPanel Grid.Row="1">
+            <DataGrid AutoGenerateColumns="True"
+                      ColumnWidth="*"
+                      ItemsSource="{Binding CutlistViewModel.Cutlists,
                   UpdateSourceTrigger=PropertyChanged}"
-                  HeadersVisibility="Column"
-                  HorizontalAlignment="Stretch"
-                  GridLinesVisibility="All"
-                  CanUserAddRows="False"
-                  CanUserDeleteRows="False" />
+                      HeadersVisibility="Column"
+                      HorizontalAlignment="Stretch"
+                      GridLinesVisibility="All"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False" />
+
+            <Label
+                Target="{Binding ElementName=ImportButton}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Visibility="{Binding
+                CutlistViewModel.ImportVisibility,
+                    Converter={StaticResource BooleanToVisibilityConverter}}">
+                Open a valid cutlist to view
+            </Label>
+            <Button
+                Name="ImportButton"
+                Command="{Binding CutlistViewModel.ImportCutlistCommand}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Visibility="{Binding
+                CutlistViewModel.ImportVisibility,
+                    Converter={StaticResource BooleanToVisibilityConverter}}">
+                Import Cutlist
+            </Button>
+        </StackPanel>
     </Grid>
 </UserControl>
