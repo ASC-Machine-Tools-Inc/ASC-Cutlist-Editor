@@ -50,7 +50,7 @@ namespace AscCutlistEditor.ViewModels
                 return;
             }
 
-            FlatPartRowsViewModel.CreateRows(CutlistViewModel.Cutlists);
+            FlatPartRowsViewModel.CreateRowsAsync(CutlistViewModel.Cutlists);
         }
     }
 }

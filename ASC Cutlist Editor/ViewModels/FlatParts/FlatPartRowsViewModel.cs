@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Input;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
 using ASC_Cutlist_Editor.Views;
 
 namespace AscCutlistEditor.ViewModels
@@ -14,9 +16,9 @@ namespace AscCutlistEditor.ViewModels
     internal class FlatPartRowsViewModel : ObservableObject
     {
         public static readonly int DefaultDisplayWidthPx = 500;
-        public readonly int CutlistSizeCutoff = 8;
+        public readonly int CutlistSizeCutoff = 8000;
 
-        private ObservableCollection<PartRow> _partRows = new ObservableCollection<PartRow>();
+        private ObservableCollection<PartRow> _partRows;
 
         public ObservableCollection<PartRow> PartRows
         {
@@ -29,7 +31,7 @@ namespace AscCutlistEditor.ViewModels
         }
 
         // Creates the rows and parts from a cutlist.
-        public void CreateRows(List<Cutlist> cutlists)
+        public void CreateRowsAsync(ObservableCollection<Cutlist> cutlists)
         {
             // Refresh the current list of parts.
             PartRows = new ObservableCollection<PartRow>();
@@ -38,31 +40,31 @@ namespace AscCutlistEditor.ViewModels
             double maxLength = cutlists.Max(c => c.Length);
 
             // Create a row with a part for each cutlist line in the CSV.
+
             foreach (Cutlist cutlist in cutlists)
             {
-                int partsToAdd;
-                // Only display one part for big cutlists.
-                if (cutlist.Quantity >= CutlistSizeCutoff)
-                {
-                    partsToAdd = 1;
-                }
-                else
-                {
-                    partsToAdd = cutlist.Quantity;
-                }
+                AddPart(cutlist, maxLength);
+            }
+        }
 
-                for (int i = 0; i < partsToAdd; i++)
-                {
-                    PartRows.Add(new PartRow
-                    {
-                        Parts = FlatPartViewModel.Instance.CreatePart(cutlist)
-                    });
+        private void AddPart(Cutlist cutlist, double maxLength)
+        {
+            // Only display one part for big cutlists.
+            int partsToAdd = cutlist.Quantity >= CutlistSizeCutoff ? 1 : cutlist.Quantity;
 
-                    // Update the length of the part we just added.
-                    int partLength = Convert.ToInt32((cutlist.Length / maxLength) *
-                                                     DefaultDisplayWidthPx);
-                    PartRows[^1].Parts[0].PartGrid.Width = partLength;
-                }
+            for (int i = 0; i < partsToAdd * 10; i++)
+            {
+                PartRows.Add(new PartRow
+                {
+                    Parts = FlatPartViewModel.Instance.CreatePart(cutlist)
+                });
+
+                // Update the length of the part we just added.
+                int partLength = Convert.ToInt32((cutlist.Length / maxLength) *
+                                                 DefaultDisplayWidthPx);
+                PartRows[^1].Parts[0].PartGrid.Width = partLength;
+
+                //await Task.Delay(10);
             }
         }
     }

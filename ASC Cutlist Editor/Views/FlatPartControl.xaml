@@ -59,7 +59,7 @@
                                 SelectionMode="Extended">
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <StackPanel Margin="1" Orientation="Horizontal" />
+                                        <VirtualizingStackPanel Margin="1" Orientation="Horizontal" />
                                     </ItemsPanelTemplate>
                                 </ListBox.ItemsPanel>
                             </ListBox>
