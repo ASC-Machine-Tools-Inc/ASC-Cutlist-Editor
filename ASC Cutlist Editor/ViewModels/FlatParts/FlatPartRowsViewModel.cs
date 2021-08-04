@@ -16,7 +16,8 @@ namespace AscCutlistEditor.ViewModels
     internal class FlatPartRowsViewModel : ObservableObject
     {
         public readonly int DefaultDisplayWidthPx = 500;
-        public readonly int CutlistSizeCutoff = 8;
+        public readonly int CutlistMergeCutoff = 8;
+        public readonly int SyncLoadCutoff = 20;
 
         private ObservableCollection<PartRow> _partRows;
 
@@ -39,23 +40,52 @@ namespace AscCutlistEditor.ViewModels
             // Grab the max cutlist length to scale them all by.
             double maxLength = cutlists.Max(c => c.Length);
 
-            // Create a row with a part for each cutlist line in the CSV.
+            // Determine whether or not to load in the part rows asynchronously
+            // using the number of total parts to draw: synchronous loading at
+            // the start prevents UI flashing.
+            int totalQuantity = 0;
+            bool loadAsync = false;
+            foreach (Cutlist cutlist in cutlists)
+            {
+                int partsToAdd = cutlist.Quantity >= CutlistMergeCutoff ?
+                    1 : cutlist.Quantity;
+                totalQuantity += partsToAdd;
+
+                if (totalQuantity > SyncLoadCutoff)
+                {
+                    loadAsync = true;
+                    break;
+                }
+            }
+
             foreach (Cutlist cutlist in cutlists)
             {
                 // Only display one part for big cutlists.
-                int partsToAdd = cutlist.Quantity >= CutlistSizeCutoff ? 1 : cutlist.Quantity;
+                int partsToAdd = cutlist.Quantity >= CutlistMergeCutoff ?
+                    1 : cutlist.Quantity;
 
-                // Set the part's length to be proportional to the largest part.
-                int partLength = Convert.ToInt32((cutlist.Length / maxLength) *
-                                                 DefaultDisplayWidthPx);
+                int partProportionalLength = Convert.ToInt32(
+                    (cutlist.Length / maxLength) * DefaultDisplayWidthPx);
 
-                // Asynchronously update the part rows as they get parsed in.
+                // Update the part rows as they get parsed in.
                 for (int i = 0; i < partsToAdd; i++)
                 {
-                    PartRows.Add(await Task.Run(() => new PartRow
+                    if (loadAsync)
                     {
-                        Parts = FlatPartViewModel.Instance.CreatePart(cutlist, partLength)
-                    }));
+                        PartRows.Add(await Task.Run(() => new PartRow
+                        {
+                            Parts = FlatPartViewModel.Instance
+                                .CreatePart(cutlist, partProportionalLength)
+                        }));
+                    }
+                    else
+                    {
+                        PartRows.Add(new PartRow
+                        {
+                            Parts = FlatPartViewModel.Instance
+                                .CreatePart(cutlist, partProportionalLength)
+                        });
+                    }
                 }
             }
         }

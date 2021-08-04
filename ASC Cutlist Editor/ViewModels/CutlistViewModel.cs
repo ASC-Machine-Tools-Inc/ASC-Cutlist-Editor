@@ -90,7 +90,7 @@ namespace AscCutlistEditor.ViewModels
                 // Reset the cutlists.
                 Cutlists = new ObservableCollection<Cutlist>();
 
-                ParseCsv(dlg);
+                ParseCsvAsync(dlg);
 
                 // If successful, hide the old button.
                 ImportVisibility = false;
@@ -112,7 +112,7 @@ namespace AscCutlistEditor.ViewModels
          * @param  dlg the OpenFileDialog to read data in from after choosing a file.
          */
 
-        private async void ParseCsv(OpenFileDialog dlg)
+        private async void ParseCsvAsync(OpenFileDialog dlg)
         {
             // Needed for .NET core to fix this exception: "No data is available for encoding 1252".
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -125,11 +125,11 @@ namespace AscCutlistEditor.ViewModels
             switch (header)
             {
                 case "HEADER 1:":  // Bryan's format.
-                    await ParseCsvIntoCutlists(reader, 0);
+                    await ParseCsvIntoCutlistsAsync(reader, 0);
                     break;
 
                 case "CUTLIST":  // Andrew's format.
-                    await ParseCsvIntoCutlists(reader, 1);
+                    await ParseCsvIntoCutlistsAsync(reader, 1);
                     break;
 
                 default:  // Invalid format.
@@ -149,7 +149,7 @@ namespace AscCutlistEditor.ViewModels
          * @param  reader The IExcelDataReader instance that  contains the cutlist to process.
          */
 
-        private async Task ParseCsvIntoCutlists(IExcelDataReader reader, int format)
+        private async Task ParseCsvIntoCutlistsAsync(IExcelDataReader reader, int format)
         {
             // Skip some rows at the start based off the given format.
             int rowsToSkip = 0;
