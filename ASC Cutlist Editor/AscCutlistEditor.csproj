@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<RootNamespace>ASC_Cutlist_Editor</RootNamespace>
+		<RootNamespace>AscCutlistEditor</RootNamespace>
 		<UseWPF>true</UseWPF>
 	</PropertyGroup>
 

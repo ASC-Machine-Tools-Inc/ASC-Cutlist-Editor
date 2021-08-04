@@ -1,13 +1,14 @@
 ﻿<UserControl x:Class="ASC_Cutlist_Editor.Views.FlatPartControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewmodels="clr-namespace:AscCutlistEditor.ViewModels"
-             xmlns:dd="urn:gong-wpf-dragdrop"
-             d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
-             mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:dd="urn:gong-wpf-dragdrop"
+                 xmlns:viewModels="clr-namespace:ASC_Cutlist_Editor.ViewModels"
+                 xmlns:viewModels1="clr-namespace:AscCutlistEditor.ViewModels"
+                 d:DataContext="{d:DesignInstance Type=viewModels1:MainViewModel}"
+                 mc:Ignorable="d"
+                 d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <!-- Adjust padding for ListBox 2D parts -->
         <Style x:Key="LessPadListBox" TargetType="ListBoxItem">

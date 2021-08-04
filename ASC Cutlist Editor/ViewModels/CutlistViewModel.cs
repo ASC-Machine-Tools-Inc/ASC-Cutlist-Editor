@@ -1,17 +1,15 @@
-﻿using AscCutlistEditor.Common;
-using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.Models;
-using ExcelDataReader;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using AscCutlistEditor.Common;
+using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.Models;
+using ExcelDataReader;
+using Microsoft.Win32;
 
 namespace AscCutlistEditor.ViewModels
 {
@@ -64,14 +62,22 @@ namespace AscCutlistEditor.ViewModels
             }
         }
 
-        public ICommand ImportCutlistCommand => new DelegateCommand(ImportCutlist);
+        /**
+         * Event handler for importing CSVs into cutlists.
+         */
+        public ICommand ImportCutlistCommand => new DelegateCommand(ImportCutlistCsv);
+
+        private async void ImportCutlistCsv()
+        {
+            await ImportCutlistCsvAsync();
+        }
 
         /**
          * Prompt the user to select a file in a valid cutlist format and read
          * its contents into the program.
          */
 
-        private void ImportCutlist()
+        private async Task ImportCutlistCsvAsync()
         {
             OpenFileDialog dlg = new OpenFileDialog
             {
@@ -90,12 +96,12 @@ namespace AscCutlistEditor.ViewModels
                 // Reset the cutlists.
                 Cutlists = new ObservableCollection<Cutlist>();
 
-                ParseCsvAsync(dlg);
+                await ParseCutlistCsvAsync(dlg);
 
-                // If successful, hide the old button.
+                // If successful, hide the import button.
                 ImportVisibility = false;
             }
-            catch (Exception)  // Catch File and FileFormat exceptions
+            catch (Exception)  // Catch File and FileFormat exceptions.
             {
                 MessageBox.Show(
                     "The chosen file could not be parsed properly.",
@@ -109,10 +115,13 @@ namespace AscCutlistEditor.ViewModels
          * Process the given file, checking that it's in a valid cutlist format
          * and if so, copy its contents into the list of cutlists.
          *
+         * See BryanCutlist.csv and AndrewCutlist.csv under ExampleCutlists for
+         * cutlist formats.
+         *
          * @param  dlg the OpenFileDialog to read data in from after choosing a file.
          */
 
-        private async void ParseCsvAsync(OpenFileDialog dlg)
+        private async Task ParseCutlistCsvAsync(OpenFileDialog dlg)
         {
             // Needed for .NET core to fix this exception: "No data is available for encoding 1252".
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -120,50 +129,25 @@ namespace AscCutlistEditor.ViewModels
                 FileAccess.Read, FileShare.ReadWrite);
             using IExcelDataReader reader = ExcelReaderFactory.CreateCsvReader(stream);
 
-            reader.Read();
+            int rowsToSkip = 0;
+            reader.Read();  // Advance reader to first row.
+
             string header = reader.GetString(0);
             switch (header)
             {
                 case "HEADER 1:":  // Bryan's format.
-                    await ParseCsvIntoCutlistsAsync(reader, 0);
+                    rowsToSkip = 17;
                     break;
 
                 case "CUTLIST":  // Andrew's format.
-                    await ParseCsvIntoCutlistsAsync(reader, 1);
+                    rowsToSkip = 1;
                     break;
 
                 default:  // Invalid format.
                     throw new FileFormatException();
             }
 
-            // Send the call up to the main viewmodel
-            // for drawing the 2D parts after parsing.
-            _drawParts.Invoke();
-        }
-
-        /**
-         * Populate the cutlists from the reader using the given cutlist file format.
-         * See BryanCutlist.csv and AndrewCutlist.csv under ExampleCutlists.
-         * (These correspond to the format parameters 0 and 1, respectively).
-         *
-         * @param  reader The IExcelDataReader instance that  contains the cutlist to process.
-         */
-
-        private async Task ParseCsvIntoCutlistsAsync(IExcelDataReader reader, int format)
-        {
             // Skip some rows at the start based off the given format.
-            int rowsToSkip = 0;
-            switch (format)
-            {
-                case 0:
-                    rowsToSkip = 17;
-                    break;
-
-                case 1:
-                    rowsToSkip = 1;
-                    break;
-            }
-
             for (int i = 0; i < rowsToSkip; i++)
             {
                 if (!reader.Read()) return;
@@ -172,21 +156,29 @@ namespace AscCutlistEditor.ViewModels
             while (reader.Read())
             {
                 // Asynchronously load in the cutlists from the file.
-                Cutlist cutlist = await Task.Run(() => ParseCsvIntoCutlistsHelper(reader, format));
+                Cutlist cutlist = await Task.Run(() => ParseCutlistCsvHelper(reader, header));
                 if (cutlist != null)
                 {
                     Cutlists.Add(cutlist);
                 }
             }
+
+            // Send the call up to the main viewmodel
+            // for drawing the 2D parts after parsing.
+            _drawParts.Invoke();
         }
 
-        private Cutlist ParseCsvIntoCutlistsHelper(IExcelDataReader reader, int format)
+        /**
+         * Do the dirty work of parsing the file into neat Cutlists.
+         */
+
+        private Cutlist ParseCutlistCsvHelper(IExcelDataReader reader, string header)
         {
             Cutlist cutlist = null;
 
-            switch (format)
+            switch (header)
             {
-                case 0:
+                case "HEADER 1:":  // Bryan's format.
                     // Skip empty rows in the file.
                     int qty = int.Parse(reader.GetString(3));
                     if (qty == 0)
@@ -206,7 +198,7 @@ namespace AscCutlistEditor.ViewModels
                     };
                     break;
 
-                case 1:
+                case "CUTLIST":  // Andrew's format.
                     cutlist = new Cutlist
                     {
                         ID = int.Parse(reader.GetString(0)),

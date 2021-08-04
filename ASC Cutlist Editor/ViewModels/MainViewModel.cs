@@ -1,8 +1,7 @@
-﻿using AscCutlistEditor.Frameworks;
-using System.Collections.ObjectModel;
-using System.Windows;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-using AscCutlistEditor.Models;
+using ASC_Cutlist_Editor.ViewModels.FlatParts;
+using AscCutlistEditor.Frameworks;
 
 namespace AscCutlistEditor.ViewModels
 {
@@ -51,7 +50,7 @@ namespace AscCutlistEditor.ViewModels
                 return;
             }
 
-            FlatPartRowsViewModel.CreateRowsAsync(CutlistViewModel.Cutlists);
+            FlatPartRowsViewModel.CreateRows(CutlistViewModel.Cutlists);
         }
     }
 }

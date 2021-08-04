@@ -1,14 +1,13 @@
-﻿using ASC_Cutlist_Editor.Views;
-using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.Models;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Threading;
+using ASC_Cutlist_Editor.Views;
+using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.Models;
 
-namespace AscCutlistEditor.ViewModels
+namespace ASC_Cutlist_Editor.ViewModels.FlatParts
 {
     // Represents a list of parts in a part row.
     internal class FlatPartViewModel : ObservableObject
