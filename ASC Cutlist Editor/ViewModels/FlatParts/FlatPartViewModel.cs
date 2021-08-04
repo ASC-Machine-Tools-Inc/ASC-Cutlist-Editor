@@ -4,7 +4,9 @@ using AscCutlistEditor.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace AscCutlistEditor.ViewModels
 {
@@ -27,7 +29,7 @@ namespace AscCutlistEditor.ViewModels
         public static FlatPartViewModel Instance { get; } = new FlatPartViewModel();
 
         // Draws a 2D view of the parts from a cutlist.
-        public ObservableCollection<SinglePartControl> CreatePart(Cutlist cutlist)
+        public ObservableCollection<SinglePartControl> CreatePart(Cutlist cutlist, int partWidth)
         {
             // Refresh the current list of parts.
             Parts = new ObservableCollection<SinglePartControl>();
@@ -37,14 +39,19 @@ namespace AscCutlistEditor.ViewModels
             int randomIndex = Convert.ToInt32(cutlist.Length) % properties.Length;
             Brush brush = (SolidColorBrush)properties[randomIndex].GetValue(null, null);
 
-            SinglePartControl part = new SinglePartControl
+            // Run on UI thread.
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                PartGrid = { Width = FlatPartRowsViewModel.DefaultDisplayWidthPx },
-                PartRect = { Fill = brush },
-                PartLabel = { Text = GetPartLabel(cutlist) }
-            };
+                SinglePartControl part = new SinglePartControl
+                {
+                    PartGrid = { Width = partWidth },
+                    PartRect = { Fill = brush },
+                    PartLabel = { Text = GetPartLabel(cutlist) }
+                };
 
-            Parts.Add(part);
+                Parts.Add(part);
+            });
+
             return Parts;
         }
 

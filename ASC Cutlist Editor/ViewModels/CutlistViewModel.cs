@@ -102,11 +102,7 @@ namespace AscCutlistEditor.ViewModels
                     "ASC Cutlist Editor", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 Console.WriteLine("Format parsing error.");
-                return;
             }
-
-            // Send the call up to the main viewmodel for drawing the 2D parts.
-            _drawParts.Invoke();
         }
 
         /**
@@ -139,6 +135,10 @@ namespace AscCutlistEditor.ViewModels
                 default:  // Invalid format.
                     throw new FileFormatException();
             }
+
+            // Send the call up to the main viewmodel
+            // for drawing the 2D parts after parsing.
+            _drawParts.Invoke();
         }
 
         /**
@@ -171,6 +171,7 @@ namespace AscCutlistEditor.ViewModels
 
             while (reader.Read())
             {
+                // Asynchronously load in the cutlists from the file.
                 Cutlist cutlist = await Task.Run(() => ParseCsvIntoCutlistsHelper(reader, format));
                 if (cutlist != null)
                 {
