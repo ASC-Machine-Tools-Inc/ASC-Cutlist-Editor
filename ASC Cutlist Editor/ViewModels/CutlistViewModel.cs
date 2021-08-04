@@ -129,7 +129,7 @@ namespace AscCutlistEditor.ViewModels
                 FileAccess.Read, FileShare.ReadWrite);
             using IExcelDataReader reader = ExcelReaderFactory.CreateCsvReader(stream);
 
-            int rowsToSkip = 0;
+            int rowsToSkip;
             reader.Read();  // Advance reader to first row.
 
             string header = reader.GetString(0);

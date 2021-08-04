@@ -25,7 +25,7 @@ namespace AscCutlistEditor.Common
             return suffix switch
             {
                 "mm" => double.Parse(unconverted) / 25.4,
-                _ => throw new NotImplementedException()
+                _ => throw new FormatException()
             };
         }
     }
