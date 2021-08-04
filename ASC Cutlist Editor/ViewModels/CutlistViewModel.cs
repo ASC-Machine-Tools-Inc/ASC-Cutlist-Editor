@@ -179,7 +179,7 @@ namespace AscCutlistEditor.ViewModels
             }
         }
 
-        private async Task<Cutlist> ParseCsvIntoCutlistsHelper(IExcelDataReader reader, int format)
+        private Cutlist ParseCsvIntoCutlistsHelper(IExcelDataReader reader, int format)
         {
             Cutlist cutlist = null;
 
@@ -201,7 +201,7 @@ namespace AscCutlistEditor.ViewModels
                         Quantity = qty,
                         Made = int.Parse(reader.GetString(4)),
                         Left = int.Parse(reader.GetString(5)),
-                        Bundle = int.Parse(reader.GetString(6)),
+                        Bundle = int.Parse(reader.GetString(6))
                     };
                     break;
 
@@ -212,7 +212,7 @@ namespace AscCutlistEditor.ViewModels
                         Length = double.Parse(reader.GetString(5)),
                         Quantity = int.Parse(reader.GetString(6)),
                         Made = int.Parse(reader.GetString(7)),
-                        Bundle = int.Parse(reader.GetString(8)),
+                        Bundle = int.Parse(reader.GetString(8))
                     };
 
                     // Skip feed info.
