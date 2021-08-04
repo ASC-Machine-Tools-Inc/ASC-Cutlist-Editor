@@ -11,13 +11,8 @@ namespace ASC_Cutlist_Editor.ViewModels.FlatParts
     internal class FlatPartRowsViewModel : ObservableObject
     {
         public readonly int DefaultDisplayWidthPx = 500;
-
-        //public readonly int CutlistMergeCutoff = 8;
-        //public readonly int SyncLoadCutoff = 20;
-        // debug
-        public readonly int CutlistMergeCutoff = 80000;
-
-        public readonly int SyncLoadCutoff = 2;
+        public readonly int CutlistMergeCutoff = 8;
+        public readonly int SyncLoadCutoff = 20;
 
         private ObservableCollection<PartRow> _partRows;
 
@@ -74,7 +69,7 @@ namespace ASC_Cutlist_Editor.ViewModels.FlatParts
                     (cutlist.Length / maxLength) * DefaultDisplayWidthPx);
 
                 // Update the part rows as they get parsed in.
-                for (int i = 0; i < partsToAdd * 10; i++)
+                for (int i = 0; i < partsToAdd; i++)
                 {
                     if (loadAsync)
                     {
@@ -92,6 +87,9 @@ namespace ASC_Cutlist_Editor.ViewModels.FlatParts
                                 .CreatePart(cutlist, partProportionalLength)
                         });
                     }
+
+                    // Debug async
+                    // await Task.Delay(1000);
                 }
             }
         }

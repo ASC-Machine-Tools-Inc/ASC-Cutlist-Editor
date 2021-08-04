@@ -41,7 +41,7 @@ namespace ASC_Cutlist_Editor.ViewModels.FlatParts
             // Run on UI thread.
             Application.Current.Dispatcher.Invoke(() =>
             {
-                SinglePartControl part = new SinglePartControl
+                SinglePartControl part = new SinglePartControl()
                 {
                     PartGrid = { Width = partWidth },
                     PartRect = { Fill = brush },
