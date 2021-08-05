@@ -10,9 +10,9 @@ namespace AscCutlistEditor.ViewModels.FlatParts
     // Represents a list of rows in the 2D view panel that can contain a list of drag n' droppable parts.
     internal class FlatPartRowsViewModel : ObservableObject
     {
-        public readonly int DefaultDisplayWidthPx = 500;
-        public readonly int CutlistMergeCutoff = 8;
-        public readonly int SyncLoadCutoff = 20;
+        public int DefaultDisplayWidthPx = 500;
+        public int CutlistMergeCutoff = 8;
+        public int SyncLoadCutoff = 20;
 
         private ObservableCollection<PartRow> _partRows;
 
@@ -40,6 +40,9 @@ namespace AscCutlistEditor.ViewModels.FlatParts
 
             // Grab the max cutlist length to scale them all by.
             double maxLength = cutlists.Max(c => c.Length);
+
+            CutlistMergeCutoff = int.MaxValue;
+            SyncLoadCutoff = 0;
 
             // Determine whether or not to load in the part rows asynchronously
             // using the number of total parts to draw: synchronous loading at
@@ -75,7 +78,7 @@ namespace AscCutlistEditor.ViewModels.FlatParts
                     {
                         PartRows.Add(await Task.Run(() => new PartRow
                         {
-                            Parts = FlatPartViewModel.Instance
+                            Parts = FlatPartViewModel
                                 .CreatePart(cutlist, partProportionalLength)
                         }));
                     }
@@ -83,7 +86,7 @@ namespace AscCutlistEditor.ViewModels.FlatParts
                     {
                         PartRows.Add(new PartRow
                         {
-                            Parts = FlatPartViewModel.Instance
+                            Parts = FlatPartViewModel
                                 .CreatePart(cutlist, partProportionalLength)
                         });
                     }

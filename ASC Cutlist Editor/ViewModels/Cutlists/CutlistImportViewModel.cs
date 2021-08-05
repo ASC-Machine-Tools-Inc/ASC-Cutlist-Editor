@@ -21,6 +21,7 @@ namespace AscCutlistEditor.ViewModels.Cutlists
 
         /// <summary>
         /// Class <c>CutlistImportViewModel</c> handles all the UI controls for cutlists.
+        /// Also handles file opening - all logic kept in CutlistParseViewModel.
         /// </summary>
         /// <param name="drawParts">Action for rendering the part views.</param>
         public CutlistImportViewModel(Action drawParts)
@@ -115,6 +116,7 @@ namespace AscCutlistEditor.ViewModels.Cutlists
                     "ASC Cutlist Editor", MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 Console.WriteLine("Format parsing error.");
+                Filename = null;
             }
         }
     }

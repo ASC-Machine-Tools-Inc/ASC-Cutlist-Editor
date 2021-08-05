@@ -18,7 +18,7 @@ namespace AscCutlistEditorTests.ViewModels.Cutlists
         {
             // Arrange
             String path = "../../../Assets/AndrewCutlist.CSV";
-            IExcelDataReader reader = OpenCSV(path);
+            IExcelDataReader reader = OpenCsv(path);
 
             // Act
             var cutlists =
@@ -41,7 +41,7 @@ namespace AscCutlistEditorTests.ViewModels.Cutlists
         {
             // Arrange
             String path = "../../../Assets/BryanCutlist.CSV";
-            IExcelDataReader reader = OpenCSV(path);
+            IExcelDataReader reader = OpenCsv(path);
 
             // Act
             var cutlists =
@@ -67,7 +67,7 @@ namespace AscCutlistEditorTests.ViewModels.Cutlists
             // Arrange
             // Not actually a cutlist!
             String path = "../../../Assets/BadCutlist.CSV";
-            IExcelDataReader reader = OpenCSV(path);
+            IExcelDataReader reader = OpenCsv(path);
 
             // Act
             var cutlists =
@@ -82,20 +82,21 @@ namespace AscCutlistEditorTests.ViewModels.Cutlists
             // Looks like one of Bryan's cutlists, but let's say it got malformed
             // somewhere in the export process.
             String path = "../../../Assets/MalformedBryanCutlist.CSV";
-            IExcelDataReader reader = OpenCSV(path);
+            IExcelDataReader reader = OpenCsv(path);
 
             // Act
             var cutlists =
                 await CutlistParseViewModel.ParseCutlistCsvAsync(reader);
         }
 
-        private IExcelDataReader OpenCSV(string path)
+        public static IExcelDataReader OpenCsv(string path)
         {
             // Needed for .NET core to fix this exception:
             // "No data is available for encoding 1252".
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
+            FileStream stream = File.Open(path, FileMode.Open,
+                FileAccess.Read, FileShare.ReadWrite);
             return ExcelReaderFactory.CreateCsvReader(stream);
         }
     }

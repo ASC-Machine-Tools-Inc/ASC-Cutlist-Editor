@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
 using AscCutlistEditor.Views;
 
 namespace AscCutlistEditor.ViewModels.FlatParts
 {
-    // Represents a list of parts in a part row.
+    // Does the UI work for representing a list of parts in a part row.
     internal class FlatPartViewModel : ObservableObject
     {
-        public static FlatPartViewModel Instance { get; } = new FlatPartViewModel();
-
-        // Draws a 2D view of the parts from a cutlist.
-        public ObservableCollection<SinglePartControl> CreatePart(Cutlist cutlist, int partWidth)
+        // Draws a 2D view of the part from a cutlist.
+        public static ObservableCollection<SinglePartControl> CreatePart(Cutlist cutlist, int partWidth)
         {
             // Refresh the current list of parts.
             ObservableCollection<SinglePartControl> parts =
@@ -28,23 +28,30 @@ namespace AscCutlistEditor.ViewModels.FlatParts
                 .GetValue(null, null);
 
             // Run on UI thread.
-            Application.Current.Dispatcher.Invoke(() =>
+            // Application.Current.Dispatcher works when running program
+            // Dispatcher.CurrentDispatcher works for tests??
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
-                SinglePartControl part = new SinglePartControl()
+                Thread staThread = new Thread(async () =>
                 {
-                    PartGrid = { Width = partWidth },
-                    PartRect = { Fill = brush },
-                    PartLabel = { Text = GetPartLabel(cutlist) }
-                };
-
-                parts.Add(part);
+                    SinglePartControl part = new SinglePartControl()
+                    {
+                        PartGrid = { Width = partWidth },
+                        PartRect = { Fill = brush },
+                        PartLabel = { Text = GetPartLabel(cutlist) }
+                    };
+                    parts.Add(part);
+                });
+                staThread.SetApartmentState(ApartmentState.STA);
+                staThread.Start();
+                staThread.Join();
             });
 
             return parts;
         }
 
         // Generates the label string for a part from a cutlist.
-        public string GetPartLabel(Cutlist cutlist)
+        public static string GetPartLabel(Cutlist cutlist)
         {
             return "PROFILE X  LENGTH: " + cutlist.Length + "  " + cutlist.Quantity + "x";
         }
