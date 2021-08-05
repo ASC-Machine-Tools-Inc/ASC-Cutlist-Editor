@@ -51,7 +51,7 @@ namespace AscCutlistEditor.ViewModels.Cutlists
 
             for (int i = 0; i < rowsToSkip; i++)
             {
-                if (!reader.Read()) return null;
+                reader.Read();
             }
 
             while (reader.Read())
