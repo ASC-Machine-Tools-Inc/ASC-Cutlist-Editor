@@ -1,7 +1,6 @@
 ﻿using System.Windows.Controls;
-using System.Windows.Media;
 
-namespace ASC_Cutlist_Editor.Views
+namespace AscCutlistEditor.Views
 {
     /// <summary>
     /// Interaction logic for SinglePartControl.xaml

@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using ASC_Cutlist_Editor.ViewModels;
 using AscCutlistEditor.ViewModels;
 
 namespace AscCutlistEditor

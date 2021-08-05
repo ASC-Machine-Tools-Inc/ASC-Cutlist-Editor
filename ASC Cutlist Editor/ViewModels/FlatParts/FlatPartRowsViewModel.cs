@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
 
-namespace ASC_Cutlist_Editor.ViewModels.FlatParts
+namespace AscCutlistEditor.ViewModels.FlatParts
 {
     // Represents a list of rows in the 2D view panel that can contain a list of drag n' droppable parts.
     internal class FlatPartRowsViewModel : ObservableObject

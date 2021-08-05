@@ -1,5 +1,5 @@
-﻿using ASC_Cutlist_Editor.Views;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using AscCutlistEditor.Views;
 
 namespace AscCutlistEditor.Models
 {

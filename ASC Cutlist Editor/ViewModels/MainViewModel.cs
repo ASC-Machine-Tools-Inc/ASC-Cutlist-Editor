@@ -1,7 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-using ASC_Cutlist_Editor.ViewModels.FlatParts;
 using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.ViewModels.Cutlists;
+using AscCutlistEditor.ViewModels.FlatParts;
 
 namespace AscCutlistEditor.ViewModels
 {
@@ -12,13 +13,13 @@ namespace AscCutlistEditor.ViewModels
         public ObservableCollection<bool> UiVisibility { get; set; } =
             new ObservableCollection<bool>(new[] { true, true, true });
 
-        public CutlistViewModel CutlistViewModel { get; }
+        public CutlistImportViewModel CutlistViewModel { get; }
         public FlatPartRowsViewModel FlatPartRowsViewModel { get; }
         public FlatPartViewModel FlatPartViewModel { get; }
 
         public MainViewModel()
         {
-            CutlistViewModel = new CutlistViewModel(DrawParts);
+            CutlistViewModel = new CutlistImportViewModel(DrawParts);
             FlatPartRowsViewModel = new FlatPartRowsViewModel();
             FlatPartViewModel = new FlatPartViewModel();
         }
@@ -50,7 +51,8 @@ namespace AscCutlistEditor.ViewModels
                 return;
             }
 
-            FlatPartRowsViewModel.CreateRows(CutlistViewModel.Cutlists);
+            FlatPartRowsViewModel.CreateRows(
+                CutlistViewModel.Cutlists);
         }
     }
 }
