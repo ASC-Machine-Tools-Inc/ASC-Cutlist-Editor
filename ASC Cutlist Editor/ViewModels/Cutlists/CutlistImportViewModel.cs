@@ -18,6 +18,7 @@ namespace AscCutlistEditor.ViewModels.Cutlists
         private readonly Action _drawParts;
         private string _filename;
         private bool _importVisibility = true;
+        private bool _closeButtonVisibility;
 
         /// <summary>
         /// Class <c>CutlistImportViewModel</c> handles all the UI controls for cutlists.
@@ -27,6 +28,8 @@ namespace AscCutlistEditor.ViewModels.Cutlists
         public CutlistImportViewModel(Action drawParts)
         {
             _drawParts = drawParts;
+
+            Cutlists = new ObservableCollection<Cutlist>();
         }
 
         /// <summary>
@@ -65,6 +68,19 @@ namespace AscCutlistEditor.ViewModels.Cutlists
             {
                 _importVisibility = value;
                 RaisePropertyChangedEvent("ImportVisibility");
+            }
+        }
+
+        /// <summary>
+        /// The visibility of the close cutlist button.
+        /// </summary>
+        public bool CloseButtonVisibility
+        {
+            get => _closeButtonVisibility;
+            set
+            {
+                _closeButtonVisibility = value;
+                RaisePropertyChangedEvent("CloseButtonVisibility");
             }
         }
 
@@ -107,6 +123,7 @@ namespace AscCutlistEditor.ViewModels.Cutlists
                 // If successful, update the UI. Send the call up to the
                 // main viewmodel for drawing the 2D parts after parsing.
                 _drawParts.Invoke();
+                CloseButtonVisibility = true;
                 ImportVisibility = false;
             }
             catch (Exception)  // Catch File and FileFormat exceptions.
@@ -118,6 +135,16 @@ namespace AscCutlistEditor.ViewModels.Cutlists
                 Console.WriteLine("Format parsing error.");
                 Filename = null;
             }
+        }
+
+        public void ClearUi()
+        {
+            Cutlists = new ObservableCollection<Cutlist>();
+
+            Filename = null;
+
+            ImportVisibility = true;
+            CloseButtonVisibility = false;
         }
     }
 }

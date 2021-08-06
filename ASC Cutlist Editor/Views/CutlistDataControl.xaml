@@ -14,12 +14,25 @@
         </Grid.RowDefinitions>
 
         <DockPanel Margin="5">
-            <TextBlock Text="Current file: " FontWeight="Bold" />
-            <TextBlock Text="{Binding CutlistViewModel.Filename,
+            <TextBlock
+                Text="Current file: "
+                FontSize="16"
+                FontWeight="Bold" />
+            <TextBlock
+                FontSize="16"
+                Text="{Binding CutlistViewModel.Filename,
                 UpdateSourceTrigger=PropertyChanged}"></TextBlock>
+            <Button
+                Command="{Binding ClearCutlistCommand}"
+                Padding="5 2"
+                HorizontalAlignment="Right"
+                Visibility="{Binding
+                CutlistViewModel.CloseButtonVisibility,
+                    Converter={StaticResource BooleanToVisibilityConverter}}">
+                X
+            </Button>
         </DockPanel>
-
-        <Border BorderBrush="Gray"
+        <Border Grid.Row="0"  BorderBrush="Gray"
                 BorderThickness="0 0 0 1"></Border>
 
         <StackPanel Grid.Row="1">
@@ -37,6 +50,7 @@
                 Target="{Binding ElementName=ImportButton}"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
+                Margin="0 50 0 15"
                 Visibility="{Binding
                 CutlistViewModel.ImportVisibility,
                     Converter={StaticResource BooleanToVisibilityConverter}}">

@@ -27,28 +27,39 @@
                        FontWeight="Bold"
                        TextAlignment="Center" />
         </DockPanel>
-        <Border BorderBrush="Gray"
+        <Border Grid.Row="0" BorderBrush="Gray"
                 BorderThickness="0 0 0 1"></Border>
 
-        <DockPanel Grid.Row="1" Margin="5">
-            <Button Command="{Binding DrawPartsCommand}">Reset To Cutlist</Button>
+        <DockPanel
+            Grid.Row="1" Margin="5"
+            Visibility="{Binding
+                FlatPartRowsViewModel.FlatPartButtonRowVisibility,
+                    Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Button
+                Command="{Binding DrawPartsCommand}">Reset To Cutlist</Button>
         </DockPanel>
         <Border Grid.Row="1" BorderBrush="Gray"
                 BorderThickness="0 0 0 1"></Border>
 
-        <ScrollViewer Grid.Row="2"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Auto">
-            <StackPanel>
-                <!-- The item control binds to the rows, while the
+        <!-- The item control binds to the rows, while the
                      ListBoxes bind to the actual parts. -->
-                <ItemsControl
+        <ItemsControl
+            Grid.Row="2"
+            dd:DragDrop.DropScrollingMode="VerticalOnly"
                     ItemsSource="{Binding
                     Path=FlatPartRowsViewModel.PartRows,
                     UpdateSourceTrigger=PropertyChanged}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ListBox
+            <ItemsControl.Template>
+                <ControlTemplate>
+                    <ScrollViewer
+                        PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                        <ItemsPresenter />
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ItemsControl.Template>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ListBox
                                 Height="Auto"
                                 dd:DragDrop.IsDragSource="True"
                                 dd:DragDrop.IsDropTarget="True"
@@ -57,16 +68,14 @@
                                 ItemsSource="{Binding Parts}"
                                 RenderTransformOrigin="0.5,0.5"
                                 SelectionMode="Extended">
-                                <ListBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel Margin="1" Orientation="Horizontal" />
-                                    </ItemsPanelTemplate>
-                                </ListBox.ItemsPanel>
-                            </ListBox>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
-        </ScrollViewer>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel Margin="1" Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </UserControl>

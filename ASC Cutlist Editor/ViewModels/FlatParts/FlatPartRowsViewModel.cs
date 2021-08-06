@@ -7,14 +7,22 @@ using System.Threading.Tasks;
 
 namespace AscCutlistEditor.ViewModels.FlatParts
 {
-    // Represents a list of rows in the 2D view panel that can contain a list of drag n' droppable parts.
     internal class FlatPartRowsViewModel : ObservableObject
     {
+        private ObservableCollection<PartRow> _partRows;
+        private bool _flatPartButtonRow = false;
+
         public int DefaultDisplayWidthPx = 500;
         public int CutlistMergeCutoff = 8;
         public int SyncLoadCutoff = 20;
 
-        private ObservableCollection<PartRow> _partRows;
+        /// <summary>
+        /// Represents a list of rows in the 2D view panel that can contain a list of drag n' droppable parts.
+        /// </summary>
+        public FlatPartRowsViewModel()
+        {
+            PartRows = new ObservableCollection<PartRow>();
+        }
 
         public ObservableCollection<PartRow> PartRows
         {
@@ -26,10 +34,35 @@ namespace AscCutlistEditor.ViewModels.FlatParts
             }
         }
 
-        // Event handler for creating PartRows.
+        /// <summary>
+        /// The visibility of the cutlist action buttons row.
+        /// </summary>
+        public bool FlatPartButtonRowVisibility
+        {
+            get => _flatPartButtonRow;
+            set
+            {
+                _flatPartButtonRow = value;
+                RaisePropertyChangedEvent("FlatPartButtonRowVisibility");
+            }
+        }
+
+        /// <summary>
+        /// Event handler for creating PartRows.
+        /// </summary>
+        /// <param name="cutlists">List of cutlists to create rows from.</param>
         public async void CreateRows(ObservableCollection<Cutlist> cutlists)
         {
             await CreateRowsAsync(cutlists);
+        }
+
+        /// <summary>
+        /// Clear the UI elements for the flat parts.
+        /// </summary>
+        public void ClearUi()
+        {
+            PartRows = new ObservableCollection<PartRow>();
+            FlatPartButtonRowVisibility = false;
         }
 
         // Creates the rows and parts from a cutlist.
@@ -40,6 +73,9 @@ namespace AscCutlistEditor.ViewModels.FlatParts
 
             // Grab the max cutlist length to scale them all by.
             double maxLength = cutlists.Max(c => c.Length);
+
+            // Show the UI buttons.
+            FlatPartButtonRowVisibility = true;
 
             // Determine whether or not to load in the part rows asynchronously
             // using the number of total parts to draw: synchronous loading at

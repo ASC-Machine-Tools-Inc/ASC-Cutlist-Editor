@@ -3,6 +3,7 @@ using AscCutlistEditor.ViewModels.Cutlists;
 using AscCutlistEditor.ViewModels.FlatParts;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using AscCutlistEditor.Models;
 
 namespace AscCutlistEditor.ViewModels
 {
@@ -10,49 +11,65 @@ namespace AscCutlistEditor.ViewModels
     {
         // Collection that tracks the visibility of the UI elements.
         // Visibility order: Cutlist, 2D, 3D.
-        public ObservableCollection<bool> UiVisibility { get; set; } =
+        public ObservableCollection<bool> UiVisibility { get; } =
             new ObservableCollection<bool>(new[] { true, true, true });
 
         public CutlistImportViewModel CutlistViewModel { get; }
         public FlatPartRowsViewModel FlatPartRowsViewModel { get; }
-        public FlatPartViewModel FlatPartViewModel { get; }
 
         public MainViewModel()
         {
             CutlistViewModel = new CutlistImportViewModel(DrawParts);
             FlatPartRowsViewModel = new FlatPartRowsViewModel();
-            FlatPartViewModel = new FlatPartViewModel();
         }
 
-        // Toggles the cutlist and its corresponding splitter's visibility.
+        /// <summary>
+        /// Toggles the cutlist and its corresponding splitter's visibility.
+        /// </summary>
         public ICommand ToggleCutlistCommand => new DelegateCommand(() => ToggleView(0));
 
-        // Toggles the flat part view and its corresponding splitters' visibility.
+        /// <summary>
+        /// Toggles the flat part view and its corresponding splitters' visibility.
+        /// </summary>
         public ICommand ToggleFlatViewCommand => new DelegateCommand(() => ToggleView(1));
 
-        // Toggles the 3D view and its corresponding splitter's visibility.
+        /// <summary>
+        /// Toggles the 3D view and its corresponding splitter's visibility.
+        /// </summary>
         public ICommand Toggle3DCommand => new DelegateCommand(() => ToggleView(2));
 
-        // Draw the 2D and 3D views from the current cutlist.
+        /// <summary>
+        /// Draw the 2D and 3D views from the current cutlist.
+        /// </summary>
         public ICommand DrawPartsCommand => new DelegateCommand(DrawParts);
+
+        /// <summary>
+        /// Remove the current loaded cutlist, clearing the UI.
+        /// </summary>
+        public ICommand ClearCutlistCommand => new DelegateCommand(ClearCutlist);
 
         private void ToggleView(int index)
         {
             UiVisibility[index] = !UiVisibility[index];
         }
 
-        // Catch the request from the cutlist view model
-        // to draw the parts after parsing a valid csv.
+        /// <summary>
+        /// Catch the request from the cutlist view model to draw the parts
+        /// after parsing a valid csv.
+        /// </summary>
         private void DrawParts()
         {
-            // Do nothing for empty cutlists.
-            if (CutlistViewModel.Cutlists.Count == 0)
-            {
-                return;
-            }
-
             FlatPartRowsViewModel.CreateRows(
                 CutlistViewModel.Cutlists);
+        }
+
+        /// <summary>
+        /// Clear the cutlist and all UI elements drawn from it.
+        /// </summary>
+        private void ClearCutlist()
+        {
+            CutlistViewModel.ClearUi();
+            FlatPartRowsViewModel.ClearUi();
         }
     }
 }
