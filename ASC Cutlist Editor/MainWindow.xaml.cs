@@ -1,5 +1,5 @@
-﻿using System.Windows;
-using AscCutlistEditor.ViewModels;
+﻿using AscCutlistEditor.ViewModels;
+using System.Windows;
 
 namespace AscCutlistEditor
 {

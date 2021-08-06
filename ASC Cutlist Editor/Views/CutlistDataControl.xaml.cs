@@ -1,11 +1,9 @@
-﻿using System.Windows.Controls;
-
-namespace AscCutlistEditor.Views
+﻿namespace AscCutlistEditor.Views
 {
     /// <summary>
     /// Interaction logic for CutlistDataControl.xaml
     /// </summary>
-    public partial class CutlistDataControl : UserControl
+    public partial class CutlistDataControl
     {
         public CutlistDataControl()
         {

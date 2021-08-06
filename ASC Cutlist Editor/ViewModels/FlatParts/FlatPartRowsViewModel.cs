@@ -1,9 +1,9 @@
-﻿using System;
+﻿using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.Models;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.Models;
 
 namespace AscCutlistEditor.ViewModels.FlatParts
 {

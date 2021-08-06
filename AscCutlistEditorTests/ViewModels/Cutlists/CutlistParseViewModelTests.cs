@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using AscCutlistEditor.ViewModels.Cutlists;
+using ExcelDataReader;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using AscCutlistEditor.Models;
-using AscCutlistEditor.ViewModels.Cutlists;
-using ExcelDataReader;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AscCutlistEditorTests.ViewModels.Cutlists
 {

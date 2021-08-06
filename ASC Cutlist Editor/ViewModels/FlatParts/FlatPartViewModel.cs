@@ -1,14 +1,12 @@
-﻿using System;
+﻿using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.Models;
+using AscCutlistEditor.Views;
+using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
-using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.Models;
-using AscCutlistEditor.Views;
 
 namespace AscCutlistEditor.ViewModels.FlatParts
 {

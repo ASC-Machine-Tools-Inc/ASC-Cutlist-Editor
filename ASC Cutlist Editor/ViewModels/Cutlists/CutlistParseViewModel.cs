@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using AscCutlistEditor.Common;
+﻿using AscCutlistEditor.Common;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
 using ExcelDataReader;
-using Microsoft.Win32;
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace AscCutlistEditor.ViewModels.Cutlists
 {

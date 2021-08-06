@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace AscCutlistEditor.Views
@@ -7,13 +6,8 @@ namespace AscCutlistEditor.Views
     /// <summary>
     /// Interaction logic for FlatPartControl.xaml
     /// </summary>
-    public partial class FlatPartControl : UserControl
+    public partial class FlatPartControl
     {
-        public class PartRow
-        {
-            public ObservableCollection<AscCutlistEditor.Models.PartRow> Parts { get; set; }
-        }
-
         public FlatPartControl()
         {
             InitializeComponent();
@@ -32,20 +26,6 @@ namespace AscCutlistEditor.Views
                 scrollViewer.LineLeft();
             }
             e.Handled = true;
-        }
-
-        // Dynamically create the view with the various parts when a CSV is parsed.
-        private void DrawParts()
-        {
-            /* This definitely is goofy, especially that we're even doing anything
-             * in the code behind. At some point down the line I'd want to look
-             * into setting up some sort of template so we can display the 2D
-             * part representations from a list, so that when we modify it in
-             * the UI it modifies that list as well.
-
-            List<Cutlist> cutlist = ((CutlistViewModel)(this.DataContext)).Cutlists;
-            FlatPartList.Children.Add();
-            */
         }
     }
 }

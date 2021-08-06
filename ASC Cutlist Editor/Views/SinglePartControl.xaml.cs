@@ -1,11 +1,9 @@
-﻿using System.Windows.Controls;
-
-namespace AscCutlistEditor.Views
+﻿namespace AscCutlistEditor.Views
 {
     /// <summary>
     /// Interaction logic for SinglePartControl.xaml
     /// </summary>
-    public partial class SinglePartControl : UserControl
+    public partial class SinglePartControl
     {
         public SinglePartControl()
         {

@@ -1,15 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using System.Security.Permissions;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Threading;
-using AscCutlistEditor.ViewModels.Cutlists;
+﻿using AscCutlistEditor.ViewModels.Cutlists;
 using AscCutlistEditor.ViewModels.FlatParts;
 using AscCutlistEditorTests.ViewModels.Cutlists;
 using ExcelDataReader;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AscCutlistEditorTests.ViewModels.FlatParts
 {
