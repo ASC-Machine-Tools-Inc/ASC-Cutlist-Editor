@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media;
@@ -28,23 +29,20 @@ namespace AscCutlistEditor.ViewModels.FlatParts
                 .GetValue(null, null);
 
             // Run on UI thread.
-            // Application.Current.Dispatcher works when running program
-            // Dispatcher.CurrentDispatcher works for tests??
-            Dispatcher.CurrentDispatcher.Invoke(() =>
+            // Select the correct dispatcher: if Application.Current is null,
+            // we're running unit tests and should use CurrentDispatcher instead.
+            Dispatcher dispatcher = Application.Current != null ?
+                Application.Current.Dispatcher :
+                Dispatcher.CurrentDispatcher;
+            dispatcher.Invoke(() =>
             {
-                Thread staThread = new Thread(async () =>
+                SinglePartControl part = new SinglePartControl()
                 {
-                    SinglePartControl part = new SinglePartControl()
-                    {
-                        PartGrid = { Width = partWidth },
-                        PartRect = { Fill = brush },
-                        PartLabel = { Text = GetPartLabel(cutlist) }
-                    };
-                    parts.Add(part);
-                });
-                staThread.SetApartmentState(ApartmentState.STA);
-                staThread.Start();
-                staThread.Join();
+                    PartGrid = { Width = partWidth },
+                    PartRect = { Fill = brush },
+                    PartLabel = { Text = GetPartLabel(cutlist) }
+                };
+                parts.Add(part);
             });
 
             return parts;
