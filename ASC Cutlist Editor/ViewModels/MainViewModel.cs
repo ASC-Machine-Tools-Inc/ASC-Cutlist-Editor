@@ -4,6 +4,7 @@ using AscCutlistEditor.ViewModels.FlatParts;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using AscCutlistEditor.Models;
+using AscCutlistEditor.MQTT;
 
 namespace AscCutlistEditor.ViewModels
 {
@@ -17,10 +18,17 @@ namespace AscCutlistEditor.ViewModels
         public CutlistImportViewModel CutlistViewModel { get; }
         public FlatPartRowsViewModel FlatPartRowsViewModel { get; }
 
+        public Generator Generator { get; }
+
         public MainViewModel()
         {
             CutlistViewModel = new CutlistImportViewModel(DrawParts);
+
             FlatPartRowsViewModel = new FlatPartRowsViewModel();
+            Generator = new Generator();
+
+            // Move to button
+            Generator.Start();
         }
 
         /// <summary>

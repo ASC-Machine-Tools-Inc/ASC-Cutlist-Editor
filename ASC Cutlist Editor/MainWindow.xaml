@@ -11,75 +11,82 @@
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
         ui:WindowHelper.UseModernWindowStyle="True">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+        <TabControl>
+            <TabItem Header="Cutlists">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-        <Menu>
-            <MenuItem Header="_File">
-                <MenuItem Header="_Open"
+                    <Menu>
+                        <MenuItem Header="_File">
+                            <MenuItem Header="_Open"
                           Command="{Binding
                     CutlistViewModel.ImportCutlistCommand}">
-                </MenuItem>
-            </MenuItem>
-            <MenuItem Header="_Edit">
-            </MenuItem>
-            <MenuItem Header="_View">
-                <!-- TODO: get checkmark working -->
-                <MenuItem Header="Cutlist Data View"
+                            </MenuItem>
+                        </MenuItem>
+                        <MenuItem Header="_Edit">
+                        </MenuItem>
+                        <MenuItem Header="_View">
+                            <!-- TODO: get checkmark working -->
+                            <MenuItem Header="Cutlist Data View"
                           Command="{Binding ToggleCutlistCommand}"
                           IsChecked="{Binding UiVisibility[0]}"></MenuItem>
-                <MenuItem Header="2D View"
+                            <MenuItem Header="2D View"
                           Command="{Binding ToggleFlatViewCommand}"></MenuItem>
-                <MenuItem Header="3D View"
+                            <MenuItem Header="3D View"
                           Command="{Binding Toggle3DCommand}"></MenuItem>
-            </MenuItem>
-        </Menu>
+                        </MenuItem>
+                    </Menu>
 
-        <Border BorderBrush="Gray"
+                    <Border BorderBrush="Gray"
                 BorderThickness="0 0 0 1"></Border>
 
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0">
-                <views:CutlistDataControl
+                        <Grid Grid.Column="0">
+                            <views:CutlistDataControl
                     Visibility="{Binding UiVisibility[0],
                     Converter={StaticResource BooleanToVisibilityConverter}}" />
-            </Grid>
+                        </Grid>
 
-            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+                        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
 
-            <Grid Grid.Column="2">
-                <views:FlatPartControl
+                        <Grid Grid.Column="2">
+                            <views:FlatPartControl
                     Visibility="{Binding UiVisibility[1],
                     Converter={StaticResource BooleanToVisibilityConverter}}" />
-            </Grid>
+                        </Grid>
 
-            <GridSplitter Grid.Column="3" Width="5" HorizontalAlignment="Stretch" />
+                        <GridSplitter Grid.Column="3" Width="5" HorizontalAlignment="Stretch" />
 
-            <Grid Grid.Column="4">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                </Grid.RowDefinitions>
+                        <Grid Grid.Column="4">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
 
-                <DockPanel Margin="5">
-                    <TextBlock Text="3D Bundle View"
+                            <DockPanel Margin="5">
+                                <TextBlock Text="3D Bundle View"
                                FontWeight="Bold"
                                TextAlignment="Center" />
-                </DockPanel>
+                            </DockPanel>
 
-                <Border BorderBrush="Gray"
+                            <Border BorderBrush="Gray"
                         BorderThickness="0 0 0 1"></Border>
-            </Grid>
-        </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Machines"></TabItem>
+        </TabControl>
     </Grid>
 </Window>

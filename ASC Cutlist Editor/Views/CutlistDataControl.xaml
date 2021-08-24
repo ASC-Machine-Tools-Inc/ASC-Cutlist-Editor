@@ -36,7 +36,8 @@
                 BorderThickness="0 0 0 1"></Border>
 
         <StackPanel Grid.Row="1">
-            <DataGrid AutoGenerateColumns="True"
+            <DataGrid Name="CutlistGrid"
+                      AutoGenerateColumns="False"
                       ColumnWidth="*"
                       ItemsSource="{Binding CutlistViewModel.Cutlists,
                   UpdateSourceTrigger=PropertyChanged}"
@@ -44,7 +45,24 @@
                       HorizontalAlignment="Stretch"
                       GridLinesVisibility="All"
                       CanUserAddRows="False"
-                      CanUserDeleteRows="False" />
+                      CanUserDeleteRows="False">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Background"
+                                Value="{Binding Color}" />
+                    </Style>
+                </DataGrid.RowStyle>
+                <!-- Manually define columns so color col doesn't display. -->
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding ID}" Header="ID" />
+                    <DataGridTextColumn Binding="{Binding Name}" Header="Name" />
+                    <DataGridTextColumn Binding="{Binding Length}" Header="Length" />
+                    <DataGridTextColumn Binding="{Binding Quantity}" Header="Quantity" />
+                    <DataGridTextColumn Binding="{Binding Made}" Header="Made" />
+                    <DataGridTextColumn Binding="{Binding Left}" Header="Left" />
+                    <DataGridTextColumn Binding="{Binding Bundle}" Header="Bundle" />
+                </DataGrid.Columns>
+            </DataGrid>
 
             <Label
                 Target="{Binding ElementName=ImportButton}"
