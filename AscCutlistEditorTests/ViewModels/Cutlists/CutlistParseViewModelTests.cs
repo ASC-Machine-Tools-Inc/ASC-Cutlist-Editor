@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using AscCutlistEditor.Utility;
 
 namespace AscCutlistEditorTests.ViewModels.Cutlists
 {
@@ -32,6 +33,7 @@ namespace AscCutlistEditorTests.ViewModels.Cutlists
             Assert.AreEqual(cutlist.Made, 2);
             Assert.AreEqual(cutlist.Left, 0);
             Assert.AreEqual(cutlist.Bundle, 1);
+            Assert.AreEqual(cutlist.Color, Helpers.LengthToColor(cutlist.Length));
         }
 
         [TestMethod]

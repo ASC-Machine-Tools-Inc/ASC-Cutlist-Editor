@@ -1,10 +1,9 @@
 ﻿using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.MQTT;
 using AscCutlistEditor.ViewModels.Cutlists;
 using AscCutlistEditor.ViewModels.FlatParts;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using AscCutlistEditor.Models;
-using AscCutlistEditor.MQTT;
 
 namespace AscCutlistEditor.ViewModels
 {
@@ -28,7 +27,7 @@ namespace AscCutlistEditor.ViewModels
             Generator = new Generator();
 
             // Move to button
-            Generator.Start();
+            // Generator.Start();
         }
 
         /// <summary>

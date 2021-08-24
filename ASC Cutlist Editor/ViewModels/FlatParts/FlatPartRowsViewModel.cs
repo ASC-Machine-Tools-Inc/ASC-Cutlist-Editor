@@ -15,7 +15,17 @@ namespace AscCutlistEditor.ViewModels.FlatParts
 
         public int DefaultDisplayWidthPx = 500;
         public int LeftOffsetPx = 30;
+
+        /// <summary>
+        /// If the number of parts for a cutlist is greater than this,
+        /// merge them together into one part row.
+        /// </summary>
         public int CutlistMergeCutoff = 8;
+
+        /// <summary>
+        /// If the number of part rows is greater than this, load them
+        /// asynchronously instead.
+        /// </summary>
         public int SyncLoadCutoff = 20;
 
         /// <summary>
@@ -68,7 +78,7 @@ namespace AscCutlistEditor.ViewModels.FlatParts
         }
 
         // Creates the rows and parts from a cutlist.
-        private async Task CreateRowsAsync(ObservableCollection<Cutlist> cutlists)
+        internal async Task CreateRowsAsync(ObservableCollection<Cutlist> cutlists)
         {
             // Refresh the current list of parts.
             PartRows = new ObservableCollection<PartRow>();

@@ -1,13 +1,11 @@
 ﻿using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
+using AscCutlistEditor.Utility;
 using AscCutlistEditor.Views;
-using System;
 using System.Collections.ObjectModel;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
-using AscCutlistEditor.Utility;
 
 namespace AscCutlistEditor.ViewModels.FlatParts
 {
