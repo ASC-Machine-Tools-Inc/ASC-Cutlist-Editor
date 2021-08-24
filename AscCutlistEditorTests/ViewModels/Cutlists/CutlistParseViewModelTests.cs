@@ -68,8 +68,7 @@ namespace AscCutlistEditorTests.ViewModels.Cutlists
             IExcelDataReader reader = OpenCsv(path);
 
             // Act
-            var cutlists =
-                await CutlistParseViewModel.ParseCutlistCsvAsync(reader);
+            await CutlistParseViewModel.ParseCutlistCsvAsync(reader);
         }
 
         [TestMethod]
@@ -83,8 +82,7 @@ namespace AscCutlistEditorTests.ViewModels.Cutlists
             IExcelDataReader reader = OpenCsv(path);
 
             // Act
-            var cutlists =
-                await CutlistParseViewModel.ParseCutlistCsvAsync(reader);
+            await CutlistParseViewModel.ParseCutlistCsvAsync(reader);
         }
 
         public static IExcelDataReader OpenCsv(string path)
