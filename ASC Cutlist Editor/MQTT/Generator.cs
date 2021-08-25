@@ -49,7 +49,7 @@ namespace AscCutlistEditor.MQTT
         {
             // Create MQTT client.
             var options = new MqttClientOptionsBuilder()
-                .WithTcpServer("169.254.71.50", 1883)
+                .WithTcpServer("192.168.10.43", 1883)
                 //.WithTcpServer("192.168.0.164", 1883)
                 .Build();
 
@@ -86,13 +86,13 @@ namespace AscCutlistEditor.MQTT
                     if (machineData != null)
                     {
                         Debug.WriteLine($"Connection Status: {machineData.SelectToken("connected")}");
-                        Debug.WriteLine($"Current Job Number: {machineData.SelectToken("tags.set1.MqttData.JobNumber")}");
-                        Debug.WriteLine($"Line Status: {machineData.SelectToken("tags.set1.PLANT_DATA.KPI.Running")}");
+                        Debug.WriteLine($"Current Job Number: {machineData.SelectToken("tags.set1.MqttPub.JobNumber")}");
+                        Debug.WriteLine($"Line Status: {machineData.SelectToken("tags.set1.MqttPub.LineRunning")}");
                         Debug.WriteLine($"Time Received: {machineData.SelectToken("timestamp")}");
 
                         // Attempt an acknowledgement response.
                         Task.Run(() => PublishMessage("self",
-                            $"Successful packet for job number: {machineData.SelectToken("tags.set1.MqttData.JobNumber")}"));
+                            $"Successful packet for job number: {machineData.SelectToken("tags.set1.MqttPub.JobNumber")}"));
                     }
                 }
                 catch (JsonReaderException)

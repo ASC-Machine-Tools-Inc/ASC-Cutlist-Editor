@@ -27,7 +27,7 @@ namespace AscCutlistEditor.ViewModels
             Generator = new Generator();
 
             // Move to button
-            // Generator.Start();
+            Generator.Start();
         }
 
         /// <summary>
