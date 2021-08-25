@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace AscCutlistEditor.ViewModels.FlatParts
 {
@@ -13,7 +14,18 @@ namespace AscCutlistEditor.ViewModels.FlatParts
         private bool _flatPartButtonRow = false;
 
         public int DefaultDisplayWidthPx = 500;
+        public int LeftOffsetPx = 30;
+
+        /// <summary>
+        /// If the number of parts for a cutlist is greater than this,
+        /// merge them together into one part row.
+        /// </summary>
         public int CutlistMergeCutoff = 8;
+
+        /// <summary>
+        /// If the number of part rows is greater than this, load them
+        /// asynchronously instead.
+        /// </summary>
         public int SyncLoadCutoff = 20;
 
         /// <summary>
@@ -66,7 +78,7 @@ namespace AscCutlistEditor.ViewModels.FlatParts
         }
 
         // Creates the rows and parts from a cutlist.
-        private async Task CreateRowsAsync(ObservableCollection<Cutlist> cutlists)
+        internal async Task CreateRowsAsync(ObservableCollection<Cutlist> cutlists)
         {
             // Refresh the current list of parts.
             PartRows = new ObservableCollection<PartRow>();
@@ -107,12 +119,16 @@ namespace AscCutlistEditor.ViewModels.FlatParts
                 // Update the part rows as they get parsed in.
                 for (int i = 0; i < partsToAdd; i++)
                 {
+                    // Offset parts after the first one.
+                    int leftOffset = i == 0 ? 0 : LeftOffsetPx;
+
                     if (loadAsync)
                     {
                         PartRows.Add(await Task.Run(() => new PartRow
                         {
                             Parts = FlatPartViewModel
-                                .CreatePart(cutlist, partProportionalLength)
+                                .CreatePart(cutlist, partProportionalLength),
+                            LeftOffset = new Thickness(leftOffset, 0, 0, 0)
                         }));
                     }
                     else
@@ -120,7 +136,8 @@ namespace AscCutlistEditor.ViewModels.FlatParts
                         PartRows.Add(new PartRow
                         {
                             Parts = FlatPartViewModel
-                                .CreatePart(cutlist, partProportionalLength)
+                                .CreatePart(cutlist, partProportionalLength),
+                            LeftOffset = new Thickness(leftOffset, 0, 0, 0)
                         });
                     }
                 }

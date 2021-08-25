@@ -70,7 +70,8 @@
                                 SelectionMode="Extended">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <VirtualizingStackPanel Margin="1" Orientation="Horizontal" />
+                                <!-- Add left margin binding for sub parts -->
+                                <VirtualizingStackPanel Margin="{Binding LeftOffset}" Orientation="Horizontal" />
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
                     </ListBox>

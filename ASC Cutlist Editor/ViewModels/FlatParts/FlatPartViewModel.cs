@@ -1,9 +1,8 @@
 ﻿using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
+using AscCutlistEditor.Utility;
 using AscCutlistEditor.Views;
-using System;
 using System.Collections.ObjectModel;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -20,11 +19,7 @@ namespace AscCutlistEditor.ViewModels.FlatParts
             ObservableCollection<SinglePartControl> parts =
                 new ObservableCollection<SinglePartControl>();
 
-            // Convert the cutlist length into a color for that part.
-            PropertyInfo[] properties = typeof(Brushes).GetProperties();
-            int randomIndex = Convert.ToInt32(cutlist.Length) % properties.Length;
-            Brush brush = (SolidColorBrush)properties[randomIndex]
-                .GetValue(null, null);
+            Brush brush = Helpers.LengthToColor(cutlist.Length);
 
             // Run on UI thread.
             // Select the correct dispatcher: if Application.Current is null,

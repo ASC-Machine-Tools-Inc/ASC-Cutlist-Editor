@@ -6,6 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
+using AscCutlistEditor.Utility;
 
 namespace AscCutlistEditor.ViewModels.Cutlists
 {
@@ -68,6 +69,7 @@ namespace AscCutlistEditor.ViewModels.Cutlists
         private static Cutlist ParseCutlistCsvHelper(IExcelDataReader reader, string header)
         {
             Cutlist cutlist = null;
+            double length;
 
             switch (header)
             {
@@ -79,26 +81,30 @@ namespace AscCutlistEditor.ViewModels.Cutlists
                         break;
                     }
 
+                    length = Math.Round(LengthParser.ParseString(reader.GetString(2)), 2);
                     cutlist = new Cutlist
                     {
                         ID = int.Parse(reader.GetString(0)),
                         Name = reader.GetString(1),
-                        Length = Math.Round(LengthParser.ParseString(reader.GetString(2)), 2),
+                        Length = length,
                         Quantity = qty,
                         Made = int.Parse(reader.GetString(4)),
                         Left = int.Parse(reader.GetString(5)),
-                        Bundle = int.Parse(reader.GetString(6))
+                        Bundle = int.Parse(reader.GetString(6)),
+                        Color = Helpers.LengthToColor(length)
                     };
                     break;
 
                 case "CUTLIST":  // Andrew's format.
+                    length = double.Parse(reader.GetString(5));
                     cutlist = new Cutlist
                     {
                         ID = int.Parse(reader.GetString(0)),
-                        Length = double.Parse(reader.GetString(5)),
+                        Length = length,
                         Quantity = int.Parse(reader.GetString(6)),
                         Made = int.Parse(reader.GetString(7)),
-                        Bundle = int.Parse(reader.GetString(8))
+                        Bundle = int.Parse(reader.GetString(8)),
+                        Color = Helpers.LengthToColor(length)
                     };
 
                     // Skip feed info.

@@ -1,4 +1,6 @@
-﻿namespace AscCutlistEditor.Models
+﻿using System.Windows.Media;
+
+namespace AscCutlistEditor.Models
 {
     public class Cutlist
     {
@@ -15,5 +17,7 @@
         public int Left { get; set; }
 
         public int Bundle { get; set; }
+
+        public Brush Color { get; set; }
     }
 }

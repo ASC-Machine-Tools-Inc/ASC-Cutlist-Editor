@@ -32,13 +32,16 @@ namespace AscCutlistEditorTests.ViewModels.FlatParts
             staThread.Start();
             staThread.Join();
 
-            var row = model.PartRows[0];
+            var row1 = model.PartRows[0];
+            var row2 = model.PartRows[1];
 
             // Assert
             // Test count might break on changing part merge cutoff.
             Assert.AreEqual(model.PartRows.Count, 17);
 
-            Assert.AreEqual(row.Parts.Count, 1);
+            Assert.AreEqual(row1.Parts.Count, 1);
+            Assert.AreEqual(row1.LeftOffset.Left, 0);
+            Assert.AreEqual(row2.LeftOffset.Left, model.LeftOffsetPx);
         }
 
         [TestMethod]
@@ -69,13 +72,16 @@ namespace AscCutlistEditorTests.ViewModels.FlatParts
             staThread.Start();
             staThread.Join();
 
-            var row = model.PartRows[0];
+            var row1 = model.PartRows[0];
+            var row2 = model.PartRows[1];
 
             // Assert
             // Test count might break on changing part merge cutoff.
             Assert.AreEqual(model.PartRows.Count, 10);
 
-            Assert.AreEqual(row.Parts.Count, 1);
+            Assert.AreEqual(row1.Parts.Count, 1);
+            Assert.AreEqual(row1.LeftOffset.Left, 0);
+            Assert.AreEqual(row2.LeftOffset.Left, model.LeftOffsetPx);
         }
 
         [TestMethod]
@@ -106,50 +112,24 @@ namespace AscCutlistEditorTests.ViewModels.FlatParts
             staThread.Start();
             staThread.Join();
 
-            var row = model.PartRows[0];
+            var row1 = model.PartRows[0];
+            var row2 = model.PartRows[1];
 
             // Assert
             // Test count might break on changing part merge cutoff.
             Assert.AreEqual(model.PartRows.Count, 17);
 
-            Assert.AreEqual(row.Parts.Count, 1);
+            Assert.AreEqual(row1.Parts.Count, 1);
+            Assert.AreEqual(row1.LeftOffset.Left, 0);
+            Assert.AreEqual(row2.LeftOffset.Left, model.LeftOffsetPx);
         }
 
-        /* TODO: figure out how to test: async part adding doesn't work in test
+        /* Can't unit test creating the rows async due to its nature - the UI
+           updates, and we can't block the STA thread. Manual testing should
+           work well enough for this.
         [TestMethod]
         public async Task CreateRowsAsyncTest()
         {
-            // Arrange
-            string path = "../../../Assets/AndrewCutlist.CSV";
-            IExcelDataReader reader = CutlistParseViewModelTests.OpenCsv(path);
-            var cutlists =
-                await CutlistParseViewModel.ParseCutlistCsvAsync(reader);
-
-            // Set model to not merge cutlists into single parts, and load async.
-            FlatPartRowsViewModel model = new FlatPartRowsViewModel
-            {
-                CutlistMergeCutoff = 10000,
-                SyncLoadCutoff = 1
-            };
-
-            // Act
-            // Create an STA thread to run UI logic.
-            Thread staThread = new Thread(async () =>
-            {
-                await model.CreateRowsAsync(cutlists);
-            });
-            staThread.SetApartmentState(ApartmentState.STA);
-            staThread.Start();
-            staThread.Join();
-
-            var row = model.PartRows[0];
-
-            // Assert
-            // Test count might break on changing part merge cutoff.
-            Assert.AreEqual(model.PartRows.Count, 17);
-
-            Assert.AreEqual(row.Parts.Count, 1);
-        }
-        */
+        } */
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using AscCutlistEditor.Utility;
 
 namespace AscCutlistEditorTests.ViewModels.Cutlists
 {
@@ -32,6 +33,7 @@ namespace AscCutlistEditorTests.ViewModels.Cutlists
             Assert.AreEqual(cutlist.Made, 2);
             Assert.AreEqual(cutlist.Left, 0);
             Assert.AreEqual(cutlist.Bundle, 1);
+            Assert.AreEqual(cutlist.Color, Helpers.LengthToColor(cutlist.Length));
         }
 
         [TestMethod]
@@ -68,8 +70,7 @@ namespace AscCutlistEditorTests.ViewModels.Cutlists
             IExcelDataReader reader = OpenCsv(path);
 
             // Act
-            var cutlists =
-                await CutlistParseViewModel.ParseCutlistCsvAsync(reader);
+            await CutlistParseViewModel.ParseCutlistCsvAsync(reader);
         }
 
         [TestMethod]
@@ -83,8 +84,7 @@ namespace AscCutlistEditorTests.ViewModels.Cutlists
             IExcelDataReader reader = OpenCsv(path);
 
             // Act
-            var cutlists =
-                await CutlistParseViewModel.ParseCutlistCsvAsync(reader);
+            await CutlistParseViewModel.ParseCutlistCsvAsync(reader);
         }
 
         public static IExcelDataReader OpenCsv(string path)
