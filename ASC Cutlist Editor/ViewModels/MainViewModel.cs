@@ -1,9 +1,11 @@
 ﻿using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.MQTT;
 using AscCutlistEditor.ViewModels.Cutlists;
 using AscCutlistEditor.ViewModels.FlatParts;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using AscCutlistEditor.ViewModels.MQTT;
+using OxyPlot;
+using OxyPlot.Series;
 
 namespace AscCutlistEditor.ViewModels
 {
@@ -17,18 +19,46 @@ namespace AscCutlistEditor.ViewModels
         public CutlistImportViewModel CutlistViewModel { get; }
         public FlatPartRowsViewModel FlatPartRowsViewModel { get; }
 
-        public Generator Generator { get; }
+        public MachineDataViewModel MachineDataViewModel { get; }
 
         public MainViewModel()
         {
             CutlistViewModel = new CutlistImportViewModel(DrawParts);
 
             FlatPartRowsViewModel = new FlatPartRowsViewModel();
-            Generator = new Generator();
 
-            // Move to button
-            Generator.Start();
+            MachineDataViewModel = new MachineDataViewModel();
+
+            // Test plot model
+            // Create the plot model
+            var tmp = new PlotModel { Title = "Simple example", Subtitle = "using OxyPlot" };
+
+            // Create two line series (markers are hidden by default)
+            var series1 = new LineSeries { Title = "Series 1", MarkerType = MarkerType.Circle };
+            series1.Points.Add(new DataPoint(0, 0));
+            series1.Points.Add(new DataPoint(10, 18));
+            series1.Points.Add(new DataPoint(20, 12));
+            series1.Points.Add(new DataPoint(30, 8));
+            series1.Points.Add(new DataPoint(40, 15));
+
+            var series2 = new LineSeries { Title = "Series 2", MarkerType = MarkerType.Square };
+            series2.Points.Add(new DataPoint(0, 4));
+            series2.Points.Add(new DataPoint(10, 12));
+            series2.Points.Add(new DataPoint(20, 16));
+            series2.Points.Add(new DataPoint(30, 25));
+            series2.Points.Add(new DataPoint(40, 5));
+
+            // Add the series to the plot model
+            tmp.Series.Add(series1);
+            tmp.Series.Add(series2);
+
+            // Axes are created automatically if they are not defined
+
+            // Set the Model property, the INotifyPropertyChanged event will make the WPF Plot control update its content
+            PlotModel = tmp;
         }
+
+        public PlotModel PlotModel { get; set; }
 
         /// <summary>
         /// Toggles the cutlist and its corresponding splitter's visibility.
@@ -55,6 +85,11 @@ namespace AscCutlistEditor.ViewModels
         /// </summary>
         public ICommand ClearCutlistCommand => new DelegateCommand(ClearCutlist);
 
+        /// <summary>
+        /// Connects to the machines to start reading KPI data.
+        /// </summary>
+        public ICommand SetupMqttCommand => new DelegateCommand(SetupMqtt);
+
         private void ToggleView(int index)
         {
             UiVisibility[index] = !UiVisibility[index];
@@ -77,6 +112,15 @@ namespace AscCutlistEditor.ViewModels
         {
             CutlistViewModel.ClearUi();
             FlatPartRowsViewModel.ClearUi();
+        }
+
+        /// <summary>
+        /// Start the server and client for MQTTnet, and try connecting
+        /// to the machines.
+        /// </summary>
+        private void SetupMqtt()
+        {
+            MachineDataViewModel.Start();
         }
     }
 }

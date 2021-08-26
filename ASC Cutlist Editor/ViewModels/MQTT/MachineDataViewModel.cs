@@ -1,37 +1,71 @@
-﻿using MQTTnet;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.Models;
+using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using MQTTnet.Server;
 using Newtonsoft.Json;
-using System;
-using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
-namespace AscCutlistEditor.MQTT
+namespace AscCutlistEditor.ViewModels.MQTT
 {
-    public class Generator
+    internal class MachineDataViewModel : ObservableObject
     {
-        private MqttFactory _mqttFactory;
-        private IMqttServer _server;
-        private IMqttClient _client;
-        private string _topic;
+        private readonly IMqttServer _server;
+        private readonly IMqttClient _client;
+        private readonly string _topic;
 
-        public Generator()
+        private ObservableCollection<MachineData> _machineDataCollection = new ObservableCollection<MachineData>();
+        private MachineData _latestMachineData = null;
+
+        public MachineDataViewModel()
         {
-            _mqttFactory = new MqttFactory();
-            _server = _mqttFactory.CreateMqttServer();
-            _client = _mqttFactory.CreateMqttClient();
+            var mqttFactory = new MqttFactory();
+            _server = mqttFactory.CreateMqttServer();
+            _client = mqttFactory.CreateMqttClient();
+            _topic = "alphapub/+/+";
 
-            _topic = "alphapub/#";
+            MachineDataCollection = new ObservableCollection<MachineData>();
+            LatestMachineData = null;
+        }
+
+        public ObservableCollection<MachineData> MachineDataCollection
+        {
+            get => _machineDataCollection;
+            set
+            {
+                _machineDataCollection = value;
+                RaisePropertyChangedEvent("MachineDataCollection");
+            }
+        }
+
+        public MachineData LatestMachineData
+        {
+            get => _latestMachineData;
+            set
+            {
+                _latestMachineData = value;
+                RaisePropertyChangedEvent("LatestMachineData");
+            }
         }
 
         public async void Start()
         {
-            await _server.StartAsync(new MqttServerOptions());
+            if (!_server.IsStarted)
+            {
+                await _server.StartAsync(new MqttServerOptions());
 
-            // Start the MQTTClient to listen for new messages.
-            await StartClient();
+                // Start the MQTTClient to listen for new messages.
+                await StartClient();
+            }
         }
 
         public async Task PublishMessage(string topic, string payload)
@@ -85,6 +119,8 @@ namespace AscCutlistEditor.MQTT
                     dynamic machineData = JsonConvert.DeserializeObject(payload);
                     if (machineData != null)
                     {
+                        AddMachineData(machineData);
+
                         Debug.WriteLine($"Connection Status: {machineData.SelectToken("connected")}");
                         Debug.WriteLine($"Current Job Number: {machineData.SelectToken("tags.set1.MqttPub.JobNumber")}");
                         Debug.WriteLine($"Line Status: {machineData.SelectToken("tags.set1.MqttPub.LineRunning")}");
@@ -109,6 +145,27 @@ namespace AscCutlistEditor.MQTT
             {
                 Debug.WriteLine("Connection unsuccessful.");
             }
+        }
+
+        private void AddMachineData(dynamic data)
+        {
+            MachineData machineData = new MachineData
+            {
+                ConnectionStatus = (string)data.SelectToken("connected"), // TODO: bool?
+                JobNumber = (string)data.SelectToken("tags.set1.MqttPub.JobNumber"),
+                LineStatus = (string)data.SelectToken("tags.set1.MqttPub.LineRunning"),
+                TimeStamp = (DateTime)data.SelectToken("timestamp")
+            };
+
+            MachineDataCollection.Add(machineData);
+
+            // Update the latest if our data is newer.
+            /*
+            if (LatestMachineData == null ||
+                data.TimeStamp > MachineDataCollection.Max(d => d.TimeStamp))
+            {
+                LatestMachineData = data;
+            } */
         }
     }
 }

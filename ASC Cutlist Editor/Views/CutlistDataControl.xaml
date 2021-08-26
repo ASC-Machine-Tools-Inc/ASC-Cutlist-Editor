@@ -38,14 +38,14 @@
         <StackPanel Grid.Row="1">
             <DataGrid Name="CutlistGrid"
                       AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
                       ColumnWidth="*"
                       ItemsSource="{Binding CutlistViewModel.Cutlists,
                   UpdateSourceTrigger=PropertyChanged}"
+                      GridLinesVisibility="Horizontal"
                       HeadersVisibility="Column"
-                      HorizontalAlignment="Stretch"
-                      GridLinesVisibility="All"
-                      CanUserAddRows="False"
-                      CanUserDeleteRows="False">
+                      HorizontalAlignment="Stretch">
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
                         <Setter Property="Background"
