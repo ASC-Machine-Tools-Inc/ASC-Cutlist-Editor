@@ -15,12 +15,18 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Button
-            HorizontalAlignment="Center"
-            Margin="25"
-            Command="{Binding SetupMqttCommand}">
-            Connect to Machines
-        </Button>
+        <StackPanel Grid.Row="0"
+                    HorizontalAlignment="Center">
+            <Button Margin="5"
+                    Command="{Binding SetupMqttCommand}">
+                Connect to Machines
+            </Button>
+            <TextBlock FontWeight="Bold">
+                Connection status:
+            </TextBlock>
+            <TextBlock Text="{Binding MachineDataViewModel.ConnectionStatus}">
+            </TextBlock>
+        </StackPanel>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -29,12 +35,24 @@
             </Grid.ColumnDefinitions>
 
             <DataGrid
-                ItemsSource="{Binding MachineDataViewModel.MachineDataCollection}"></DataGrid>
+                ItemsSource="{Binding MachineDataViewModel.MachineDataCollection}"
+                AutoGenerateColumns="True"
+                IsReadOnly="True"
+                GridLinesVisibility="Horizontal"
+                HeadersVisibility="Column"
+                HorizontalAlignment="Stretch">
+                <!-- Disable selection -->
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="IsHitTestVisible" Value="False" />
+                    </Style>
+                </DataGrid.RowStyle>
+            </DataGrid>
 
             <oxy:PlotView
                 Grid.Column="1"
                 Margin="5"
-                Model="{Binding PlotModel}" />
+                Model="{Binding MachineDataViewModel.PlotModel}" />
         </Grid>
 
         <Grid Grid.Row="2">
