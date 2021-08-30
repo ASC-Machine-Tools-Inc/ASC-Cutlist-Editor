@@ -8,6 +8,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Assets\Images\bundleExample.png" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="exceldatareader" Version="3.6.0" />
 		<PackageReference Include="exceldatareader.dataset" Version="3.6.0" />
 		<PackageReference Include="gong-wpf-dragdrop" Version="2.4.0" />
@@ -15,5 +19,15 @@
 		<PackageReference Include="MQTTnet" Version="3.0.16" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Assets\Images\bundleExample.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="ViewModels\Bundles\" />
 	</ItemGroup>
 </Project>
