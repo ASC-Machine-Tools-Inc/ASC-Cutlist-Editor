@@ -1,9 +1,12 @@
 ﻿using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.MQTT;
 using AscCutlistEditor.ViewModels.Cutlists;
 using AscCutlistEditor.ViewModels.FlatParts;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using AscCutlistEditor.Utility;
+using AscCutlistEditor.ViewModels.MQTT;
+using OxyPlot;
+using OxyPlot.Series;
 
 namespace AscCutlistEditor.ViewModels
 {
@@ -15,19 +18,23 @@ namespace AscCutlistEditor.ViewModels
             new ObservableCollection<bool>(new[] { true, true, true });
 
         public CutlistImportViewModel CutlistViewModel { get; }
+
         public FlatPartRowsViewModel FlatPartRowsViewModel { get; }
 
-        public Generator Generator { get; }
+        public MachineDataViewModel MachineDataViewModel { get; }
+
+        public MockMachineData MockMachineData { get; }
 
         public MainViewModel()
         {
             CutlistViewModel = new CutlistImportViewModel(DrawParts);
 
             FlatPartRowsViewModel = new FlatPartRowsViewModel();
-            Generator = new Generator();
 
-            // Move to button
-            Generator.Start();
+            MachineDataViewModel = new MachineDataViewModel();
+
+            MockMachineData = new MockMachineData();
+            MockMachineData.StartMockMessages();
         }
 
         /// <summary>
@@ -55,6 +62,11 @@ namespace AscCutlistEditor.ViewModels
         /// </summary>
         public ICommand ClearCutlistCommand => new DelegateCommand(ClearCutlist);
 
+        /// <summary>
+        /// Connects to the machines to start reading KPI data.
+        /// </summary>
+        public ICommand SetupMqttCommand => new DelegateCommand(SetupMqtt);
+
         private void ToggleView(int index)
         {
             UiVisibility[index] = !UiVisibility[index];
@@ -77,6 +89,15 @@ namespace AscCutlistEditor.ViewModels
         {
             CutlistViewModel.ClearUi();
             FlatPartRowsViewModel.ClearUi();
+        }
+
+        /// <summary>
+        /// Start the server and client for MQTTnet, and try connecting
+        /// to the machines.
+        /// </summary>
+        private void SetupMqtt()
+        {
+            MachineDataViewModel.Start();
         }
     }
 }

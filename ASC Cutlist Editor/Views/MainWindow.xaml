@@ -6,6 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:AscCutlistEditor.ViewModels"
         xmlns:views="clr-namespace:AscCutlistEditor.Views"
+        xmlns:mqtt="clr-namespace:AscCutlistEditor.Views.MQTT"
         mc:Ignorable="d"
         Title="ASC Cutlist Editor" Height="450" Width="800"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
@@ -80,7 +81,9 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Machines"></TabItem>
+            <TabItem Header="Machines">
+                <mqtt:UptimeControl />
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>
