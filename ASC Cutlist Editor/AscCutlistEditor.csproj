@@ -28,8 +28,4 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="ViewModels\Bundles\" />
-	</ItemGroup>
 </Project>
