@@ -26,7 +26,7 @@ namespace AscCutlistEditor.Utility
         private readonly IMqttClient _client;
         private readonly string _topic;
 
-        public int Port = 1884;
+        public int Port = 33333;
 
         public MockMachineData()
         {
@@ -51,8 +51,10 @@ namespace AscCutlistEditor.Utility
         {
             if (!_server.IsStarted)
             {
-                // Wait, do I even need a server??
-                await _server.StartAsync(new MqttServerOptions());
+                var options = new MqttServerOptionsBuilder()
+                    .WithDefaultEndpointPort(Port)
+                    .Build();
+                await _server.StartAsync(options);
 
                 // Start the MQTTClient to listen for new messages.
                 await StartClient();
@@ -108,7 +110,7 @@ namespace AscCutlistEditor.Utility
             Start();
 
             _mockMessageTimer = new DispatcherTimer();
-            _mockMessageTimer.Tick += _mockMessageTimer_Tick;
+            _mockMessageTimer.Tick += MockMessageTimerTick;
             _mockMessageTimer.Interval = new TimeSpan(0, 0, 5);
             _mockMessageTimer.Start();
         }
@@ -120,7 +122,7 @@ namespace AscCutlistEditor.Utility
             _mockMessageTimer.Stop();
         }
 
-        private async void _mockMessageTimer_Tick(object sender, EventArgs e)
+        private async void MockMessageTimerTick(object sender, EventArgs e)
         {
             await PublishMessage(_topic, "test");
         }

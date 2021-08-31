@@ -4,6 +4,7 @@ using AscCutlistEditor.ViewModels.FlatParts;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using AscCutlistEditor.Utility;
+using AscCutlistEditor.ViewModels.Bundles;
 using AscCutlistEditor.ViewModels.MQTT;
 using OxyPlot;
 using OxyPlot.Series;
@@ -21,6 +22,8 @@ namespace AscCutlistEditor.ViewModels
 
         public FlatPartRowsViewModel FlatPartRowsViewModel { get; }
 
+        public BundleViewModel BundleViewModel { get; }
+
         public MachineDataViewModel MachineDataViewModel { get; }
 
         public MockMachineData MockMachineData { get; }
@@ -30,6 +33,8 @@ namespace AscCutlistEditor.ViewModels
             CutlistViewModel = new CutlistImportViewModel(DrawParts);
 
             FlatPartRowsViewModel = new FlatPartRowsViewModel();
+
+            BundleViewModel = new BundleViewModel();
 
             MachineDataViewModel = new MachineDataViewModel();
 
@@ -80,6 +85,8 @@ namespace AscCutlistEditor.ViewModels
         {
             FlatPartRowsViewModel.CreateRows(
                 CutlistViewModel.Cutlists);
+            BundleViewModel.CreateBundles(
+                CutlistViewModel.Cutlists);
         }
 
         /// <summary>
@@ -89,6 +96,7 @@ namespace AscCutlistEditor.ViewModels
         {
             CutlistViewModel.ClearUi();
             FlatPartRowsViewModel.ClearUi();
+            BundleViewModel.ClearUi();
         }
 
         /// <summary>
