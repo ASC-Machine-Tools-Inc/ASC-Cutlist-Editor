@@ -15,9 +15,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using AscCutlistEditor.Views.MQTT;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {
+    /// <summary>
+    /// Handles the data for a single machine connection.
+    /// </summary>
     internal class MachineDataViewModel : ObservableObject
     {
         private readonly IMqttServer _server;
@@ -28,8 +32,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
         private MachineData _latestMachineData = null;
         private readonly LineSeries _uptimeSeries;
         private string _connectionStatus;
-
-        public PlotModel PlotModel { get; set; }
 
         public MachineDataViewModel()
         {
@@ -42,11 +44,11 @@ namespace AscCutlistEditor.ViewModels.MQTT
             LatestMachineData = null;
             ConnectionStatus = "disconnected";
 
-            // Test plot model
-            // Create the plot model
+            // Test plot model.
+            // Create the plot model.
             var tmp = new PlotModel { Title = "Uptime", Subtitle = "TESTING" };
 
-            // Create two line series (markers are hidden by default)
+            // Create two line series (markers are hidden by default).
             var series1 = new LineSeries { Title = "Series 1", MarkerType = MarkerType.Square };
 
             DateTimeAxis xAxis = new DateTimeAxis
@@ -62,7 +64,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             series2.Points.Add(new DataPoint(30, 25));
             series2.Points.Add(new DataPoint(40, 5));
 
-            // Add the series to the plot model
+            // Add the series to the plot model.
             tmp.Series.Add(series1);
             tmp.Axes.Add(xAxis);
             _uptimeSeries = series1;
@@ -70,6 +72,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             PlotModel = tmp;
         }
+
+        public PlotModel PlotModel { get; set; }
 
         public ObservableCollection<MachineData> MachineDataCollection
         {

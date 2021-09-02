@@ -82,7 +82,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Machines">
-                <mqtt:UptimeControl />
+                <mqtt:MachineListControl />
             </TabItem>
         </TabControl>
     </Grid>

@@ -21,6 +21,8 @@ namespace AscCutlistEditor.ViewModels
 
         public MachineDataViewModel MachineDataViewModel { get; }
 
+        public MachineConnectionsViewModel MachineConnectionsViewModel { get; }
+
         public MockMachineData MockMachineData { get; }
 
         public MainViewModel()
@@ -30,6 +32,10 @@ namespace AscCutlistEditor.ViewModels
             PartCollectionViewModel = new PartCollectionViewModel();
 
             MachineDataViewModel = new MachineDataViewModel();
+
+            MachineConnectionsViewModel = new MachineConnectionsViewModel();
+            MachineConnectionsViewModel.AddTab();
+            MachineConnectionsViewModel.AddTab();
 
             MockMachineData = new MockMachineData();
             MockMachineData.StartMockMessages();

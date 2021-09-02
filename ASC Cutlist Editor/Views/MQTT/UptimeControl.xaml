@@ -5,7 +5,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:AscCutlistEditor.ViewModels"
-             d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -17,14 +16,15 @@
 
         <StackPanel Grid.Row="0"
                     HorizontalAlignment="Center">
+            <!--
             <Button Margin="5"
                     Command="{Binding SetupMqttCommand}">
                 Connect to Machines
-            </Button>
+            </Button> -->
             <TextBlock FontWeight="Bold">
                 Connection status:
             </TextBlock>
-            <TextBlock Text="{Binding MachineDataViewModel.ConnectionStatus}">
+            <TextBlock Text="{Binding ConnectionStatus}">
             </TextBlock>
         </StackPanel>
 
@@ -35,7 +35,7 @@
             </Grid.ColumnDefinitions>
 
             <DataGrid
-                ItemsSource="{Binding MachineDataViewModel.MachineDataCollection}"
+                ItemsSource="{Binding MachineDataCollection}"
                 AutoGenerateColumns="True"
                 IsReadOnly="True"
                 GridLinesVisibility="Horizontal"
@@ -52,7 +52,7 @@
             <oxy:PlotView
                 Grid.Column="1"
                 Margin="5"
-                Model="{Binding MachineDataViewModel.PlotModel}" />
+                Model="{Binding PlotModel}" />
         </Grid>
 
         <Grid Grid.Row="2">
