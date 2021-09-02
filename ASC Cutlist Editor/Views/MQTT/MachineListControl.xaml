@@ -8,8 +8,21 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Buttons for testing mock connections -->
+        <Button
+            Command="{Binding AddMockConnectionCommand}"
+            Margin="10">
+            Add Mock Connection
+        </Button>
+
         <TabControl
-                ItemsSource="{Binding
+            Grid.Row="1"
+            ItemsSource="{Binding
             MachineConnectionsViewModel.MachineConnectionTabs}">
         </TabControl>
     </Grid>

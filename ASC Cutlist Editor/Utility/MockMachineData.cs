@@ -3,9 +3,12 @@ using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using MQTTnet.Server;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using AscCutlistEditor.Models.MQTT;
 
 namespace AscCutlistEditor.Utility
 {
@@ -14,22 +17,20 @@ namespace AscCutlistEditor.Utility
     /// </summary>
     internal class MockMachineData
     {
-        private DispatcherTimer _mockMessageTimer;
-        private readonly IMqttServer _server;
-        private readonly IMqttClient _client;
-        private readonly string _topic;
+        private readonly MqttFactory _mqttFactory;
+        private readonly IMqttServer _server;  // Our mqtt broker.
+        private readonly List<MockMachineClient> _clients;
 
-        public int Port = 33333;
+        public int Port = 1883;
 
         public MockMachineData()
         {
-            var mqttFactory = new MqttFactory();
-            _server = mqttFactory.CreateMqttServer();
-            _client = mqttFactory.CreateMqttClient();
-            _topic = "alphapub/mockdata" + Port + "/";
+            _mqttFactory = new MqttFactory();
+            _server = _mqttFactory.CreateMqttServer();
+            _clients = new List<MockMachineClient>();
         }
 
-        public async Task PublishMessage(string topic, string payload)
+        public static async Task PublishMessage(IMqttClient client, string topic, string payload)
         {
             var message = new MqttApplicationMessageBuilder()
                 .WithTopic(topic)
@@ -37,10 +38,10 @@ namespace AscCutlistEditor.Utility
                 .WithExactlyOnceQoS()
                 .WithRetainFlag()
                 .Build();
-            await _client.PublishAsync(message);
+            await client.PublishAsync(message);
         }
 
-        public async void Start()
+        public async void StartServer()
         {
             if (!_server.IsStarted)
             {
@@ -48,76 +49,74 @@ namespace AscCutlistEditor.Utility
                     .WithDefaultEndpointPort(Port)
                     .Build();
                 await _server.StartAsync(options);
-
-                // Start the MQTTClient to listen for new messages.
-                await StartClient();
             }
         }
 
-        public async Task StartClient()
+        public async void AddMockClient()
+        {
+            // Start the MQTTClient to listen for new messages.
+            await StartClient();
+        }
+
+        /// <summary>
+        /// Disconnect the last added mock client.
+        /// </summary>
+        public async void StopMockMessages()
+        {
+            await StopClient(_clients[^1]);
+        }
+
+        private async Task StartClient()
         {
             // Create MQTT client.
             var options = new MqttClientOptionsBuilder()
                 .WithTcpServer("192.168.10.43", Port)
                 .Build();
-            Port++;
+            var clientId = _clients.Count();
+            var client = _mqttFactory.CreateMqttClient();
+            var topic = "alphapub/mockdata" + clientId + "/";
+            var mockClient = new MockMachineClient(clientId, client, topic);
 
             // Response to send on connection.
-            _client.UseConnectedHandler(async e =>
+            client.UseConnectedHandler(async e =>
             {
-                Debug.WriteLine("### MOCK CONNECTED WITH SERVER ###");
+                Debug.WriteLine("### MOCK " + mockClient.Id + " CONNECTED ###");
 
                 // Test publishing a message.
-                await PublishMessage("self/success", "Mock connection successful!");
+                await PublishMessage(client, "self/success", "Mock connection successful!");
             });
 
             try
             {
-                await _client.ConnectAsync(options);
+                await client.ConnectAsync(options);
             }
             catch
             {
                 Debug.WriteLine("Connection unsuccessful.");
             }
+
+            _clients.Add(mockClient);
         }
 
-        public async Task StopClient()
+        private async Task StopClient(MockMachineClient mockClient)
         {
-            _client.UseDisconnectedHandler(e =>
+            mockClient.Client.UseDisconnectedHandler(e =>
             {
-                Debug.WriteLine("### MOCK DISCONNECTED ###");
+                Debug.WriteLine("### MOCK CLIENT " + mockClient.Id + " DISCONNECTED ###");
             });
 
             try
             {
-                await _client.DisconnectAsync();
+                await mockClient.Client.DisconnectAsync();
             }
             catch
             {
                 Debug.WriteLine("Disconnection unsuccessful.");
             }
-        }
 
-        public void StartMockMessages()
-        {
-            Start();
-
-            _mockMessageTimer = new DispatcherTimer();
-            _mockMessageTimer.Tick += MockMessageTimerTick;
-            _mockMessageTimer.Interval = new TimeSpan(0, 0, 5);
-            _mockMessageTimer.Start();
-        }
-
-        public async void StopMockMessages()
-        {
-            await StopClient();
-
-            _mockMessageTimer.Stop();
-        }
-
-        private async void MockMessageTimerTick(object sender, EventArgs e)
-        {
-            await PublishMessage(_topic, "test");
+            // Stop timer to prevent memory leak - might be unnecessary?
+            mockClient.MessageTimer.Stop();
+            _clients.Remove(mockClient);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using AscCutlistEditor.Frameworks;
+﻿using System.Collections.Generic;
+using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Utility;
 using AscCutlistEditor.ViewModels.Cutlists;
 using AscCutlistEditor.ViewModels.MQTT;
@@ -38,7 +39,7 @@ namespace AscCutlistEditor.ViewModels
             MachineConnectionsViewModel.AddTab();
 
             MockMachineData = new MockMachineData();
-            MockMachineData.StartMockMessages();
+            MockMachineData.StartServer();
         }
 
         /// <summary>
@@ -71,6 +72,11 @@ namespace AscCutlistEditor.ViewModels
         /// </summary>
         public ICommand SetupMqttCommand => new DelegateCommand(SetupMqtt);
 
+        /// <summary>
+        /// Create a new mock connection with MockMachineData to listen to.
+        /// </summary>
+        public ICommand AddMockConnectionCommand => new DelegateCommand(AddMockConnection);
+
         private void ToggleView(int index)
         {
             UiVisibility[index] = !UiVisibility[index];
@@ -102,6 +108,11 @@ namespace AscCutlistEditor.ViewModels
         private void SetupMqtt()
         {
             MachineDataViewModel.Start();
+        }
+
+        private void AddMockConnection()
+        {
+            MockMachineData.AddMockClient();
         }
     }
 }
