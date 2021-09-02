@@ -6,6 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:AscCutlistEditor.ViewModels"
         xmlns:views="clr-namespace:AscCutlistEditor.Views"
+        xmlns:mqtt="clr-namespace:AscCutlistEditor.Views.MQTT"
         mc:Ignorable="d"
         Title="ASC Cutlist Editor" Height="450" Width="800"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
@@ -29,14 +30,18 @@
                         <MenuItem Header="_Edit">
                         </MenuItem>
                         <MenuItem Header="_View">
-                            <!-- TODO: get checkmark working -->
                             <MenuItem Header="Cutlist Data View"
                           Command="{Binding ToggleCutlistCommand}"
-                          IsChecked="{Binding UiVisibility[0]}"></MenuItem>
+                          IsCheckable="True"
+                          IsChecked="True"></MenuItem>
                             <MenuItem Header="2D View"
-                          Command="{Binding ToggleFlatViewCommand}"></MenuItem>
+                          Command="{Binding ToggleFlatViewCommand}"
+                          IsCheckable="True"
+                          IsChecked="True"></MenuItem>
                             <MenuItem Header="3D View"
-                          Command="{Binding Toggle3DCommand}"></MenuItem>
+                          Command="{Binding Toggle3DCommand}"
+                          IsCheckable="True"
+                          IsChecked="True"></MenuItem>
                         </MenuItem>
                     </Menu>
 
@@ -69,24 +74,16 @@
                         <GridSplitter Grid.Column="3" Width="5" HorizontalAlignment="Stretch" />
 
                         <Grid Grid.Column="4">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                                <RowDefinition Height="*"></RowDefinition>
-                            </Grid.RowDefinitions>
-
-                            <DockPanel Margin="5">
-                                <TextBlock Text="3D Bundle View"
-                               FontWeight="Bold"
-                               TextAlignment="Center" />
-                            </DockPanel>
-
-                            <Border BorderBrush="Gray"
-                        BorderThickness="0 0 0 1"></Border>
+                            <views:BundleControl
+                        Visibility="{Binding UiVisibility[2],
+                        Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </Grid>
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Machines"></TabItem>
+            <TabItem Header="Machines">
+                <mqtt:UptimeControl />
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

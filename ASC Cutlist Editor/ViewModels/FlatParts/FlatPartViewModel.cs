@@ -13,7 +13,7 @@ namespace AscCutlistEditor.ViewModels.FlatParts
     internal class FlatPartViewModel : ObservableObject
     {
         // Draws a 2D view of the part from a cutlist.
-        public static ObservableCollection<SinglePartControl> CreatePart(Cutlist cutlist, int partWidth)
+        public static ObservableCollection<SinglePartControl> CreatePart(Cutlist cutlist, int partWidth, int count)
         {
             // Refresh the current list of parts.
             ObservableCollection<SinglePartControl> parts =
@@ -33,7 +33,7 @@ namespace AscCutlistEditor.ViewModels.FlatParts
                 {
                     PartGrid = { Width = partWidth },
                     PartRect = { Fill = brush },
-                    PartLabel = { Text = GetPartLabel(cutlist) }
+                    PartLabel = { Text = GetPartLabel(cutlist, count) }
                 };
                 parts.Add(part);
             });
@@ -41,10 +41,28 @@ namespace AscCutlistEditor.ViewModels.FlatParts
             return parts;
         }
 
-        // Generates the label string for a part from a cutlist.
-        public static string GetPartLabel(Cutlist cutlist)
+        /// <summary>
+        /// Generates the label string for a part from a cutlist.
+        /// </summary>
+        /// <param name="cutlist">The cutlist to generate a part from.</param>
+        /// <param name="count">
+        /// The current number for this part out of the cutlist's quantity.
+        /// 0 means that this part represents the entire cutlist (quantity is
+        /// over the cutoff for drawing single parts).
+        /// </param>
+        /// <returns>A label string to display on a flat part.</returns>
+        public static string GetPartLabel(Cutlist cutlist, int count)
         {
-            return "PROFILE X  LENGTH: " + cutlist.Length + "  " + cutlist.Quantity + "x";
+            if (count == 0)
+            {
+                return "P" + cutlist.ID + "  LENGTH: " + cutlist.Length + "  " +
+                       cutlist.Quantity + " parts";
+            }
+            else
+            {
+                return "P" + cutlist.ID + "  LENGTH: " + cutlist.Length + "  " +
+                       count + " of " + cutlist.Quantity + " parts";
+            }
         }
     }
 }

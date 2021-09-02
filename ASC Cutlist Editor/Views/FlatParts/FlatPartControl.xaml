@@ -60,14 +60,14 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <ListBox
-                                Height="Auto"
-                                dd:DragDrop.IsDragSource="True"
-                                dd:DragDrop.IsDropTarget="True"
-                                dd:DragDrop.UseDefaultDragAdorner="True"
-                                ItemContainerStyle="{StaticResource LessPadListBox}"
-                                ItemsSource="{Binding Parts}"
-                                RenderTransformOrigin="0.5,0.5"
-                                SelectionMode="Extended">
+                        Height="Auto"
+                        dd:DragDrop.IsDragSource="True"
+                        dd:DragDrop.IsDropTarget="True"
+                        dd:DragDrop.UseDefaultDragAdorner="True"
+                        ItemContainerStyle="{StaticResource LessPadListBox}"
+                        ItemsSource="{Binding Parts}"
+                        RenderTransformOrigin="0.5,0.5"
+                        SelectionMode="Extended">
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <!-- Add left margin binding for sub parts -->

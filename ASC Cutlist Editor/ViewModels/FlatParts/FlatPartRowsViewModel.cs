@@ -122,12 +122,16 @@ namespace AscCutlistEditor.ViewModels.FlatParts
                     // Offset parts after the first one.
                     int leftOffset = i == 0 ? 0 : LeftOffsetPx;
 
+                    // Current index for the part out of the total.
+                    // (43 parts vs 1 of 43 parts)
+                    int count = partsToAdd == 1 ? 0 : i + 1;
+
                     if (loadAsync)
                     {
                         PartRows.Add(await Task.Run(() => new PartRow
                         {
                             Parts = FlatPartViewModel
-                                .CreatePart(cutlist, partProportionalLength),
+                                .CreatePart(cutlist, partProportionalLength, count),
                             LeftOffset = new Thickness(leftOffset, 0, 0, 0)
                         }));
                     }
@@ -136,7 +140,7 @@ namespace AscCutlistEditor.ViewModels.FlatParts
                         PartRows.Add(new PartRow
                         {
                             Parts = FlatPartViewModel
-                                .CreatePart(cutlist, partProportionalLength),
+                                .CreatePart(cutlist, partProportionalLength, count),
                             LeftOffset = new Thickness(leftOffset, 0, 0, 0)
                         });
                     }
