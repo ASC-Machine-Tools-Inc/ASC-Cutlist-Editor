@@ -1,11 +1,12 @@
-﻿using AscCutlistEditor.ViewModels;
+﻿using AscCutlistEditor.Models;
+using AscCutlistEditor.ViewModels;
+using AscCutlistEditor.ViewModels.Cutlists;
+using AscCutlistEditor.ViewModels.Parts;
+using AscCutlistEditor.Views;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using AscCutlistEditor.Models;
-using AscCutlistEditor.ViewModels.Cutlists;
-using AscCutlistEditor.ViewModels.FlatParts;
 
 namespace AscCutlistEditorTests.ViewModels
 {
@@ -45,9 +46,12 @@ namespace AscCutlistEditorTests.ViewModels
             cutModel.Cutlists.Add(new Cutlist());
 
             // Simulating drawing a part row.
-            FlatPartRowsViewModel rowModel = model.FlatPartRowsViewModel;
+            PartCollectionViewModel rowModel = model.PartCollectionViewModel;
             rowModel.FlatPartButtonRowVisibility = true;
             rowModel.PartRows.Add(new PartRow());
+
+            // Simulating drawing a bundle.
+            rowModel.Bundles.Add(new SingleBundleControl());
 
             // Act
             model.ClearCutlistCommand.Execute(null);
@@ -60,6 +64,8 @@ namespace AscCutlistEditorTests.ViewModels
 
             Assert.AreEqual(rowModel.FlatPartButtonRowVisibility, false);
             Assert.AreEqual(rowModel.PartRows.Count, 0);
+
+            Assert.AreEqual(rowModel.Bundles.Count, 0);
         }
     }
 }

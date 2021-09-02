@@ -7,12 +7,25 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace AscCutlistEditor.ViewModels.FlatParts
+namespace AscCutlistEditor.ViewModels.Parts
 {
     // Does the UI work for representing a list of parts in a part row.
-    internal class FlatPartViewModel : ObservableObject
+    internal class PartViewModel : ObservableObject
     {
-        // Draws a 2D view of the part from a cutlist.
+        /// <summary>
+        /// Draws a 2D view of the part from a cutlist.
+        /// </summary>
+        /// <param name="cutlist">The cutlist to create a part from.</param>
+        /// <param name="partWidth">The width in px of the part.</param>
+        /// <param name="count">
+        /// Which part this represents out of the cutlist, ranging from 1 to the
+        /// quantity of the cutlist. If this is 0, then it denotes that this
+        /// part represents the entire cutlist.
+        /// </param>
+        /// <returns>
+        /// An observable collection with one SinglePartControl representing
+        /// a part from the cutlist.
+        /// </returns>
         public static ObservableCollection<SinglePartControl> CreatePart(Cutlist cutlist, int partWidth, int count)
         {
             // Refresh the current list of parts.
@@ -39,6 +52,16 @@ namespace AscCutlistEditor.ViewModels.FlatParts
             });
 
             return parts;
+        }
+
+        /// <summary>
+        /// Draws a 3D view of the part from a cutlist.
+        /// </summary>
+        /// <param name="cutlist">The cutlist to create a bundle from.</param>
+        /// <returns>A BundleControl representing the cutlist.</returns>
+        public static SingleBundleControl CreateBundle(Cutlist cutlist)
+        {
+            return new SingleBundleControl();
         }
 
         /// <summary>

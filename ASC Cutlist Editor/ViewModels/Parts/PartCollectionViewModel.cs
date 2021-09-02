@@ -1,17 +1,20 @@
 ﻿using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
+using AscCutlistEditor.Views;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace AscCutlistEditor.ViewModels.FlatParts
+namespace AscCutlistEditor.ViewModels.Parts
 {
-    internal class FlatPartRowsViewModel : ObservableObject
+    internal class PartCollectionViewModel : ObservableObject
     {
         private ObservableCollection<PartRow> _partRows;
-        private bool _flatPartButtonRow = false;
+        private ObservableCollection<SingleBundleControl> _bundles;
+
+        private bool _flatPartButtonRow;
 
         public int DefaultDisplayWidthPx = 500;
         public int LeftOffsetPx = 30;
@@ -23,15 +26,15 @@ namespace AscCutlistEditor.ViewModels.FlatParts
         public int CutlistMergeCutoff = 8;
 
         /// <summary>
-        /// If the number of part rows is greater than this, load them
-        /// asynchronously instead.
+        /// If the number of part rows/bundles is greater than this,
+        /// load them asynchronously instead.
         /// </summary>
         public int SyncLoadCutoff = 20;
 
         /// <summary>
         /// Represents a list of rows in the 2D view panel that can contain a list of drag n' droppable parts.
         /// </summary>
-        public FlatPartRowsViewModel()
+        public PartCollectionViewModel()
         {
             PartRows = new ObservableCollection<PartRow>();
         }
@@ -43,6 +46,16 @@ namespace AscCutlistEditor.ViewModels.FlatParts
             {
                 _partRows = value;
                 RaisePropertyChangedEvent("PartRows");
+            }
+        }
+
+        public ObservableCollection<SingleBundleControl> Bundles
+        {
+            get => _bundles;
+            set
+            {
+                _bundles = value;
+                RaisePropertyChangedEvent("Bundles");
             }
         }
 
@@ -74,6 +87,7 @@ namespace AscCutlistEditor.ViewModels.FlatParts
         public void ClearUi()
         {
             PartRows = new ObservableCollection<PartRow>();
+            Bundles = new ObservableCollection<SingleBundleControl>();
             FlatPartButtonRowVisibility = false;
         }
 
@@ -82,18 +96,19 @@ namespace AscCutlistEditor.ViewModels.FlatParts
         {
             // Refresh the current list of parts.
             PartRows = new ObservableCollection<PartRow>();
-
-            // Grab the max cutlist length to scale them all by.
-            double maxLength = cutlists.Max(c => c.Length);
+            Bundles = new ObservableCollection<SingleBundleControl>();
 
             // Show the UI buttons.
             FlatPartButtonRowVisibility = true;
+
+            // Grab the max cutlist length to scale them all by.
+            double maxLength = cutlists.Max(c => c.Length);
 
             // Determine whether or not to load in the part rows asynchronously
             // using the number of total parts to draw: synchronous loading at
             // the start prevents UI flashing.
             int totalQuantity = 0;
-            bool loadAsync = false;
+            bool loadPartsAsync = false;
             foreach (Cutlist cutlist in cutlists)
             {
                 int partsToAdd = cutlist.Quantity >= CutlistMergeCutoff ?
@@ -102,10 +117,13 @@ namespace AscCutlistEditor.ViewModels.FlatParts
 
                 if (totalQuantity > SyncLoadCutoff)
                 {
-                    loadAsync = true;
+                    loadPartsAsync = true;
                     break;
                 }
             }
+
+            // Determine whether to load the bundles in asynchronously.
+            bool loadBundlesAsync = cutlists.Count > SyncLoadCutoff;
 
             foreach (Cutlist cutlist in cutlists)
             {
@@ -114,7 +132,7 @@ namespace AscCutlistEditor.ViewModels.FlatParts
                     1 : cutlist.Quantity;
 
                 int partProportionalLength = Convert.ToInt32(
-                    (cutlist.Length / maxLength) * DefaultDisplayWidthPx);
+                    cutlist.Length / maxLength * DefaultDisplayWidthPx);
 
                 // Update the part rows as they get parsed in.
                 for (int i = 0; i < partsToAdd; i++)
@@ -126,11 +144,11 @@ namespace AscCutlistEditor.ViewModels.FlatParts
                     // (43 parts vs 1 of 43 parts)
                     int count = partsToAdd == 1 ? 0 : i + 1;
 
-                    if (loadAsync)
+                    if (loadPartsAsync)
                     {
                         PartRows.Add(await Task.Run(() => new PartRow
                         {
-                            Parts = FlatPartViewModel
+                            Parts = PartViewModel
                                 .CreatePart(cutlist, partProportionalLength, count),
                             LeftOffset = new Thickness(leftOffset, 0, 0, 0)
                         }));
@@ -139,11 +157,22 @@ namespace AscCutlistEditor.ViewModels.FlatParts
                     {
                         PartRows.Add(new PartRow
                         {
-                            Parts = FlatPartViewModel
+                            Parts = PartViewModel
                                 .CreatePart(cutlist, partProportionalLength, count),
                             LeftOffset = new Thickness(leftOffset, 0, 0, 0)
                         });
                     }
+                }
+
+                // Load in the bundles.
+                if (loadBundlesAsync)
+                {
+                    Bundles.Add(await Task.Run(() =>
+                        PartViewModel.CreateBundle(cutlist)));
+                }
+                else
+                {
+                    Bundles.Add(PartViewModel.CreateBundle(cutlist));
                 }
             }
         }

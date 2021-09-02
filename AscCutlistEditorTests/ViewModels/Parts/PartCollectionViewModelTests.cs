@@ -1,15 +1,15 @@
 ﻿using AscCutlistEditor.ViewModels.Cutlists;
-using AscCutlistEditor.ViewModels.FlatParts;
+using AscCutlistEditor.ViewModels.Parts;
 using AscCutlistEditorTests.ViewModels.Cutlists;
 using ExcelDataReader;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AscCutlistEditorTests.ViewModels.FlatParts
+namespace AscCutlistEditorTests.ViewModels.Parts
 {
     [TestClass]
-    public class FlatPartRowsViewModelTests
+    public class PartCollectionViewModelTests
     {
         [TestMethod]
         public async Task CreateRowsTest()
@@ -20,7 +20,7 @@ namespace AscCutlistEditorTests.ViewModels.FlatParts
             var cutlists =
                 await CutlistParseViewModel.ParseCutlistCsvAsync(reader);
 
-            FlatPartRowsViewModel model = new FlatPartRowsViewModel();
+            PartCollectionViewModel model = new PartCollectionViewModel();
 
             // Act
             // Create an STA thread to run UI logic.
@@ -42,6 +42,8 @@ namespace AscCutlistEditorTests.ViewModels.FlatParts
             Assert.AreEqual(row1.Parts.Count, 1);
             Assert.AreEqual(row1.LeftOffset.Left, 0);
             Assert.AreEqual(row2.LeftOffset.Left, model.LeftOffsetPx);
+
+            Assert.AreEqual(model.Bundles.Count, 9);
         }
 
         [TestMethod]
@@ -58,7 +60,7 @@ namespace AscCutlistEditorTests.ViewModels.FlatParts
             var cutlists2 =
                 await CutlistParseViewModel.ParseCutlistCsvAsync(reader2);
 
-            FlatPartRowsViewModel model = new FlatPartRowsViewModel();
+            PartCollectionViewModel model = new PartCollectionViewModel();
 
             // Act
             // Create an STA thread to run UI logic.
@@ -82,6 +84,8 @@ namespace AscCutlistEditorTests.ViewModels.FlatParts
             Assert.AreEqual(row1.Parts.Count, 1);
             Assert.AreEqual(row1.LeftOffset.Left, 0);
             Assert.AreEqual(row2.LeftOffset.Left, model.LeftOffsetPx);
+
+            Assert.AreEqual(model.Bundles.Count, 3);
         }
 
         [TestMethod]
@@ -98,7 +102,7 @@ namespace AscCutlistEditorTests.ViewModels.FlatParts
             var cutlists2 =
                 await CutlistParseViewModel.ParseCutlistCsvAsync(reader2);
 
-            FlatPartRowsViewModel model = new FlatPartRowsViewModel();
+            PartCollectionViewModel model = new PartCollectionViewModel();
 
             // Act
             // Create an STA thread to run UI logic.
@@ -122,6 +126,8 @@ namespace AscCutlistEditorTests.ViewModels.FlatParts
             Assert.AreEqual(row1.Parts.Count, 1);
             Assert.AreEqual(row1.LeftOffset.Left, 0);
             Assert.AreEqual(row2.LeftOffset.Left, model.LeftOffsetPx);
+
+            Assert.AreEqual(model.Bundles.Count, 9);
         }
 
         /* Can't unit test creating the rows async due to its nature - the UI

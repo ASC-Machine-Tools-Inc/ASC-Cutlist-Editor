@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Threading;
-using AscCutlistEditor.Models;
-using MQTTnet;
+﻿using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using MQTTnet.Server;
-using Newtonsoft.Json;
-using OxyPlot;
-using OxyPlot.Axes;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace AscCutlistEditor.Utility
 {
