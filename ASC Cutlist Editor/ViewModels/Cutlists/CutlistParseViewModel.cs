@@ -1,12 +1,12 @@
 ﻿using AscCutlistEditor.Common;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
+using AscCutlistEditor.Utility;
 using ExcelDataReader;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
-using AscCutlistEditor.Utility;
 
 namespace AscCutlistEditor.ViewModels.Cutlists
 {

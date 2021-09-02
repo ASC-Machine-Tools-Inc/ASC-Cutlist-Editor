@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using AscCutlistEditor.MQTT;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MQTTnet.Server;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AscCutlistEditorTests.MQTT
 {

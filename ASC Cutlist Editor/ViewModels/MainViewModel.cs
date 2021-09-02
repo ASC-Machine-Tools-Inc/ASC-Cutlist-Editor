@@ -1,13 +1,10 @@
 ﻿using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.Utility;
 using AscCutlistEditor.ViewModels.Cutlists;
-using AscCutlistEditor.ViewModels.FlatParts;
+using AscCutlistEditor.ViewModels.MQTT;
+using AscCutlistEditor.ViewModels.Parts;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using AscCutlistEditor.Utility;
-using AscCutlistEditor.ViewModels.Bundles;
-using AscCutlistEditor.ViewModels.MQTT;
-using OxyPlot;
-using OxyPlot.Series;
 
 namespace AscCutlistEditor.ViewModels
 {
@@ -20,9 +17,7 @@ namespace AscCutlistEditor.ViewModels
 
         public CutlistImportViewModel CutlistViewModel { get; }
 
-        public FlatPartRowsViewModel FlatPartRowsViewModel { get; }
-
-        public BundleViewModel BundleViewModel { get; }
+        public PartCollectionViewModel PartCollectionViewModel { get; }
 
         public MachineDataViewModel MachineDataViewModel { get; }
 
@@ -32,9 +27,7 @@ namespace AscCutlistEditor.ViewModels
         {
             CutlistViewModel = new CutlistImportViewModel(DrawParts);
 
-            FlatPartRowsViewModel = new FlatPartRowsViewModel();
-
-            BundleViewModel = new BundleViewModel();
+            PartCollectionViewModel = new PartCollectionViewModel();
 
             MachineDataViewModel = new MachineDataViewModel();
 
@@ -83,9 +76,7 @@ namespace AscCutlistEditor.ViewModels
         /// </summary>
         private void DrawParts()
         {
-            FlatPartRowsViewModel.CreateRows(
-                CutlistViewModel.Cutlists);
-            BundleViewModel.CreateBundles(
+            PartCollectionViewModel.CreateRows(
                 CutlistViewModel.Cutlists);
         }
 
@@ -95,8 +86,7 @@ namespace AscCutlistEditor.ViewModels
         private void ClearCutlist()
         {
             CutlistViewModel.ClearUi();
-            FlatPartRowsViewModel.ClearUi();
-            BundleViewModel.ClearUi();
+            PartCollectionViewModel.ClearUi();
         }
 
         /// <summary>

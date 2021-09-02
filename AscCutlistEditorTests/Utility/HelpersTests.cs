@@ -1,7 +1,6 @@
-﻿using System;
-using System.Windows.Media;
-using AscCutlistEditor.Utility;
+﻿using AscCutlistEditor.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Windows.Media;
 
 namespace AscCutlistEditorTests.Utility
 {

@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Threading;
-using AscCutlistEditor.Frameworks;
+﻿using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
-using AscCutlistEditor.Views;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using MQTTnet.Server;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
+using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {

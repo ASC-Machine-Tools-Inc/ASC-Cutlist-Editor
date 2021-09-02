@@ -33,7 +33,7 @@
         <DockPanel
             Grid.Row="1" Margin="5"
             Visibility="{Binding
-                FlatPartRowsViewModel.FlatPartButtonRowVisibility,
+                PartCollectionViewModel.FlatPartButtonRowVisibility,
                     Converter={StaticResource BooleanToVisibilityConverter}}">
             <Button
                 Command="{Binding DrawPartsCommand}">Reset To Cutlist</Button>
@@ -47,7 +47,7 @@
             Grid.Row="2"
             dd:DragDrop.DropScrollingMode="VerticalOnly"
                     ItemsSource="{Binding
-                    Path=FlatPartRowsViewModel.PartRows,
+                    Path=PartCollectionViewModel.PartRows,
                     UpdateSourceTrigger=PropertyChanged}">
             <ItemsControl.Template>
                 <ControlTemplate>
