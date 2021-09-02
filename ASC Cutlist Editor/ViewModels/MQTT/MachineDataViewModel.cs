@@ -15,7 +15,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using AscCutlistEditor.Views.MQTT;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {
