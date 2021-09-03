@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -25,7 +26,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
     ///
     internal class MachineDataViewModel : ObservableObject
     {
-        private readonly IMqttServer _server;
         private readonly IMqttClient _client;
         private readonly string _topic;
 
@@ -33,13 +33,13 @@ namespace AscCutlistEditor.ViewModels.MQTT
         private MachineData _latestMachineData;
         private readonly LineSeries _uptimeSeries;
         private string _connectionStatus;
+        private int _uptimeRunningCount;
+        private double _uptimeRunningPercentage;
 
         public PlotModel PlotModel { get; set; }
 
-        public MachineDataViewModel(IMqttServer server, string topic)
+        public MachineDataViewModel(string topic)
         {
-            _server = server;
-
             var mqttFactory = new MqttFactory();
             _client = mqttFactory.CreateMqttClient();
             _topic = MachineConnectionsViewModel.MainTopic + topic;
@@ -60,6 +60,12 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 Position = AxisPosition.Bottom,
                 StringFormat = "h:mm:ss",
             };
+            LinearAxis yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Maximum = 105,
+                Minimum = 0
+            }; // TODO: fix axis, maybe not linear???
 
             var series2 = new LineSeries { Title = "Series 2", MarkerType = MarkerType.Square };
             series2.Points.Add(new DataPoint(0, 4));
@@ -71,6 +77,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             // Add the series to the plot model.
             tmp.Series.Add(series1);
             tmp.Axes.Add(xAxis);
+            tmp.Axes.Add(yAxis);
             _uptimeSeries = series1;
             //tmp.Series.Add(series2);
 
@@ -104,6 +111,16 @@ namespace AscCutlistEditor.ViewModels.MQTT
             {
                 _connectionStatus = value;
                 RaisePropertyChangedEvent("ConnectionStatus");
+            }
+        }
+
+        public double UptimeRunningPercentage
+        {
+            get => _uptimeRunningPercentage;
+            set
+            {
+                _uptimeRunningPercentage = value;
+                RaisePropertyChangedEvent("UptimeRunningPercentage");
             }
         }
 
@@ -150,12 +167,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     dynamic machineData = JsonConvert.DeserializeObject(payload);
                     if (machineData != null)
                     {
+                        // Add the data to our graph.
                         AddMachineData(machineData);
-
-                        Debug.WriteLine($"Connection Status: {machineData.SelectToken("connected")}");
-                        Debug.WriteLine($"Current Job Number: {machineData.SelectToken("tags.set1.MqttPub.JobNumber")}");
-                        Debug.WriteLine($"Line Status: {machineData.SelectToken("tags.set1.MqttPub.LineRunning")}");
-                        Debug.WriteLine($"Time Received: {machineData.SelectToken("timestamp")}");
 
                         // Attempt an acknowledgement response.
                         Task.Run(() => PublishMessage("self",
@@ -199,21 +212,33 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 Dispatcher.CurrentDispatcher;
             dispatcher.Invoke(() =>
             {
+                string lineRunning = data.SelectToken("tags.set1.MqttPub.LineRunning");
                 DateTime timeStamp = (DateTime)data.SelectToken("timestamp");
 
                 MachineData machineData = new MachineData
                 {
                     ConnectionStatus = (string)data.SelectToken("connected"), // TODO: bool?
                     JobNumber = (string)data.SelectToken("tags.set1.MqttPub.JobNumber"),
-                    LineStatus = (string)data.SelectToken("tags.set1.MqttPub.LineRunning"),
+                    LineStatus = lineRunning,
                     TimeStamp = timeStamp
                 };
 
                 MachineDataCollection.Add(machineData);
 
-                double testValue = new Random().NextDouble() * 100;
-                _uptimeSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(timeStamp), testValue));
-                PlotModel.InvalidatePlot(true);
+                // Calculate percentage for line running bars.
+                if (lineRunning.Equals("LINE RUNNING"))
+                {
+                    _uptimeRunningCount++;
+                }
+                UptimeRunningPercentage = (double)_uptimeRunningCount / MachineDataCollection.Count * 100;
+
+                _uptimeSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(timeStamp), UptimeRunningPercentage));
+                PlotModel.InvalidatePlot(true); // Refresh plot with new data.
+
+                Debug.WriteLine($"Connection Status: {data.SelectToken("connected")}");
+                Debug.WriteLine($"Current Job Number: {lineRunning}");
+                Debug.WriteLine($"Line Status: {data.SelectToken("tags.set1.MqttPub.LineRunning")}");
+                Debug.WriteLine($"Time Received: {timeStamp}");
             });
 
             // Update the latest if our data is newer.

@@ -56,25 +56,43 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <ProgressBar
-                MinHeight="50"
-                MinWidth="100"
-                Foreground="Green"
-                Value="80">
-                <ProgressBar.LayoutTransform>
-                    <RotateTransform Angle="-90" />
-                </ProgressBar.LayoutTransform>
-            </ProgressBar>
-            <ProgressBar
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <ProgressBar
+                    MinHeight="50"
+                    MinWidth="100"
+                    Foreground="Green"
+                    Value="{Binding UptimeRunningPercentage}">
+                    <ProgressBar.LayoutTransform>
+                        <RotateTransform Angle="-90" />
+                    </ProgressBar.LayoutTransform>
+                </ProgressBar>
+                <TextBlock
+                    Text="{Binding UptimeRunningPercentage,
+                    StringFormat=Uptime: {0:#,#.0}%}"></TextBlock>
+                <!-- TODO: convert text in format instead to 2 decimal points? -->
+            </StackPanel>
+
+            <StackPanel
                 Grid.Column="1"
-                MinHeight="50"
-                MinWidth="100"
-                Foreground="Red"
-                Value="20">
-                <ProgressBar.LayoutTransform>
-                    <RotateTransform Angle="-90" />
-                </ProgressBar.LayoutTransform>
-            </ProgressBar>
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <ProgressBar
+                    MinHeight="50"
+                    MinWidth="100"
+                    Foreground="Red"
+                    Value="{Binding UptimeRunningPercentage,
+                    Converter={StaticResource InversePercentageConverter}}">
+                    <ProgressBar.LayoutTransform>
+                        <RotateTransform Angle="-90" />
+                    </ProgressBar.LayoutTransform>
+                </ProgressBar>
+                <TextBlock
+                    Text="{Binding UptimeRunningPercentage,
+                    Converter={StaticResource InversePercentageConverter},
+                    StringFormat=Downtime: {0:#,#.0}%}"></TextBlock>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

@@ -40,6 +40,9 @@ namespace AscCutlistEditor.ViewModels.MQTT
             Server = mqttFactory.CreateMqttServer();
             _listener = mqttFactory.CreateMqttClient();
             _listenerTopic = MainTopic + "/+/+";
+
+            _knownTopics = new HashSet<string>();
+            _machineConnectionTabs = new ObservableCollection<TabItem>();
         }
 
         public ObservableCollection<TabItem> MachineConnectionTabs
@@ -55,7 +58,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
         public async Task AddTab(string topic)
         {
             // Create a new model for listening to this topic.
-            MachineDataViewModel model = new MachineDataViewModel(Server, topic);
+            MachineDataViewModel model = new MachineDataViewModel(topic);
             await model.StartClient();
 
             Dispatcher dispatcher = Application.Current != null ?
@@ -65,7 +68,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             {
                 MachineConnectionTabs.Add(new TabItem
                 {
-                    Header = topic,
+                    Header = topic.Replace("/", ""),
                     Content = new UptimeControl(),
                     DataContext = model
                 });
@@ -86,6 +89,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
         }
 
+        // TODO: clear UI method?
+
         private async Task StartListener()
         {
             // Create MQTT client.
@@ -103,14 +108,14 @@ namespace AscCutlistEditor.ViewModels.MQTT
             });
 
             // Response to send on receiving a message.
-            _listener.UseApplicationMessageReceivedHandler(e =>
+            _listener.UseApplicationMessageReceivedHandler(async e =>
             {
                 // Create a new tab if we haven't seen this topic before.
                 string topic = e.ApplicationMessage.Topic.Substring(MainTopic.Length);
                 if (!_knownTopics.Contains(topic))
                 {
                     _knownTopics.Add(topic);
-                    AddTab(topic);
+                    await AddTab(topic);
 
                     Debug.WriteLine("### ADDING TOPIC " + topic + " ###");
                 }
