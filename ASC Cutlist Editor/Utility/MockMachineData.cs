@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using AscCutlistEditor.Models.MQTT;
+using AscCutlistEditor.ViewModels.MQTT;
 
 namespace AscCutlistEditor.Utility
 {
@@ -17,17 +18,13 @@ namespace AscCutlistEditor.Utility
     /// </summary>
     internal class MockMachineData
     {
-        private readonly MqttFactory _mqttFactory;
-        private readonly IMqttServer _server;  // Our mqtt broker.
         private readonly List<MockMachineClient> _clients;
+        private readonly MachineConnectionsViewModel _machineConnectionsViewModel;
 
-        public int Port = 1883;
-
-        public MockMachineData()
+        public MockMachineData(MachineConnectionsViewModel model)
         {
-            _mqttFactory = new MqttFactory();
-            _server = _mqttFactory.CreateMqttServer();
             _clients = new List<MockMachineClient>();
+            _machineConnectionsViewModel = model;
         }
 
         public static async Task PublishMessage(IMqttClient client, string topic, string payload)
@@ -41,43 +38,37 @@ namespace AscCutlistEditor.Utility
             await client.PublishAsync(message);
         }
 
-        public async void StartServer()
-        {
-            if (!_server.IsStarted)
-            {
-                var options = new MqttServerOptionsBuilder()
-                    .WithDefaultEndpointPort(Port)
-                    .Build();
-                await _server.StartAsync(options);
-            }
-        }
-
         public async void AddMockClient()
         {
             // Start the MQTTClient to listen for new messages.
-            await StartClient();
+            if (_machineConnectionsViewModel.Server.IsStarted)
+            {
+                await StartClient();
+            }
         }
 
         /// <summary>
         /// Disconnect the last added mock client.
         /// </summary>
-        public async void StopMockMessages()
+        public async void RemoveMockClient()
         {
             await StopClient(_clients[^1]);
         }
 
         private async Task StartClient()
         {
-            // Create MQTT client.
+            // Create a new MQTT client.
             var options = new MqttClientOptionsBuilder()
-                .WithTcpServer("192.168.10.43", Port)
+                .WithTcpServer(
+                    MachineConnectionsViewModel.Ip,
+                    MachineConnectionsViewModel.Port)
                 .Build();
             var clientId = _clients.Count();
-            var client = _mqttFactory.CreateMqttClient();
-            var topic = "alphapub/mockdata" + clientId + "/";
+            var client = new MqttFactory().CreateMqttClient();
+            var topic = MachineConnectionsViewModel.MainTopic + "/mockdata" + clientId + "/";
             var mockClient = new MockMachineClient(clientId, client, topic);
 
-            // Response to send on connection.
+            // Set the response to send on connection.
             client.UseConnectedHandler(async e =>
             {
                 Debug.WriteLine("### MOCK " + mockClient.Id + " CONNECTED ###");

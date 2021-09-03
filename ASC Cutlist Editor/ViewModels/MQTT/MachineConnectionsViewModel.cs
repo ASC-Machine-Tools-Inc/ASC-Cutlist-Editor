@@ -3,7 +3,17 @@ using System.Collections.Generic;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Views.MQTT;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
+using MQTTnet;
+using MQTTnet.Client;
+using MQTTnet.Client.Options;
+using MQTTnet.Server;
+using Newtonsoft.Json;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {
@@ -13,10 +23,24 @@ namespace AscCutlistEditor.ViewModels.MQTT
     /// </summary>
     internal class MachineConnectionsViewModel : ObservableObject
     {
+        internal readonly IMqttServer Server;
+        private readonly IMqttClient _listener;
+        private readonly string _listenerTopic;
+
+        private HashSet<string> _knownTopics = new HashSet<string>();
         private ObservableCollection<TabItem> _machineConnectionTabs = new ObservableCollection<TabItem>();
 
-        private HashSet<string> _knownConnections = new HashSet<string>();
-        // TODO: create a listener to call AddTab when a new number is detected (not in known connections)
+        public static int Port = 1883;
+        public static string Ip = "192.168.10.43";
+        public static string MainTopic = "alphapub";
+
+        public MachineConnectionsViewModel()
+        {
+            var mqttFactory = new MqttFactory();
+            Server = mqttFactory.CreateMqttServer();
+            _listener = mqttFactory.CreateMqttClient();
+            _listenerTopic = MainTopic + "/+/+";
+        }
 
         public ObservableCollection<TabItem> MachineConnectionTabs
         {
@@ -28,16 +52,78 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
         }
 
-        public void AddTab()
+        public async Task AddTab(string topic)
         {
-            MachineDataViewModel model = new MachineDataViewModel();
+            // Create a new model for listening to this topic.
+            MachineDataViewModel model = new MachineDataViewModel(Server, topic);
+            await model.StartClient();
 
-            MachineConnectionTabs.Add(new TabItem
+            Dispatcher dispatcher = Application.Current != null ?
+                Application.Current.Dispatcher :
+                Dispatcher.CurrentDispatcher;
+            dispatcher.Invoke(() =>
             {
-                Header = "Test",
-                Content = new UptimeControl(),
-                DataContext = model
+                MachineConnectionTabs.Add(new TabItem
+                {
+                    Header = topic,
+                    Content = new UptimeControl(),
+                    DataContext = model
+                });
             });
+        }
+
+        public async void Start()
+        {
+            if (!Server.IsStarted)
+            {
+                var options = new MqttServerOptionsBuilder()
+                    .WithDefaultEndpointPort(Port)
+                    .Build();
+                await Server.StartAsync(options);
+
+                // Start the MQTTClient to listen for new connections.
+                await StartListener();
+            }
+        }
+
+        private async Task StartListener()
+        {
+            // Create MQTT client.
+            var options = new MqttClientOptionsBuilder()
+                .WithTcpServer(Ip, Port)
+                .Build();
+
+            // Response to send on connection.
+            _listener.UseConnectedHandler(async e =>
+            {
+                Debug.WriteLine("### LISTENER CONNECTED ###");
+
+                // Subscribe to a topic.
+                await _listener.SubscribeAsync(_listenerTopic);
+            });
+
+            // Response to send on receiving a message.
+            _listener.UseApplicationMessageReceivedHandler(e =>
+            {
+                // Create a new tab if we haven't seen this topic before.
+                string topic = e.ApplicationMessage.Topic.Substring(MainTopic.Length);
+                if (!_knownTopics.Contains(topic))
+                {
+                    _knownTopics.Add(topic);
+                    AddTab(topic);
+
+                    Debug.WriteLine("### ADDING TOPIC " + topic + " ###");
+                }
+            });
+
+            try
+            {
+                await _listener.ConnectAsync(options);
+            }
+            catch
+            {
+                Debug.WriteLine("Connection unsuccessful.");
+            }
         }
     }
 }

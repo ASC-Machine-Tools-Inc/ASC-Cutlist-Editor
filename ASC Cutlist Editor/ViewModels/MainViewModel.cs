@@ -20,8 +20,6 @@ namespace AscCutlistEditor.ViewModels
 
         public PartCollectionViewModel PartCollectionViewModel { get; }
 
-        public MachineDataViewModel MachineDataViewModel { get; }
-
         public MachineConnectionsViewModel MachineConnectionsViewModel { get; }
 
         public MockMachineData MockMachineData { get; }
@@ -32,14 +30,10 @@ namespace AscCutlistEditor.ViewModels
 
             PartCollectionViewModel = new PartCollectionViewModel();
 
-            MachineDataViewModel = new MachineDataViewModel();
-
             MachineConnectionsViewModel = new MachineConnectionsViewModel();
-            MachineConnectionsViewModel.AddTab();
-            MachineConnectionsViewModel.AddTab();
+            MachineConnectionsViewModel.Start();  // Start listening for connections.
 
-            MockMachineData = new MockMachineData();
-            MockMachineData.StartServer();
+            MockMachineData = new MockMachineData(MachineConnectionsViewModel);
         }
 
         /// <summary>
@@ -68,11 +62,6 @@ namespace AscCutlistEditor.ViewModels
         public ICommand ClearCutlistCommand => new DelegateCommand(ClearCutlist);
 
         /// <summary>
-        /// Connects to the machines to start reading KPI data.
-        /// </summary>
-        public ICommand SetupMqttCommand => new DelegateCommand(SetupMqtt);
-
-        /// <summary>
         /// Create a new mock connection with MockMachineData to listen to.
         /// </summary>
         public ICommand AddMockConnectionCommand => new DelegateCommand(AddMockConnection);
@@ -99,15 +88,6 @@ namespace AscCutlistEditor.ViewModels
         {
             CutlistViewModel.ClearUi();
             PartCollectionViewModel.ClearUi();
-        }
-
-        /// <summary>
-        /// Start the server and client for MQTTnet, and try connecting
-        /// to the machines.
-        /// </summary>
-        private void SetupMqtt()
-        {
-            MachineDataViewModel.Start();
         }
 
         private void AddMockConnection()

@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace AscCutlistEditor.ViewModels.MQTT
@@ -21,6 +22,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
     /// <summary>
     /// Handles the data for a single machine connection.
     /// </summary>
+    ///
     internal class MachineDataViewModel : ObservableObject
     {
         private readonly IMqttServer _server;
@@ -28,16 +30,19 @@ namespace AscCutlistEditor.ViewModels.MQTT
         private readonly string _topic;
 
         private ObservableCollection<MachineData> _machineDataCollection = new ObservableCollection<MachineData>();
-        private MachineData _latestMachineData = null;
+        private MachineData _latestMachineData;
         private readonly LineSeries _uptimeSeries;
         private string _connectionStatus;
 
-        public MachineDataViewModel()
+        public PlotModel PlotModel { get; set; }
+
+        public MachineDataViewModel(IMqttServer server, string topic)
         {
+            _server = server;
+
             var mqttFactory = new MqttFactory();
-            _server = mqttFactory.CreateMqttServer();
             _client = mqttFactory.CreateMqttClient();
-            _topic = "alphapub/+/+";
+            _topic = MachineConnectionsViewModel.MainTopic + topic;
 
             MachineDataCollection = new ObservableCollection<MachineData>();
             LatestMachineData = null;
@@ -72,8 +77,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
             PlotModel = tmp;
         }
 
-        public PlotModel PlotModel { get; set; }
-
         public ObservableCollection<MachineData> MachineDataCollection
         {
             get => _machineDataCollection;
@@ -104,35 +107,13 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
         }
 
-        public async void Start()
-        {
-            if (!_server.IsStarted)
-            {
-                await _server.StartAsync(new MqttServerOptions());
-
-                // Start the MQTTClient to listen for new messages.
-                await StartClient();
-            }
-        }
-
-        public async Task PublishMessage(string topic, string payload)
-        {
-            var message = new MqttApplicationMessageBuilder()
-                .WithTopic(topic)
-                .WithPayload(payload)
-                .WithExactlyOnceQoS()
-                .WithRetainFlag()
-                .Build();
-            await _client.PublishAsync(message);
-        }
-
-        // TODO: implementation is rather brittle, as it relies on Bryan's touchscreen feeding data.
-        // We might want to set up some way to mock sending messages to our client instead.
         public async Task StartClient()
         {
             // Create MQTT client.
             var options = new MqttClientOptionsBuilder()
-                .WithTcpServer("192.168.10.43", 1883)
+                .WithTcpServer(
+                    MachineConnectionsViewModel.Ip,
+                    MachineConnectionsViewModel.Port)
                 .Build();
 
             // Response to send on connection.
@@ -146,7 +127,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 // Subscribe to a topic.
                 await _client.SubscribeAsync(_topic);
 
-                Debug.WriteLine("### SUBSCRIBED ###");
+                Debug.WriteLine("### SUBSCRIBED TO " + _topic + "###");
 
                 ConnectionStatus = "connected";
             });
@@ -195,6 +176,17 @@ namespace AscCutlistEditor.ViewModels.MQTT
             {
                 Debug.WriteLine("Connection unsuccessful.");
             }
+        }
+
+        public async Task PublishMessage(string topic, string payload)
+        {
+            var message = new MqttApplicationMessageBuilder()
+                .WithTopic(topic)
+                .WithPayload(payload)
+                .WithExactlyOnceQoS()
+                .WithRetainFlag()
+                .Build();
+            await _client.PublishAsync(message);
         }
 
         private void AddMachineData(dynamic data)
