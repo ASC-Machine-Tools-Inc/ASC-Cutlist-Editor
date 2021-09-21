@@ -23,6 +23,9 @@ namespace AscCutlistEditor.Utility
         }
     }
 
+    /// <summary>
+    /// Converter for getting the inverse percentage of a double. (Ex: 33.0% -> 67.0%)
+    /// </summary>
     [ValueConversion(typeof(double), typeof(double))]
     public class InversePercentageConverter : IValueConverter
     {

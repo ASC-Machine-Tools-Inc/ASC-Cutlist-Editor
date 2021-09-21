@@ -1,17 +1,14 @@
-﻿using MQTTnet;
-using MQTTnet.Client;
-using MQTTnet.Client.Options;
-using MQTTnet.Server;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 using AscCutlistEditor.Models.MQTT;
 using AscCutlistEditor.ViewModels.MQTT;
+using MQTTnet;
+using MQTTnet.Client;
+using MQTTnet.Client.Options;
 
-namespace AscCutlistEditor.Utility
+namespace AscCutlistEditor.Utility.MQTT
 {
     /// <summary>
     /// Sends mock data to alphapub for simulating machine information.
