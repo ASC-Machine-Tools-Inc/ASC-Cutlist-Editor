@@ -13,14 +13,15 @@ namespace AscCutlistEditor.Utility.MQTT
 {
     internal class Queries
     {
-        private SqlConnection conn = new SqlConnection("TODO: connection string, store somewhere safe and let user set");
+        private SqlConnection _conn = new SqlConnection("TODO: connection string, store somewhere safe and let user set");
 
+        /*
         /// <summary>
         /// Get the order numbers, material type, and total run length of the orders for a specific machine.
         /// </summary>
         /// <param name="machineId">The machine's corresponding id to retrieve orders for.</param>
         /// <returns>A list of the orders for a given machine.</returns>
-        public IQueryable<dynamic> getOrders(string machineId)
+        public IQueryable<dynamic> GetOrders(string machineId)
         {
             return amsorder
                 .Select(x => new
@@ -39,7 +40,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// </summary>
         /// <param name="coilId">The coil's corresponding id to get data for.</param>
         /// <returns>The data for that coil</returns>
-        public IQueryable<dynamic> getCoil(string coilId)
+        public IQueryable<dynamic> GetCoil(string coilId)
         {
             return amscoil
                 .Select(x => new
@@ -55,7 +56,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// Get the list of coils that aren't currently depleted for displaying on an HMI.
         /// </summary>
         /// <returns>A list of non-depleted coils.</returns>
-        public IQueryable<dynamic> getCoils()
+        public IQueryable<dynamic> GetCoils()
         {
             return amscoil
                 .Select(x => new
@@ -75,7 +76,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// <param name="machineId">The machine's corresponding id to retrieve orders for.</param>
         /// <param name="orderNum">The orders' corresponding id to retrieve orders for.</param>
         /// <returns>A list of orders for the given machine and order number.</returns>
-        public IQueryable<dynamic> getCoils(string machineId, string orderNum)
+        public IQueryable<dynamic> GetCoils(string machineId, string orderNum)
         {
             return amsorder
                 .Select(x => new
@@ -93,7 +94,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// </summary>
         /// <param name="orderNum">The order number for the corresponding bundle.</param>
         /// <returns>A list of distinct bundle data for the order number.</returns>
-        public IQueryable<dynamic> getBundle(string orderNum)
+        public IQueryable<dynamic> GetBundle(string orderNum)
         {
             return amsbundle
                 .Select(x => new
@@ -119,14 +120,15 @@ namespace AscCutlistEditor.Utility.MQTT
         /// Update amsproduct by inserting the contents of usageData.
         /// </summary>
         /// <param name="usageData">The data to add to amsproduct.</param>
-        private async void setUsageData(IQueryable<dynamic> usageData)
+        private async void SetUsageData(IQueryable<dynamic> usageData)
         {
-            foreach (var Product in usageData)
+            foreach (var product in usageData)
             {
                 // Something along these lines - need model for product, set up context
                 //_context.TimeLog.Add(TimeLog);
                 //await _context.SaveChangesAsync();
             }
         }
+        */
     }
 }

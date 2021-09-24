@@ -13,40 +13,39 @@ namespace AscCutlistEditorTests.ViewModels
     [TestClass]
     public class MainViewModelTests
     {
+        private readonly MainViewModel _model = new MainViewModel();
+
         [TestMethod]
         public void MainViewModelVisibilityTest()
         {
             // Arrange
-            MainViewModel model = new MainViewModel();
             List<bool> visibilityList = new List<bool> { false, false, false };
             ObservableCollection<bool> visibility =
                 new ObservableCollection<bool>(visibilityList);
 
             // Act
             // Test UI toggling
-            model.ToggleCutlistCommand.Execute(null);
-            model.ToggleFlatViewCommand.Execute(null);
-            model.Toggle3DCommand.Execute(null);
+            _model.ToggleCutlistCommand.Execute(null);
+            _model.ToggleFlatViewCommand.Execute(null);
+            _model.Toggle3DCommand.Execute(null);
 
             // Assert
-            Assert.IsTrue(model.UiVisibility.SequenceEqual(visibility));
+            Assert.IsTrue(_model.UiVisibility.SequenceEqual(visibility));
         }
 
         [TestMethod]
         public void MainViewModelClearCutlistTest()
         {
             // Arrange
-            MainViewModel model = new MainViewModel();
-
             // Simulating opening a cutlist.
-            CutlistImportViewModel cutModel = model.CutlistViewModel;
+            CutlistImportViewModel cutModel = _model.CutlistViewModel;
             cutModel.Filename = "Imaginary.CSV";
             cutModel.ImportVisibility = false;
             cutModel.CloseButtonVisibility = true;
             cutModel.Cutlists.Add(new Cutlist());
 
             // Simulating drawing a part row.
-            PartCollectionViewModel rowModel = model.PartCollectionViewModel;
+            PartCollectionViewModel rowModel = _model.PartCollectionViewModel;
             rowModel.FlatPartButtonRowVisibility = true;
             rowModel.PartRows.Add(new PartRow());
 
@@ -54,7 +53,7 @@ namespace AscCutlistEditorTests.ViewModels
             rowModel.Bundles.Add(new SingleBundleControl());
 
             // Act
-            model.ClearCutlistCommand.Execute(null);
+            _model.ClearCutlistCommand.Execute(null);
 
             // Assert
             Assert.AreEqual(cutModel.Filename, null);

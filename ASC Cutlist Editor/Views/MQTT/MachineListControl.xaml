@@ -14,11 +14,18 @@
         </Grid.RowDefinitions>
 
         <!-- Buttons for testing mock connections -->
-        <Button
-            Command="{Binding AddMockConnectionCommand}"
-            Margin="10">
-            Add Mock Connection
-        </Button>
+        <WrapPanel>
+            <Button
+                Command="{Binding StartListeningCommand}"
+                Margin="10">
+                Start Listening For Connections
+            </Button>
+            <Button
+                Command="{Binding AddMockConnectionCommand}"
+                Margin="10">
+                Add Mock Connection
+            </Button>
+        </WrapPanel>
 
         <TabControl
             Grid.Row="1"

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Threading;
 using AscCutlistEditor.Utility;
+using AscCutlistEditor.Utility.MQTT;
 using MQTTnet.Client;
 
 namespace AscCutlistEditor.Models.MQTT

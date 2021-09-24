@@ -37,6 +37,7 @@ namespace AscCutlistEditor.ViewModels.Parts
         public PartCollectionViewModel()
         {
             PartRows = new ObservableCollection<PartRow>();
+            Bundles = new ObservableCollection<SingleBundleControl>();
         }
 
         public ObservableCollection<PartRow> PartRows
