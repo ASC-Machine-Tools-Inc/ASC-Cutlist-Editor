@@ -34,13 +34,13 @@ namespace AscCutlistEditor.Utility
         public object Convert(object value, Type targetType, object parameter,
             System.Globalization.CultureInfo culture)
         {
-            return 100 - (double)value;
+            return 100 - (double?)value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter,
             System.Globalization.CultureInfo culture)
         {
-            throw new NotSupportedException();
+            return Convert(value, targetType, parameter, culture);
         }
 
         #endregion IValueConverter Members
