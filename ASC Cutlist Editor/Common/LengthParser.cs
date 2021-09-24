@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Windows.Foundation.Metadata;
 
-namespace ASC_Cutlist_Editor.Common
+namespace AscCutlistEditor.Common
 {
     internal class LengthParser
     {
@@ -13,20 +10,23 @@ namespace ASC_Cutlist_Editor.Common
 
         public static double ParseString(string length)
         {
+            // Try regular parsing first.
+            if (double.TryParse(length, out double result))
+            {
+                return result;
+            }
+
             // Denotes what index to cut off for the suffix.
             int suffixCutoff = Math.Max(0, length.Length - 2);
 
             string unconverted = length[..suffixCutoff];
             string suffix = length[suffixCutoff..];
 
-            switch (suffix)
+            return suffix switch
             {
-                case "mm":
-                    return double.Parse(unconverted) / 25.4;
-
-                default:
-                    return double.Parse(length);
-            }
+                "mm" => double.Parse(unconverted) / 25.4,
+                _ => throw new FormatException()
+            };
         }
     }
 }

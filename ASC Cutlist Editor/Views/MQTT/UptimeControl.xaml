@@ -1,0 +1,98 @@
+﻿<UserControl x:Class="AscCutlistEditor.Views.MQTT.UptimeControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:oxy="http://oxyplot.org/wpf"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mqtt="clr-namespace:AscCutlistEditor.ViewModels.MQTT" d:DataContext="{d:DesignInstance Type=mqtt:MachineDataViewModel}"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0"
+                    HorizontalAlignment="Center">
+            <TextBlock FontWeight="Bold">
+                Connection status:
+            </TextBlock>
+            <TextBlock Text="{Binding ConnectionStatus}">
+            </TextBlock>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <DataGrid
+                ItemsSource="{Binding MachineDataCollection}"
+                AutoGenerateColumns="True"
+                IsReadOnly="True"
+                GridLinesVisibility="Horizontal"
+                HeadersVisibility="Column"
+                HorizontalAlignment="Stretch">
+                <!-- Disable selection -->
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="IsHitTestVisible" Value="False" />
+                    </Style>
+                </DataGrid.RowStyle>
+            </DataGrid>
+
+            <oxy:PlotView
+                Grid.Column="1"
+                Margin="5"
+                Model="{Binding PlotModel}" />
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <ProgressBar
+                    MinHeight="50"
+                    MinWidth="100"
+                    Foreground="Green"
+                    Value="{Binding UptimeRunningPercentage}">
+                    <ProgressBar.LayoutTransform>
+                        <RotateTransform Angle="-90" />
+                    </ProgressBar.LayoutTransform>
+                </ProgressBar>
+                <TextBlock
+                    Text="{Binding UptimeRunningPercentage,
+                    StringFormat=Uptime: {0:#,#.0}%}"></TextBlock>
+                <!-- TODO: convert text in format instead to 2 decimal points? -->
+            </StackPanel>
+
+            <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <ProgressBar
+                    MinHeight="50"
+                    MinWidth="100"
+                    Foreground="Red"
+                    Value="{Binding UptimeRunningPercentage,
+                    Converter={StaticResource InversePercentageConverter}}">
+                    <ProgressBar.LayoutTransform>
+                        <RotateTransform Angle="-90" />
+                    </ProgressBar.LayoutTransform>
+                </ProgressBar>
+                <TextBlock
+                    Text="{Binding UptimeRunningPercentage,
+                    Converter={StaticResource InversePercentageConverter},
+                    StringFormat=Downtime: {0:#,#.0}%}"></TextBlock>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
