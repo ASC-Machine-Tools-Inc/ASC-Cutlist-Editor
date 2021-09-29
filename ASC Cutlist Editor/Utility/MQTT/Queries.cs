@@ -15,7 +15,6 @@ namespace AscCutlistEditor.Utility.MQTT
     {
         private SqlConnection _conn = new SqlConnection("TODO: connection string, store somewhere safe and let user set");
 
-        /*
         /// <summary>
         /// Get the order numbers, material type, and total run length of the orders for a specific machine.
         /// </summary>
@@ -129,6 +128,5 @@ namespace AscCutlistEditor.Utility.MQTT
                 //await _context.SaveChangesAsync();
             }
         }
-        */
     }
 }

@@ -69,6 +69,8 @@ namespace AscCutlistEditor.ViewModels
         /// </summary>
         public ICommand AddMockConnectionCommand => new DelegateCommand(AddMockConnection);
 
+        public ICommand ConnectToSqlServerCommand => new DelegateCommand(ConnectToSqlServer);
+
         private void ToggleView(int index)
         {
             UiVisibility[index] = !UiVisibility[index];
@@ -102,6 +104,16 @@ namespace AscCutlistEditor.ViewModels
         private void AddMockConnection()
         {
             MockMachineData.AddMockClient();
+        }
+
+        private void ConnectToSqlServer()
+        {
+            UserConnection.CreateConnectionString(
+                "67.192.150.132,1452",
+                "taylormetals",
+                "TayMet_adj",
+                "Taymet555!"
+                );
         }
     }
 }

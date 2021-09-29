@@ -25,6 +25,48 @@
                 Margin="10">
                 Add Mock Connection
             </Button>
+
+            <!-- SQL Server connection settings. -->
+            <Button
+                Command="{Binding ConnectToSqlServerCommand}"
+                Margin="10">
+                Test SQL Server Connection
+            </Button>
+            <!-- TODO: change expander to show dialog window -->
+            <Expander>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <Label>Data Source:</Label>
+                    <TextBox
+                             Grid.Column="1"
+                             Margin="0,0,0,10"></TextBox>
+
+                    <Label Grid.Row="1">Database Name:</Label>
+                    <TextBox Grid.Row="1"
+                             Grid.Column="1"
+                             Margin="0,0,0,10"></TextBox>
+
+                    <Label Grid.Row="2">Username:</Label>
+                    <TextBox Grid.Row="2"
+                             Grid.Column="1"
+                             Margin="0,0,0,10"></TextBox>
+
+                    <Label Grid.Row="3">Password:</Label>
+                    <TextBox Grid.Row="3"
+                             Grid.Column="1"
+                             Margin="0,0,0,10"></TextBox>
+                </Grid>
+            </Expander>
         </WrapPanel>
 
         <TabControl
