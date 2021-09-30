@@ -49,22 +49,25 @@
                     <Label>Data Source:</Label>
                     <TextBox
                              Grid.Column="1"
-                             Text="{Binding SettingsViewModel[DataSource]}"
+                             Text="{Binding SqlConnectionViewModel[DataSource]}"
                              Margin="0,0,0,10"></TextBox>
 
                     <Label Grid.Row="1">Database Name:</Label>
                     <TextBox Grid.Row="1"
                              Grid.Column="1"
+                             Text="{Binding SqlConnectionViewModel[DatabaseName]}"
                              Margin="0,0,0,10"></TextBox>
 
                     <Label Grid.Row="2">Username:</Label>
                     <TextBox Grid.Row="2"
                              Grid.Column="1"
+                             Text="{Binding SqlConnectionViewModel[Username]}"
                              Margin="0,0,0,10"></TextBox>
 
                     <Label Grid.Row="3">Password:</Label>
                     <TextBox Grid.Row="3"
                              Grid.Column="1"
+                             Text="{Binding SqlConnectionViewModel[Password]}"
                              Margin="0,0,0,10"></TextBox>
                 </Grid>
             </Expander>

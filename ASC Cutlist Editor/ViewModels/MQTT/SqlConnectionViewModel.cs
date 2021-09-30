@@ -1,5 +1,12 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Properties;
 
@@ -9,7 +16,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
     /// This handles Bryan's code - connecting to the database, querying,
     /// and updating the ams data.
     /// </summary>
-    internal class SettingsViewModel : ObservableObject
+    internal class SqlConnectionViewModel : ObservableObject
     {
         public object this[string settingsName]
         {
@@ -50,11 +57,11 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 DataSource = dataSource,
                 InitialCatalog = databaseName,
                 UserID = username,
-                Password = password,
-                ConnectTimeout = 3  // Might remove and replace with loading later?
+                Password = password
             };
+            Debug.WriteLine(Builder.ConnectionString);
 
-            // SettingsViewModel["DataSource"] = dataSource;
+            // SqlConnectionViewModel["DataSource"] = dataSource;
 
             Settings.Default.DataSource = dataSource;
             Settings.Default.DatabaseName = databaseName;
@@ -62,152 +69,217 @@ namespace AscCutlistEditor.ViewModels.MQTT
             Settings.Default.Password = password;
             Settings.Default.Save();
 
-            await using (SqlConnection conn = new SqlConnection(Builder.ConnectionString))
+            await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
+            try
             {
-                try
+                // Set the loading cursor while connecting.
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                await conn.OpenAsync();
+
+                // Show if connection successful.
+                MessageBox.Show(
+                    "Connection successful!",
+                    "ASC Cutlist Editor",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+
+                // Test query.
+                DataTable table = await GetOrders("5");
+
+                Debug.WriteLine("Writing rows.");
+                foreach (DataRow row in table.Rows)
                 {
-                    await conn.OpenAsync();
-                    // Show if connection successful.
-                    MessageBox.Show(
-                        "Connection successful!",
-                        "ASC Cutlist Editor",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
-                }
-                catch (SqlException)
-                {
-                    MessageBox.Show(
-                        "Error connecting to the server.",
-                        "ASC Cutlist Editor",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                    Debug.WriteLine(string.Join(", ", row.ItemArray));
                 }
             }
-
-            // TODO: see if we need to set persist security info true: might need it for SQL auth
-
-            string testConn = "Data Source=67.192.150.132,1452;Initial Catalog=taylormetals;Persist Security Info=True;User ID=TayMet_adj;Password=***********";
+            catch (SqlException)
+            {
+                MessageBox.Show(
+                    "Error connecting to the server.",
+                    "ASC Cutlist Editor",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+            finally
+            {
+                // Reset to default.
+                Mouse.OverrideCursor = null;
+            }
         }
 
-        // TODO: message recieved handler
+        // TODO: message received handler
 
-        /*
-         *
-             /// <summary>
-    /// Get the order numbers, material type, and total run length of the orders for a specific machine.
-    /// </summary>
-    /// <param name="machineId">The machine's corresponding id to retrieve orders for.</param>
-    /// <returns>A list of the orders for a given machine.</returns>
-    public List<dynamic> GetOrders(string machineId)
-    {
-        using
+        /// <summary>
+        /// Get the order numbers, material type, and total run length of the orders for a specific machine.
+        /// </summary>
+        /// <param name="machineId">The machine's corresponding id to retrieve orders for.</param>
+        /// <returns>A list of the orders for a given machine.</returns>
+        public async Task<DataTable> GetOrders(string machineId)
+        {
+            DataTable result = new DataTable();
 
+            await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
+
+            string queryStr = "Select orderno, material, SUM(length * " +
+                              "convert(decimal(10,2),quantity) ) As orderlen, " +
+                              "partno From amsorder Where orderno IS NOT NULL " +
+                              "And machinenum like @machineID GROUP BY orderno, " +
+                              "material, machinenum, partno";
+
+            await using SqlCommand cmd = new SqlCommand(queryStr, conn);
+
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddWithValue(
+                "@machineID",
+                "%" + machineId + "%");
+
+            try
+            {
+                conn.Open();
+                await using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                result.Load(reader);
+            }
+            catch (SqlException)
+            {
+                MessageBox.Show(
+                    $"SQL exception for GetOrders({machineId}).",
+                    "ASC Cutlist Editor",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// TODO: this one is orderlenquery vs ordernoquery? ask Bryan
+        /// </summary>
+        /// <param name="coilId"></param>
+        /// <returns></returns>
+        public async Task<DataTable> GetOrdersLen(string coilId)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Get the coil data for a specific coil.
+        /// </summary>
+        /// <param name="coilId">The coil's corresponding id to get data for.</param>
+        /// <returns>The data for that coil</returns>
+        public async Task<DataTable> GetCoil(string coilId)
+        {
+            DataTable result = new DataTable();
+
+            await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
+
+            string queryStr = "SELECT startlength as startlen, lengthused as lenused, " +
+                              "material as matl from amscoil where coilnumber like @coilID";
+
+            await using SqlCommand cmd = new SqlCommand(queryStr, conn);
+
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddWithValue(
+                "@coilID",
+                "%" + coilId + "%");
+
+            try
+            {
+                conn.Open();
+                await using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                result.Load(reader);
+            }
+            catch (SqlException)
+            {
+                MessageBox.Show(
+                    $"SQL exception for GetCoil({coilId}).",
+                    "ASC Cutlist Editor",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Get the list of coils that aren't currently depleted for displaying on an HMI.
+        /// </summary>
+        /// <returns>A list of non-depleted coils.</returns>
+        public IQueryable<dynamic> GetCoils()
+        {
+            return amscoil
+                .Select(x => new
+                {
+                    x.coilnumber,
+                    x.description,
+                    x.material,
+                    x.startlength,
+                    x.lengthused
+                })
+                .Where(x => x.dateout == null);
+        }
+
+        /// <summary>
+        /// Get the list of orders for the given order number on the given machine.
+        /// </summary>
+        /// <param name="machineId">The machine's corresponding id to retrieve orders for.</param>
+        /// <param name="orderNum">The orders' corresponding id to retrieve orders for.</param>
+        /// <returns>A list of orders for the given machine and order number.</returns>
+        public IQueryable<dynamic> GetCoils(string machineId, string orderNum)
+        {
             return amsorder
                 .Select(x => new
                 {
-                    OrderNo = x.orderno,
-                    Material = x.material,
-                    OrderLen = x.Sum(y => y.length * Math.Round(y.quantity, 2)),
-                    PartNo = x.partno
+                    x.item_id,
+                    x.length,
+                    x.quantity,
+                    x.bundle
                 })
-                .Where(x => x.orderno != null && x.machineNum.equals(machineId))
-                .GroupBy(x => new { x.orderno, x.material, x.machinenum, x.partno });
-    }
-
-    /// <summary>
-    /// Get the coil data for a specific coil.
-    /// </summary>
-    /// <param name="coilId">The coil's corresponding id to get data for.</param>
-    /// <returns>The data for that coil</returns>
-    public IQueryable<dynamic> GetCoil(string coilId)
-    {
-        return amscoil
-            .Select(x => new
-            {
-                x.startlength,
-                x.lengthused,
-                x.material
-            })
-            .Where(x => x.coilnumber.equals(coilId));
-    }
-
-    /// <summary>
-    /// Get the list of coils that aren't currently depleted for displaying on an HMI.
-    /// </summary>
-    /// <returns>A list of non-depleted coils.</returns>
-    public IQueryable<dynamic> GetCoils()
-    {
-        return amscoil
-            .Select(x => new
-            {
-                x.coilnumber,
-                x.description,
-                x.material,
-                x.startlength,
-                x.lengthused
-            })
-            .Where(x => x.dateout == null);
-    }
-
-    /// <summary>
-    /// Get the list of orders for the given order number on the given machine.
-    /// </summary>
-    /// <param name="machineId">The machine's corresponding id to retrieve orders for.</param>
-    /// <param name="orderNum">The orders' corresponding id to retrieve orders for.</param>
-    /// <returns>A list of orders for the given machine and order number.</returns>
-    public IQueryable<dynamic> GetCoils(string machineId, string orderNum)
-    {
-        return amsorder
-            .Select(x => new
-            {
-                x.item_id,
-                x.length,
-                x.quantity,
-                x.bundle
-            })
-            .Where(x => x.machinenum.equals(machineId) && x.orderno.equals(orderNum));
-    }
-
-    /// <summary>
-    /// Get the bundle data for a given order number.
-    /// </summary>
-    /// <param name="orderNum">The order number for the corresponding bundle.</param>
-    /// <returns>A list of distinct bundle data for the order number.</returns>
-    public IQueryable<dynamic> GetBundle(string orderNum)
-    {
-        return amsbundle
-            .Select(x => new
-            {
-                x.material,
-                x.prodcode,
-                x.user1,
-                x.user2,
-                x.user3,
-                x.user4,
-                x.custname,
-                x.custaddr1,
-                x.custaddr2,
-                x.custcity,
-                x.custstate,
-                x.custzip
-            })
-            .Distinct()
-            .Where(x => x.orderno.equals(orderNum));
-    }
-
-    /// <summary>
-    /// Update amsproduct by inserting the contents of usageData.
-    /// </summary>
-    /// <param name="usageData">The data to add to amsproduct.</param>
-    private async void SetUsageData(IQueryable<dynamic> usageData)
-    {
-        foreach (var product in usageData)
-        {
-            // Something along these lines - need model for product, set up context
-            //_context.TimeLog.Add(TimeLog);
-            //await _context.SaveChangesAsync();
+                .Where(x => x.machinenum.equals(machineId) && x.orderno.equals(orderNum));
         }
+
+        /// <summary>
+        /// Get the bundle data for a given order number.
+        /// </summary>
+        /// <param name="orderNum">The order number for the corresponding bundle.</param>
+        /// <returns>A list of distinct bundle data for the order number.</returns>
+        public IQueryable<dynamic> GetBundle(string orderNum)
+        {
+            return amsbundle
+                .Select(x => new
+                {
+                    x.material,
+                    x.prodcode,
+                    x.user1,
+                    x.user2,
+                    x.user3,
+                    x.user4,
+                    x.custname,
+                    x.custaddr1,
+                    x.custaddr2,
+                    x.custcity,
+                    x.custstate,
+                    x.custzip
+                })
+                .Distinct()
+                .Where(x => x.orderno.equals(orderNum));
+        }
+
+        /*
+/// <summary>
+/// Update amsproduct by inserting the contents of usageData.
+/// </summary>
+/// <param name="usageData">The data to add to amsproduct.</param>
+private async void SetUsageData(IQueryable<dynamic> usageData)
+{
+    foreach (var product in usageData)
+    {
+        // Something along these lines - need model for product, set up context
+        //_context.TimeLog.Add(TimeLog);
+        //await _context.SaveChangesAsync();
     }
-         */
+}
+
+*/
     }
 }
