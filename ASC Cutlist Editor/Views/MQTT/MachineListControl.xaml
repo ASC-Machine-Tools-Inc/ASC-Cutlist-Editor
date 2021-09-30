@@ -49,6 +49,7 @@
                     <Label>Data Source:</Label>
                     <TextBox
                              Grid.Column="1"
+                             Text="{Binding SettingsViewModel[DataSource]}"
                              Margin="0,0,0,10"></TextBox>
 
                     <Label Grid.Row="1">Database Name:</Label>

@@ -1,6 +1,7 @@
 ﻿using AscCutlistEditor.Views;
 using System.Collections.ObjectModel;
 using System.Windows;
+using AscCutlistEditor.Views.FlatParts;
 
 namespace AscCutlistEditor.Models
 {

@@ -23,6 +23,8 @@ namespace AscCutlistEditor.ViewModels
 
         public MockMachineData MockMachineData { get; }
 
+        public SettingsViewModel SettingsViewModel { get; }
+
         public MainViewModel()
         {
             CutlistViewModel = new CutlistImportViewModel(DrawParts);
@@ -32,6 +34,8 @@ namespace AscCutlistEditor.ViewModels
             MachineConnectionsViewModel = new MachineConnectionsViewModel();
 
             MockMachineData = new MockMachineData(MachineConnectionsViewModel);
+
+            SettingsViewModel = new SettingsViewModel();
         }
 
         /// <summary>
@@ -108,8 +112,9 @@ namespace AscCutlistEditor.ViewModels
 
         private void ConnectToSqlServer()
         {
-            UserConnection.CreateConnectionString(
-                "67.192.150.132,1452",
+            UserConnection conn = new UserConnection();
+            conn.CreateConnectionString(
+                (string)SettingsViewModel["DataSource"],
                 "taylormetals",
                 "TayMet_adj",
                 "Taymet555!"

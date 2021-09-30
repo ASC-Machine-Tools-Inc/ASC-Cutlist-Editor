@@ -6,6 +6,8 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
+using AscCutlistEditor.Views.Bundles;
+using AscCutlistEditor.Views.FlatParts;
 
 namespace AscCutlistEditor.ViewModels.Parts
 {

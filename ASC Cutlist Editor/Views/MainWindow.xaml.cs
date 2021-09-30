@@ -1,7 +1,8 @@
-﻿using AscCutlistEditor.ViewModels;
+﻿using System;
 using System.Windows;
+using AscCutlistEditor.ViewModels;
 
-namespace AscCutlistEditor
+namespace AscCutlistEditor.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
