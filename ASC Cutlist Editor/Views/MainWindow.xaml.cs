@@ -20,7 +20,6 @@ namespace AscCutlistEditor.Views
 
         private static void MainWindow_Closed(object sender, EventArgs e)
         {
-            Debug.WriteLine("Saving!");
             SqlConnectionViewModel.Save();
         }
     }
