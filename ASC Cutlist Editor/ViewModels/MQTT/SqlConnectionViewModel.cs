@@ -20,6 +20,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
     /// </summary>
     internal class SqlConnectionViewModel : ObservableObject
     {
+        public SqlConnectionStringBuilder Builder;
+
         public object this[string settingsName]
         {
             get => Settings.Default[settingsName];
@@ -31,16 +33,19 @@ namespace AscCutlistEditor.ViewModels.MQTT
         }
 
         // Save the user settings and encrypt them.
-        public void Save()
+        public static void Save()
         {
+            string sectionName = "userSettings/AscCutlistEditor.Properties.Settings";
+            string protectionProvider = "DataProtectionConfigurationProvider";
+
             Configuration config = ConfigurationManager.OpenExeConfiguration(
                 ConfigurationUserLevel.PerUserRoamingAndLocal);
-            ConfigurationSection userSettings = config.GetSection("userSettings/AscCutlistEditor.Properties.Settings");
-            userSettings.SectionInformation.ProtectSection("DataProtectionConfigurationProvider");
-            config.Save(ConfigurationSaveMode.Full);
-        }
+            ConfigurationSection userSettings = config.GetSection(sectionName);
+            userSettings.SectionInformation.ProtectSection(protectionProvider);
 
-        public SqlConnectionStringBuilder Builder;
+            config.Save(ConfigurationSaveMode.Full);
+            Settings.Default.Save();
+        }
 
         public async void CreateConnectionString(
             string dataSource,
@@ -66,15 +71,11 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 UserID = username,
                 Password = password
             };
-            Debug.WriteLine(Builder.ConnectionString);
 
-            // SqlConnectionViewModel["DataSource"] = dataSource;
-
-            Settings.Default.DataSource = dataSource;
-            Settings.Default.DatabaseName = databaseName;
-            Settings.Default.Username = username;
-            Settings.Default.Password = password;
-            Save();
+            this["DataSource"] = dataSource;
+            this["DatabaseName"] = databaseName;
+            this["Username"] = username;
+            this["Password"] = password;
 
             await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
             try
@@ -92,9 +93,9 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     MessageBoxImage.Information);
 
                 // Test query.
-                DataTable table = await GetCoil("21");
+                DataTable table = await GetNonDepletedCoils();
 
-                Debug.WriteLine("Writing GetOrders rows.");
+                Debug.WriteLine("Writing GetNonDepletedCoils rows.");
                 foreach (DataRow row in table.Rows)
                 {
                     Debug.WriteLine(string.Join(", ", row.ItemArray));
@@ -131,12 +132,12 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
 
-            string queryStr = "SELECT orderno, material, partno, " +
-                              "SUM(length * CONVERT(DECIMAL(10,2),quantity)) AS orderlen " +
-                              "FROM amsorder " +
-                              "WHERE orderno IS NOT NULL AND " +
-                              "machinenum LIKE @machineID " +
-                              "GROUP BY orderno, material, partno, machinenum";
+            string queryStr =
+                "SELECT orderno, material, partno, " +
+                "SUM(length * CONVERT(DECIMAL(10,2),quantity)) AS orderlen " +
+                "FROM amsorder " +
+                "WHERE orderno IS NOT NULL AND machinenum LIKE @machineID " +
+                "GROUP BY orderno, material, partno, machinenum";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
@@ -177,11 +178,12 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
 
-            string queryStr = "SELECT orderno, material, " +
-                              "SUM(length * CONVERT(DECIMAL(10,2),quantity)) AS orderlen " +
-                              "FROM amsorder " +
-                              "WHERE orderno LIKE @orderId " +
-                              "GROUP BY orderno, material";
+            string queryStr =
+                "SELECT orderno, material, " +
+                "SUM(length * CONVERT(DECIMAL(10,2),quantity)) AS orderlen " +
+                "FROM amsorder " +
+                "WHERE orderno LIKE @orderId " +
+                "GROUP BY orderno, material";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
@@ -219,8 +221,10 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
 
-            string queryStr = "SELECT startlength as startlen, lengthused as lenused, " +
-                              "material as matl from amscoil where coilnumber like @coilID";
+            string queryStr =
+                "SELECT startlength, lengthused, material " +
+                "FROM amscoil " +
+                "WHERE coilnumber LIKE @coilID";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
@@ -247,26 +251,24 @@ namespace AscCutlistEditor.ViewModels.MQTT
             return result;
         }
 
-        /*
         /// <summary>
-        /// Get the coil data for a specific coil.
+        /// Get all non-depleted coils.
         /// </summary>
-        /// <returns>The data for that coil</returns>
-        public async Task<DataTable> GetCoil()
+        /// <returns>The list of non-depleted coils.</returns>
+        public async Task<DataTable> GetNonDepletedCoils()
         {
             DataTable result = new DataTable();
 
             await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
 
-            string queryStr = "SELECT startlength as startlen, lengthused as lenused, " +
-                              "material as matl from amscoil where coilnumber like @coilID";
+            string queryStr = "SELECT coilnumber, description, material, " +
+                              "startlength, lengthused " +
+                              "FROM amscoil " +
+                              "WHERE dateout IS NULL";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
             cmd.CommandType = CommandType.Text;
-            cmd.Parameters.AddWithValue(
-                "@coilID",
-                "%" + coilId + "%");
 
             try
             {
@@ -277,7 +279,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             catch (SqlException)
             {
                 MessageBox.Show(
-                    $"SQL exception for GetCoil({coilId}).",
+                    $"SQL exception for GetNonDepletedCoils().",
                     "ASC Cutlist Editor",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
@@ -302,7 +304,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     x.startlength,
                     x.lengthused
                 })
-                .Where(x => x.dateout == null);
+                .WHERE(x => x.dateout == null);
         }
 
         /// <summary>
@@ -321,7 +323,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     x.quantity,
                     x.bundle
                 })
-                .Where(x => x.machinenum.equals(machineId) && x.orderno.equals(orderNum));
+                .WHERE(x => x.machinenum.equals(machineId) && x.orderno.equals(orderNum));
         }
 
         /// <summary>
@@ -348,7 +350,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     x.custzip
                 })
                 .Distinct()
-                .Where(x => x.orderno.equals(orderNum));
+                .WHERE(x => x.orderno.equals(orderNum));
         }
 
         /*
