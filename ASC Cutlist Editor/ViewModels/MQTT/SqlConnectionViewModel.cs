@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Windows.Security.Cryptography.Core;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Properties;
 
@@ -28,9 +30,14 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
         }
 
+        // Save the user settings and encrypt them.
         public void Save()
         {
-            Settings.Default.Save();
+            Configuration config = ConfigurationManager.OpenExeConfiguration(
+                ConfigurationUserLevel.PerUserRoamingAndLocal);
+            ConfigurationSection userSettings = config.GetSection("userSettings/AscCutlistEditor.Properties.Settings");
+            userSettings.SectionInformation.ProtectSection("DataProtectionConfigurationProvider");
+            config.Save(ConfigurationSaveMode.Full);
         }
 
         public SqlConnectionStringBuilder Builder;
@@ -67,7 +74,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             Settings.Default.DatabaseName = databaseName;
             Settings.Default.Username = username;
             Settings.Default.Password = password;
-            Settings.Default.Save();
+            Save();
 
             await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
             try
@@ -85,9 +92,9 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     MessageBoxImage.Information);
 
                 // Test query.
-                DataTable table = await GetOrders("5");
+                DataTable table = await GetCoil("21");
 
-                Debug.WriteLine("Writing rows.");
+                Debug.WriteLine("Writing GetOrders rows.");
                 foreach (DataRow row in table.Rows)
                 {
                     Debug.WriteLine(string.Join(", ", row.ItemArray));
@@ -111,21 +118,25 @@ namespace AscCutlistEditor.ViewModels.MQTT
         // TODO: message received handler
 
         /// <summary>
-        /// Get the order numbers, material type, and total run length of the orders for a specific machine.
+        /// Get the order numbers, material type, part number, and total run
+        /// length of the orders for a specific machine.
         /// </summary>
-        /// <param name="machineId">The machine's corresponding id to retrieve orders for.</param>
+        /// <param name="machineId">
+        /// The machine's corresponding id to retrieve orders for.
+        /// </param>
         /// <returns>A list of the orders for a given machine.</returns>
-        public async Task<DataTable> GetOrders(string machineId)
+        public async Task<DataTable> GetOrdersByMachineNum(string machineId)
         {
             DataTable result = new DataTable();
 
             await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
 
-            string queryStr = "Select orderno, material, SUM(length * " +
-                              "convert(decimal(10,2),quantity) ) As orderlen, " +
-                              "partno From amsorder Where orderno IS NOT NULL " +
-                              "And machinenum like @machineID GROUP BY orderno, " +
-                              "material, machinenum, partno";
+            string queryStr = "SELECT orderno, material, partno, " +
+                              "SUM(length * CONVERT(DECIMAL(10,2),quantity)) AS orderlen " +
+                              "FROM amsorder " +
+                              "WHERE orderno IS NOT NULL AND " +
+                              "machinenum LIKE @machineID " +
+                              "GROUP BY orderno, material, partno, machinenum";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
@@ -153,20 +164,55 @@ namespace AscCutlistEditor.ViewModels.MQTT
         }
 
         /// <summary>
-        /// TODO: this one is orderlenquery vs ordernoquery? ask Bryan
+        /// Get the order numbers, material type, and total run length of the
+        /// orders for a specific order number.
         /// </summary>
-        /// <param name="coilId"></param>
-        /// <returns></returns>
-        public async Task<DataTable> GetOrdersLen(string coilId)
+        /// <param name="orderId">
+        /// The order number to retrieve orders for.
+        /// </param>
+        /// <returns>A list of the orders for a given order number.</returns>
+        public async Task<DataTable> GetOrdersByOrderNo(string orderId)
         {
-            return null;
+            DataTable result = new DataTable();
+
+            await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
+
+            string queryStr = "SELECT orderno, material, " +
+                              "SUM(length * CONVERT(DECIMAL(10,2),quantity)) AS orderlen " +
+                              "FROM amsorder " +
+                              "WHERE orderno LIKE @orderId " +
+                              "GROUP BY orderno, material";
+
+            await using SqlCommand cmd = new SqlCommand(queryStr, conn);
+
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddWithValue(
+                "orderId",
+                "%" + orderId + "%");
+
+            try
+            {
+                conn.Open();
+                await using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                result.Load(reader);
+            }
+            catch (SqlException)
+            {
+                MessageBox.Show(
+                    $"SQL exception for GetOrdersLen({orderId}).",
+                    "ASC Cutlist Editor",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+
+            return result;
         }
 
         /// <summary>
         /// Get the coil data for a specific coil.
         /// </summary>
         /// <param name="coilId">The coil's corresponding id to get data for.</param>
-        /// <returns>The data for that coil</returns>
+        /// <returns>The data for that coil.</returns>
         public async Task<DataTable> GetCoil(string coilId)
         {
             DataTable result = new DataTable();
@@ -201,6 +247,46 @@ namespace AscCutlistEditor.ViewModels.MQTT
             return result;
         }
 
+        /*
+        /// <summary>
+        /// Get the coil data for a specific coil.
+        /// </summary>
+        /// <returns>The data for that coil</returns>
+        public async Task<DataTable> GetCoil()
+        {
+            DataTable result = new DataTable();
+
+            await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
+
+            string queryStr = "SELECT startlength as startlen, lengthused as lenused, " +
+                              "material as matl from amscoil where coilnumber like @coilID";
+
+            await using SqlCommand cmd = new SqlCommand(queryStr, conn);
+
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddWithValue(
+                "@coilID",
+                "%" + coilId + "%");
+
+            try
+            {
+                conn.Open();
+                await using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                result.Load(reader);
+            }
+            catch (SqlException)
+            {
+                MessageBox.Show(
+                    $"SQL exception for GetCoil({coilId}).",
+                    "ASC Cutlist Editor",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+
+            return result;
+        }
+
+        /*
         /// <summary>
         /// Get the list of coils that aren't currently depleted for displaying on an HMI.
         /// </summary>

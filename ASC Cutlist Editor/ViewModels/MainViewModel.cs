@@ -115,9 +115,9 @@ namespace AscCutlistEditor.ViewModels
             SqlConnectionViewModel conn = new SqlConnectionViewModel();
             conn.CreateConnectionString(
                 (string)SqlConnectionViewModel["DataSource"],
-                "taylormetals",
-                "TayMet_adj",
-                "Taymet555!"
+                (string)SqlConnectionViewModel["DatabaseName"],
+                (string)SqlConnectionViewModel["Username"],
+                (string)SqlConnectionViewModel["Password"]
                 );
         }
     }
