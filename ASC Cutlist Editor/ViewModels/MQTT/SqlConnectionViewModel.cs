@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Properties;
+using MQTTnet.Client;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {
@@ -17,6 +18,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
     internal class SqlConnectionViewModel : ObservableObject
     {
         public SqlConnectionStringBuilder Builder;
+
+        private readonly IMqttClient _client;
 
         public object this[string settingsName]
         {
@@ -88,14 +91,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
 
-                // Test query.
-                DataTable table = await GetBundle("15");
-
-                Debug.WriteLine("Writing GetBundle rows.");
-                foreach (DataRow row in table.Rows)
-                {
-                    Debug.WriteLine(string.Join(", ", row.ItemArray));
-                }
+                // Start listener for MQTT messages.
             }
             catch (SqlException)
             {

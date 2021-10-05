@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.VisualBasic;
 
 namespace AscCutlistEditor.Views.MQTT
 {
@@ -21,6 +22,16 @@ namespace AscCutlistEditor.Views.MQTT
         public MachineListControl()
         {
             InitializeComponent();
+        }
+
+        private void OpenSqlSettings(object sender, RoutedEventArgs e)
+        {
+            SqlSettingsControl settings = new SqlSettingsControl
+            {
+                // Grab the data context of MainWindow so we can access our settings.
+                DataContext = Application.Current.MainWindow?.DataContext
+            };
+            settings.Show();
         }
     }
 }

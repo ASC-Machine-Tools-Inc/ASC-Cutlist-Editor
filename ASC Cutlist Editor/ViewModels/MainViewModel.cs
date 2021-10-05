@@ -3,6 +3,7 @@ using AscCutlistEditor.ViewModels.Cutlists;
 using AscCutlistEditor.ViewModels.MQTT;
 using AscCutlistEditor.ViewModels.Parts;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 using AscCutlistEditor.Utility.MQTT;
 
@@ -112,6 +113,7 @@ namespace AscCutlistEditor.ViewModels
 
         private void ConnectToSqlServer()
         {
+            MessageBox.Show("Yo!");
             SqlConnectionViewModel conn = new SqlConnectionViewModel();
             conn.CreateConnectionString(
                 (string)SqlConnectionViewModel["DataSource"],
