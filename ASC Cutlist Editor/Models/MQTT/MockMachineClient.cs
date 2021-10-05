@@ -2,6 +2,7 @@
 using System.Windows.Threading;
 using AscCutlistEditor.Utility;
 using AscCutlistEditor.Utility.MQTT;
+using AscCutlistEditor.ViewModels.MQTT;
 using MQTTnet.Client;
 
 namespace AscCutlistEditor.Models.MQTT
@@ -44,7 +45,7 @@ namespace AscCutlistEditor.Models.MQTT
                             "{\"JobNumber\":\"JN12345\"," +
                             "\"LineRunning\":\"" + lineRunning + "\"}}}," +
                 "\"timestamp\":\"" + DateTime.Now + "\"}";
-            await MockMachineData.PublishMessage(Client, Topic, payload);
+            await MachineDataViewModel.PublishMessage(Client, Topic, payload);
         }
     }
 }

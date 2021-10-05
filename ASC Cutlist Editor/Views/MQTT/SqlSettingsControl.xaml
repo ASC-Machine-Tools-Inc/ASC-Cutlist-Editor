@@ -9,8 +9,8 @@
         Title="Sql Connection Settings" Height="450" Width="800">
     <Grid Margin="50 25">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
-            <ColumnDefinition Width="3*"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -45,11 +45,18 @@
                  Margin="10"></TextBox>
 
         <Button
+            Grid.Column="0"
+            Grid.Row="4"
+            Command="{Binding ConnectToSqlServerCommand}"
+            Margin="10">
+            Test Connection
+        </Button>
+        <Button
             Grid.Column="1"
             Grid.Row="4"
             Command="{Binding ConnectToSqlServerCommand}"
             Margin="10">
-            Test SQL Server Connection
+            Save and Close
         </Button>
     </Grid>
 </Window>

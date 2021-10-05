@@ -139,7 +139,10 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 Debug.WriteLine("### CONNECTED WITH SERVER ###");
 
                 // Test publishing a message.
-                await PublishMessage("self/success", "Connection successful!");
+                await PublishMessage(
+                    _client,
+                    "self/success",
+                    "Connection successful!");
 
                 // Subscribe to a topic.
                 await _client.SubscribeAsync(_topic);
@@ -171,8 +174,11 @@ namespace AscCutlistEditor.ViewModels.MQTT
                         AddMachineData(machineData);
 
                         // Attempt an acknowledgement response.
-                        Task.Run(() => PublishMessage("self",
-                            $"Successful packet for job number: {machineData.SelectToken("tags.set1.MqttPub.JobNumber")}"));
+                        Task.Run(() => PublishMessage(
+                            _client,
+                            "self",
+                            $"Successful packet for job number: " +
+                            $"{machineData.SelectToken("tags.set1.MqttPub.JobNumber")}"));
                     }
                 }
                 catch (JsonReaderException)
@@ -191,7 +197,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
         }
 
-        public async Task PublishMessage(string topic, string payload)
+        public static async Task PublishMessage(IMqttClient client, string topic, string payload)
         {
             var message = new MqttApplicationMessageBuilder()
                 .WithTopic(topic)
@@ -199,7 +205,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 .WithExactlyOnceQoS()
                 .WithRetainFlag()
                 .Build();
-            await _client.PublishAsync(message);
+            await client.PublishAsync(message);
         }
 
         private void AddMachineData(dynamic data)

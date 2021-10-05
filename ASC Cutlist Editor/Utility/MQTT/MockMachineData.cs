@@ -24,17 +24,6 @@ namespace AscCutlistEditor.Utility.MQTT
             _machineConnectionsViewModel = model;
         }
 
-        public static async Task PublishMessage(IMqttClient client, string topic, string payload)
-        {
-            var message = new MqttApplicationMessageBuilder()
-                .WithTopic(topic)
-                .WithPayload(payload)
-                .WithExactlyOnceQoS()
-                .WithRetainFlag()
-                .Build();
-            await client.PublishAsync(message);
-        }
-
         public async void AddMockClient()
         {
             // Start the MQTTClient to listen for new messages.
@@ -71,7 +60,7 @@ namespace AscCutlistEditor.Utility.MQTT
                 Debug.WriteLine("### MOCK " + mockClient.Id + " CONNECTED ###");
 
                 // Test publishing a message.
-                await PublishMessage(client, "self/success", "Mock connection successful!");
+                await MachineDataViewModel.PublishMessage(client, "self/success", "Mock connection successful!");
             });
 
             try

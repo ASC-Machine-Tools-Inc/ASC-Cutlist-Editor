@@ -113,7 +113,6 @@ namespace AscCutlistEditor.ViewModels
 
         private void ConnectToSqlServer()
         {
-            MessageBox.Show("Yo!");
             SqlConnectionViewModel conn = new SqlConnectionViewModel();
             conn.CreateConnectionString(
                 (string)SqlConnectionViewModel["DataSource"],

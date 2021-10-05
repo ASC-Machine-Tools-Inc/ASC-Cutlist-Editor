@@ -10,6 +10,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -25,17 +26,24 @@
                 Margin="10">
                 Add Mock Connection
             </Button>
+        </WrapPanel>
 
-            <!-- SQL Server connection settings. -->
+        <!-- SQL Server connection settings. -->
+        <WrapPanel
+            Grid.Row="1">
             <Button
                 Click="OpenSqlSettings"
                 Margin="5">
                 Open SQL Settings
             </Button>
+            <Button
+                Margin="5">
+                Connect
+            </Button>
         </WrapPanel>
 
         <TabControl
-            Grid.Row="1"
+            Grid.Row="2"
             ItemsSource="{Binding
             MachineConnectionsViewModel.MachineConnectionTabs}">
         </TabControl>
