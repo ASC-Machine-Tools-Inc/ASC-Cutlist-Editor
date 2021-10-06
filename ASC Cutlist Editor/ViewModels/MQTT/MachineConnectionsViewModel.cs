@@ -31,7 +31,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
         private ObservableCollection<TabItem> _machineConnectionTabs = new ObservableCollection<TabItem>();
 
         public static int Port = 1883;
-        public static string Ip = "192.168.10.43";
+        public static string Ip = "192.168.0.119";
         public static string MainTopic = "alphapub";
 
         public MachineConnectionsViewModel()

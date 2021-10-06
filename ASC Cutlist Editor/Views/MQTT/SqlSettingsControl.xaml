@@ -20,43 +20,54 @@
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Label>Data Source:</Label>
+        <Label Content="Data Source:" />
         <TextBox
             Grid.Column="1"
             Text="{Binding SqlConnectionViewModel[DataSource]}"
+            Margin="10" />
+
+        <Label
+            Grid.Row="1"
+            Content="Database Name:" />
+        <TextBox
+            Grid.Row="1"
+            Grid.Column="1"
+            Text="{Binding SqlConnectionViewModel[DatabaseName]}"
+            Margin="10" />
+
+        <Label
+            Grid.Row="2"
+            Content="Username:" />
+        <TextBox
+            Grid.Row="2"
+            Grid.Column="1"
+            Text="{Binding SqlConnectionViewModel[Username]}"
+            Margin="10" />
+
+        <Label
+            Grid.Row="3"
+            Content="Password:" />
+        <TextBox
+            Grid.Row="3"
+            Grid.Column="1"
+            Text="{Binding SqlConnectionViewModel[Password]}"
             Margin="10"></TextBox>
-
-        <Label Grid.Row="1">Database Name:</Label>
-        <TextBox Grid.Row="1"
-                 Grid.Column="1"
-                 Text="{Binding SqlConnectionViewModel[DatabaseName]}"
-                 Margin="10"></TextBox>
-
-        <Label Grid.Row="2">Username:</Label>
-        <TextBox Grid.Row="2"
-                 Grid.Column="1"
-                 Text="{Binding SqlConnectionViewModel[Username]}"
-                 Margin="10"></TextBox>
-
-        <Label Grid.Row="3">Password:</Label>
-        <TextBox Grid.Row="3"
-                 Grid.Column="1"
-                 Text="{Binding SqlConnectionViewModel[Password]}"
-                 Margin="10"></TextBox>
 
         <Button
             Grid.Column="0"
             Grid.Row="4"
-            Command="{Binding ConnectToSqlServerCommand}"
+            Command="{Binding TestSqlConnectionCommand}"
+            Content="Test Connection"
             Margin="10">
-            Test Connection
         </Button>
+
+        <!-- Settings automatically save, but this helps reassure users. -->
         <Button
             Grid.Column="1"
             Grid.Row="4"
-            Command="{Binding ConnectToSqlServerCommand}"
+            Content="Save and Close"
+            IsCancel="True"
             Margin="10">
-            Save and Close
         </Button>
     </Grid>
 </Window>

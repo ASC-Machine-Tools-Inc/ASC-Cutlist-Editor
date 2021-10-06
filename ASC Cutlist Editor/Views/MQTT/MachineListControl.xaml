@@ -18,14 +18,12 @@
         <WrapPanel>
             <Button
                 Command="{Binding StartListeningCommand}"
-                Margin="10">
-                Start Listening For Connections
-            </Button>
+                Content="Start Listening For Connections"
+                Margin="10" />
             <Button
                 Command="{Binding AddMockConnectionCommand}"
-                Margin="10">
-                Add Mock Connection
-            </Button>
+                Content="Add Mock Connect"
+                Margin="10" />
         </WrapPanel>
 
         <!-- SQL Server connection settings. -->
@@ -33,13 +31,12 @@
             Grid.Row="1">
             <Button
                 Click="OpenSqlSettings"
-                Margin="5">
-                Open SQL Settings
-            </Button>
+                Content="Open Sql Settings"
+                Margin="5" />
             <Button
-                Margin="5">
-                Connect
-            </Button>
+                Command="{Binding ConnectToSqlServerCommand}"
+                Content="Connect"
+                Margin="5" />
         </WrapPanel>
 
         <TabControl

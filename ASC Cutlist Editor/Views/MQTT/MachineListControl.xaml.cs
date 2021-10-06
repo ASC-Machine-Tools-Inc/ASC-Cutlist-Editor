@@ -31,7 +31,7 @@ namespace AscCutlistEditor.Views.MQTT
                 // Grab the data context of MainWindow so we can access our settings.
                 DataContext = Application.Current.MainWindow?.DataContext
             };
-            settings.Show();
+            settings.ShowDialog();
         }
     }
 }
