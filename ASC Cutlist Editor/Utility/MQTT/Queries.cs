@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Windows.Media.Streaming.Adaptive;
 using AscCutlistEditor.ViewModels.MQTT;
 
 namespace AscCutlistEditor.Utility.MQTT
@@ -17,7 +18,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// </summary>
         /// <param name="coilId">The coil's corresponding id to get data for.</param>
         /// <returns>The data for that coil.</returns>
-        public async Task<DataTable> GetCoilData(string coilId)
+        public static async Task<DataTable> GetCoilData(string coilId)
         {
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
@@ -41,7 +42,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// Get all non-depleted coils.
         /// </summary>
         /// <returns>The list of non-depleted coils.</returns>
-        public async Task<DataTable> GetNonDepletedCoils()
+        public static async Task<DataTable> GetNonDepletedCoils()
         {
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
@@ -66,7 +67,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// The order number to retrieve orders for.
         /// </param>
         /// <returns>A list of the orders for a given order number.</returns>
-        public async Task<DataTable> GetOrdersById(string orderNum)
+        public static async Task<DataTable> GetOrdersById(string orderNum)
         {
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
@@ -96,7 +97,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// The machine's corresponding id to retrieve orders for.
         /// </param>
         /// <returns>A list of the orders for a given machine.</returns>
-        public async Task<DataTable> GetOrdersByMachineNum(string machineId)
+        public static async Task<DataTable> GetOrdersByMachineNum(string machineId)
         {
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
@@ -121,10 +122,10 @@ namespace AscCutlistEditor.Utility.MQTT
         /// <summary>
         /// Get the list of orders for the given order number on the given machine.
         /// </summary>
-        /// <param name="machineId">The machine's corresponding id to retrieve orders for.</param>
         /// <param name="orderNum">The orders' corresponding id to retrieve orders for.</param>
+        /// <param name="machineId">The machine's corresponding id to retrieve orders for.</param>
         /// <returns>A list of orders for the given machine and order number.</returns>
-        public async Task<DataTable> GetOrdersByMachineAndId(string machineId, string orderNum)
+        public static async Task<DataTable> GetOrdersByIdAndMachine(string orderNum, string machineId)
         {
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
@@ -152,7 +153,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// </summary>
         /// <param name="orderNum">The order number for the corresponding bundle.</param>
         /// <returns>A list of distinct bundle data for the order number.</returns>
-        public async Task<DataTable> GetBundle(string orderNum)
+        public static async Task<DataTable> GetBundle(string orderNum)
         {
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
@@ -179,7 +180,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// <param name="conn">The connection to execute the command on.</param>
         /// <param name="cmd">The command to execute.</param>
         /// <returns>The results of the select statement.</returns>
-        private async Task<DataTable> SelectHelper(
+        private static async Task<DataTable> SelectHelper(
             SqlConnection conn,
             SqlCommand cmd)
         {
@@ -208,7 +209,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// </summary>
         /// <param name="usageData">The data to add to amsproduct.</param>
         /// <returns>The number of rows added to amsproduct.</returns>
-        private async Task<int> SetUsageData(DataTable usageData)
+        private static async Task<int> SetUsageData(DataTable usageData)
         {
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);

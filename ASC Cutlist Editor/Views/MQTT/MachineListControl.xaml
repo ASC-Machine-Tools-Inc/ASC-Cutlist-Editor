@@ -17,12 +17,8 @@
         <!-- Buttons for testing mock connections -->
         <WrapPanel>
             <Button
-                Command="{Binding StartListeningCommand}"
-                Content="Start Listening For Connections"
-                Margin="10" />
-            <Button
                 Command="{Binding AddMockConnectionCommand}"
-                Content="Add Mock Connect"
+                Content="Add Mock Connection"
                 Margin="10" />
         </WrapPanel>
 

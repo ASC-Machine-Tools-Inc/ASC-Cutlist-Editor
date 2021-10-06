@@ -32,6 +32,8 @@ namespace AscCutlistEditor.ViewModels
             PartCollectionViewModel = new PartCollectionViewModel();
 
             MachineConnectionsViewModel = new MachineConnectionsViewModel();
+            // Start listening for connections on load.
+            MachineConnectionsViewModel.Start();
 
             MockMachineData = new MockMachineData(MachineConnectionsViewModel);
 
@@ -70,13 +72,6 @@ namespace AscCutlistEditor.ViewModels
                 CutlistViewModel.ClearUi();
                 PartCollectionViewModel.ClearUi();
             });
-
-        /// <summary>
-        /// Start listening for machine connections.
-        /// </summary>
-        // TODO: debug this, what if we add mock connections before we start listening??
-        public ICommand StartListeningCommand =>
-            new DelegateCommand(() => MachineConnectionsViewModel.Start());
 
         /// <summary>
         /// Create a new mock connection with MockMachineData to listen to.
