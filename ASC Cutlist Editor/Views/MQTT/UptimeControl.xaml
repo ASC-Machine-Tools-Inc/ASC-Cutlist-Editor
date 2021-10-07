@@ -47,13 +47,14 @@
             <oxy:PlotView
                 Grid.Column="1"
                 Margin="5"
-                Model="{Binding PlotModel}" />
+                Model="{Binding UptimePlot}" />
         </Grid>
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
             <StackPanel
@@ -71,7 +72,6 @@
                 <TextBlock
                     Text="{Binding UptimeRunningPercentage,
                     StringFormat=Uptime: {0:#,#.0}%}"></TextBlock>
-                <!-- TODO: convert text in format instead to 2 decimal points? -->
             </StackPanel>
 
             <StackPanel
@@ -93,6 +93,11 @@
                     Converter={StaticResource InversePercentageConverter},
                     StringFormat=Downtime: {0:#,#.0}%}"></TextBlock>
             </StackPanel>
+
+            <oxy:PlotView
+                Grid.Column="2"
+                Margin="5"
+                Model="{Binding UptimePercentagePlot}" />
         </Grid>
     </Grid>
 </UserControl>

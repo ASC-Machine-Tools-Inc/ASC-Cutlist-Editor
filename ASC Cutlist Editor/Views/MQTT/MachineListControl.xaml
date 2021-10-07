@@ -30,8 +30,8 @@
                 Content="Open Sql Settings"
                 Margin="5" />
             <Button
-                Command="{Binding ConnectToSqlServerCommand}"
-                Content="Connect to Database"
+                Command="{Binding StartListeningForConnectionsCommand}"
+                Content="Start Listening For Connections"
                 Margin="5" />
             <Button
                 Command="{Binding RefreshConnectionTabsCommand}"

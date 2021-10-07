@@ -30,11 +30,14 @@ namespace AscCutlistEditor.ViewModels.MQTT
         private HashSet<string> _knownTopics;
         private ObservableCollection<TabItem> _machineConnectionTabs;
 
+        private readonly SqlConnectionViewModel _sqlConnectionViewModel;
+
         public static int Port = 1883;
         public static string Ip = "192.168.0.119";
         public static string MainTopic = "alphapub";
 
-        public MachineConnectionsViewModel()
+        public MachineConnectionsViewModel(
+            SqlConnectionViewModel connModel)
         {
             var mqttFactory = new MqttFactory();
             Server = mqttFactory.CreateMqttServer();
@@ -43,6 +46,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             _knownTopics = new HashSet<string>();
             _machineConnectionTabs = new ObservableCollection<TabItem>();
+
+            _sqlConnectionViewModel = connModel;
         }
 
         public ObservableCollection<TabItem> MachineConnectionTabs
@@ -60,16 +65,21 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// </summary>
         public async void Start()
         {
-            if (!Server.IsStarted)
+            // Check that the server isn't already running, and that we have
+            // a valid connection string to connect to.
+            if (Server.IsStarted ||
+                !await _sqlConnectionViewModel.TestConnection())
             {
-                var options = new MqttServerOptionsBuilder()
-                    .WithDefaultEndpointPort(Port)
-                    .Build();
-                await Server.StartAsync(options);
-
-                // Start the MQTTClient to listen for new connections.
-                await StartListener();
+                return;
             }
+
+            var options = new MqttServerOptionsBuilder()
+                .WithDefaultEndpointPort(Port)
+                .Build();
+            await Server.StartAsync(options);
+
+            // Start the MQTTClient to listen for new connections.
+            await StartListener();
         }
 
         /// <summary>
@@ -80,7 +90,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
         public async Task AddTab(string topic)
         {
             // Create a new model for listening to this topic.
-            MachineDataViewModel model = new MachineDataViewModel(topic);
+            MachineDataViewModel model =
+                new MachineDataViewModel(topic, _sqlConnectionViewModel);
             await model.StartClient();
 
             Dispatcher dispatcher = Application.Current != null ?

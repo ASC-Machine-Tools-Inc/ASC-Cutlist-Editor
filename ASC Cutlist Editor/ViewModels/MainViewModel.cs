@@ -31,13 +31,11 @@ namespace AscCutlistEditor.ViewModels
 
             PartCollectionViewModel = new PartCollectionViewModel();
 
-            MachineConnectionsViewModel = new MachineConnectionsViewModel();
-            // Start listening for connections on load.
-            MachineConnectionsViewModel.Start();
+            SqlConnectionViewModel = new SqlConnectionViewModel();
+
+            MachineConnectionsViewModel = new MachineConnectionsViewModel(SqlConnectionViewModel);
 
             MockMachineData = new MockMachineData(MachineConnectionsViewModel);
-
-            SqlConnectionViewModel = new SqlConnectionViewModel();
         }
 
         /// <summary>
@@ -73,6 +71,15 @@ namespace AscCutlistEditor.ViewModels
                 PartCollectionViewModel.ClearUi();
             });
 
+        /// <summary>
+        /// Start listening for new connections under the chosen topic.
+        /// </summary>
+        public ICommand StartListeningForConnectionsCommand =>
+            new DelegateCommand(() => MachineConnectionsViewModel.Start());
+
+        /// <summary>
+        /// Resets the list of connections (does not stop connection listener!)
+        /// </summary>
         public ICommand RefreshConnectionTabsCommand =>
             new DelegateCommand(() => MachineConnectionsViewModel.Refresh());
 
@@ -85,6 +92,7 @@ namespace AscCutlistEditor.ViewModels
         /// <summary>
         /// Use the saved connection string to open a connection and start the MQTT client.
         /// </summary>
+        ///  TODO: probably remove this
         public ICommand ConnectToSqlServerCommand =>
             new DelegateCommand(() => SqlConnectionViewModel.StartClient());
 

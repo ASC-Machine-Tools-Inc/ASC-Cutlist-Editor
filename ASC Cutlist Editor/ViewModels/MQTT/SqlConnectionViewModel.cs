@@ -27,7 +27,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
         private readonly IMqttClient _client;
         private readonly string _subTopic = "alphapub/+/+";
-        private readonly string _pubTopic = "alphasub";
 
         public SqlConnectionViewModel()
         {
@@ -57,51 +56,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             config.Save();
             Settings.Default.Save();
-        }
-
-        /// <summary>
-        /// Attempt opening a connection to the current connection string in Builder.
-        /// </summary>
-        /// <returns>Returns true if the connection was successful, false otherwise.</returns>
-        public async Task<bool> TestConnection()
-        {
-            // Check that we can create a connection string.
-            if (!CreateConnectionString())
-            {
-                return false;
-            }
-
-            await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
-            try
-            {
-                // Set the loading cursor while connecting.
-                Mouse.OverrideCursor = Cursors.Wait;
-
-                await conn.OpenAsync();
-
-                // Show if connection successful.
-                MessageBox.Show(
-                    "Connection successful!",
-                    "ASC Cutlist Editor",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-
-                return true;
-            }
-            catch (SqlException)
-            {
-                MessageBox.Show(
-                    "Error connecting to the server.",
-                    "ASC Cutlist Editor",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-                return false;
-            }
-            finally
-            {
-                // Reset to default.
-                Mouse.OverrideCursor = null;
-            }
         }
 
         /// <summary>
@@ -173,12 +127,57 @@ namespace AscCutlistEditor.ViewModels.MQTT
         }
 
         /// <summary>
+        /// Attempt opening a connection to the current connection string in Builder.
+        /// </summary>
+        /// <returns>Returns true if the connection was successful, false otherwise.</returns>
+        public async Task<bool> TestConnection()
+        {
+            // Check that we can create a connection string.
+            if (!CreateConnectionString())
+            {
+                return false;
+            }
+
+            await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
+            try
+            {
+                // Set the loading cursor while connecting.
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                await conn.OpenAsync();
+
+                // Show if connection successful.
+                MessageBox.Show(
+                    "Connection successful!",
+                    "ASC Cutlist Editor",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+
+                return true;
+            }
+            catch (SqlException)
+            {
+                MessageBox.Show(
+                    "Error connecting to the server.",
+                    "ASC Cutlist Editor",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return false;
+            }
+            finally
+            {
+                // Reset to default.
+                Mouse.OverrideCursor = null;
+            }
+        }
+
+        /// <summary>
         /// Creates a new connection string from the SQL Server connection parameters.
         /// </summary>
         /// <returns>
         /// True if a connection string was created, false otherwise.
         /// </returns>
-        private bool CreateConnectionString()
+        public bool CreateConnectionString()
         {
             string dataSource = (string)this["DataSource"];
             string databaseName = (string)this["DatabaseName"];

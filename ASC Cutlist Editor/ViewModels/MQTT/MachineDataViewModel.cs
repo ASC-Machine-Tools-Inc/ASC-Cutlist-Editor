@@ -10,7 +10,9 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using System;
 using System.Collections.ObjectModel;
+using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,62 +28,26 @@ namespace AscCutlistEditor.ViewModels.MQTT
     internal class MachineDataViewModel : ObservableObject
     {
         private readonly IMqttClient _client;
-        private readonly string _topic;
 
-        private ObservableCollection<MachineData> _machineDataCollection = new ObservableCollection<MachineData>();
+        // The topic to read from.
+        private readonly string _subTopic;
+
+        // The topic to publish responses to.
+        private readonly string _pubTopic = "alphasub";
+
+        private ObservableCollection<MachineData> _machineDataCollection =
+            new ObservableCollection<MachineData>();
+
         private MachineData _latestMachineData;
-        private readonly LineSeries _uptimeSeries;
+        private LineSeries _uptimeSeries;
+        private LineSeries _uptimePercentageSeries;
         private string _connectionStatus;
         private int _uptimeRunningCount;
         private double _uptimeRunningPercentage;
 
-        public PlotModel PlotModel { get; set; }
+        public PlotModel UptimePlot { get; set; }
 
-        public MachineDataViewModel(string topic)
-        {
-            var mqttFactory = new MqttFactory();
-            _client = mqttFactory.CreateMqttClient();
-            _topic = MachineConnectionsViewModel.MainTopic + topic;
-
-            MachineDataCollection = new ObservableCollection<MachineData>();
-            LatestMachineData = null;
-            ConnectionStatus = "disconnected";
-
-            // Test plot model.
-            // Create the plot model.
-            var tmp = new PlotModel { Title = "Uptime", Subtitle = "TESTING" };
-
-            // Create two line series (markers are hidden by default).
-            var series1 = new LineSeries { Title = "Series 1", MarkerType = MarkerType.Square };
-
-            DateTimeAxis xAxis = new DateTimeAxis
-            {
-                Position = AxisPosition.Bottom,
-                StringFormat = "h:mm:ss",
-            };
-            LinearAxis yAxis = new LinearAxis
-            {
-                Position = AxisPosition.Left,
-                Maximum = 105,
-                Minimum = 0
-            }; // TODO: fix axis, maybe not linear???
-
-            var series2 = new LineSeries { Title = "Series 2", MarkerType = MarkerType.Square };
-            series2.Points.Add(new DataPoint(0, 4));
-            series2.Points.Add(new DataPoint(10, 12));
-            series2.Points.Add(new DataPoint(20, 16));
-            series2.Points.Add(new DataPoint(30, 25));
-            series2.Points.Add(new DataPoint(40, 5));
-
-            // Add the series to the plot model.
-            tmp.Series.Add(series1);
-            tmp.Axes.Add(xAxis);
-            tmp.Axes.Add(yAxis);
-            _uptimeSeries = series1;
-            //tmp.Series.Add(series2);
-
-            PlotModel = tmp;
-        }
+        public PlotModel UptimePercentagePlot { get; set; }
 
         public ObservableCollection<MachineData> MachineDataCollection
         {
@@ -123,6 +89,21 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
         }
 
+        // TODO: assign connmodel
+        public MachineDataViewModel(string topic, SqlConnectionViewModel connModel)
+        {
+            var mqttFactory = new MqttFactory();
+            _client = mqttFactory.CreateMqttClient();
+            _subTopic = MachineConnectionsViewModel.MainTopic + topic;
+
+            MachineDataCollection = new ObservableCollection<MachineData>();
+            LatestMachineData = null;
+            ConnectionStatus = "disconnected";
+
+            CreateUptimeModel();
+        }
+
+        // TODO: use connmodel to fire off our queries
         public async Task StartClient()
         {
             // Create MQTT client.
@@ -144,9 +125,9 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     "Connection successful!");
 
                 // Subscribe to a topic.
-                await _client.SubscribeAsync(_topic);
+                await _client.SubscribeAsync(_subTopic);
 
-                Debug.WriteLine("### SUBSCRIBED TO " + _topic + "###");
+                Debug.WriteLine("### SUBSCRIBED TO " + _subTopic + "###");
 
                 ConnectionStatus = "connected";
             });
@@ -207,6 +188,50 @@ namespace AscCutlistEditor.ViewModels.MQTT
             await client.PublishAsync(message);
         }
 
+        /// <summary>
+        /// Create the OxyPlot graphs for our view.
+        /// </summary>
+        private void CreateUptimeModel()
+        {
+            var uptimePlot = new PlotModel { Title = "Uptime", Subtitle = "Current" };
+            var uptimePercentagePlot = new PlotModel { Title = "Uptime", Subtitle = "Percentage" };
+
+            // Create line series (markers are hidden by default).
+            var currentSeries = new LineSeries { Title = "Current Status", MarkerType = MarkerType.Square };
+            var percentSeries = new LineSeries { Title = "Uptime Percentage", MarkerType = MarkerType.Square };
+
+            // Add the series to the plot models.
+            uptimePlot.Series.Add(currentSeries);
+            uptimePlot.Axes.Add(new DateTimeAxis
+            {
+                Position = AxisPosition.Bottom,
+                StringFormat = "h:mm:ss",
+            });
+            uptimePlot.Axes.Add(new LinearAxis
+            {
+                Maximum = 105,
+                Minimum = 0
+            });
+
+            uptimePercentagePlot.Series.Add(percentSeries);
+            uptimePercentagePlot.Axes.Add(new DateTimeAxis
+            {
+                Position = AxisPosition.Bottom,
+                StringFormat = "h:mm:ss",
+            });
+            uptimePercentagePlot.Axes.Add(new LinearAxis
+            {
+                Maximum = 105,
+                Minimum = 0
+            });
+
+            _uptimeSeries = currentSeries;
+            _uptimePercentageSeries = percentSeries;
+
+            UptimePlot = uptimePlot;
+            UptimePercentagePlot = uptimePercentagePlot;
+        }
+
         private void AddMachineData(dynamic data)
         {
             // Run on UI thread.
@@ -231,14 +256,25 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 MachineDataCollection.Add(machineData);
 
                 // Calculate percentage for line running bars.
+                bool running = false;
                 if (lineRunning.Equals("LINE RUNNING"))
                 {
                     _uptimeRunningCount++;
+                    running = true;
                 }
                 UptimeRunningPercentage = (double)_uptimeRunningCount / MachineDataCollection.Count * 100;
 
-                _uptimeSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(timeStamp), UptimeRunningPercentage));
-                PlotModel.InvalidatePlot(true); // Refresh plot with new data.
+                _uptimeSeries.Points.Add(
+                    new DataPoint(
+                        DateTimeAxis.ToDouble(timeStamp),
+                        running ? 100 : 0));
+                UptimePlot.InvalidatePlot(true); // Refresh plot with new data.
+
+                _uptimePercentageSeries.Points.Add(
+            new DataPoint(
+                DateTimeAxis.ToDouble(timeStamp),
+                UptimeRunningPercentage));
+                UptimePercentagePlot.InvalidatePlot(true); // Refresh plot with new data.
 
                 Debug.WriteLine($"Connection Status: {data.SelectToken("connected")}");
                 Debug.WriteLine($"Current Job Number: {lineRunning}");
