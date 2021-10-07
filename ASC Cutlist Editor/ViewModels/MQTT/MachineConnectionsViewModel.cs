@@ -27,8 +27,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
         private readonly IMqttClient _listener;
         private readonly string _listenerTopic;
 
-        private HashSet<string> _knownTopics = new HashSet<string>();
-        private ObservableCollection<TabItem> _machineConnectionTabs = new ObservableCollection<TabItem>();
+        private HashSet<string> _knownTopics;
+        private ObservableCollection<TabItem> _machineConnectionTabs;
 
         public static int Port = 1883;
         public static string Ip = "192.168.0.119";
@@ -55,6 +55,28 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
         }
 
+        /// <summary>
+        /// Start the server and client for listening for new connections.
+        /// </summary>
+        public async void Start()
+        {
+            if (!Server.IsStarted)
+            {
+                var options = new MqttServerOptionsBuilder()
+                    .WithDefaultEndpointPort(Port)
+                    .Build();
+                await Server.StartAsync(options);
+
+                // Start the MQTTClient to listen for new connections.
+                await StartListener();
+            }
+        }
+
+        /// <summary>
+        /// Add a new TabItem to track the KPI data for that connection.
+        /// </summary>
+        /// <param name="topic"></param>
+        /// <returns></returns>
         public async Task AddTab(string topic)
         {
             // Create a new model for listening to this topic.
@@ -75,21 +97,15 @@ namespace AscCutlistEditor.ViewModels.MQTT
             });
         }
 
-        public async void Start()
+        /// <summary>
+        /// Clear all connections and the UI. The client is still listening,
+        /// so all active connections will reappear while inactive ones won't.
+        /// </summary>
+        public void Refresh()
         {
-            if (!Server.IsStarted)
-            {
-                var options = new MqttServerOptionsBuilder()
-                    .WithDefaultEndpointPort(Port)
-                    .Build();
-                await Server.StartAsync(options);
-
-                // Start the MQTTClient to listen for new connections.
-                await StartListener();
-            }
+            _knownTopics = new HashSet<string>();
+            MachineConnectionTabs = new ObservableCollection<TabItem>();
         }
-
-        // TODO: clear UI method?
 
         private async Task StartListener()
         {

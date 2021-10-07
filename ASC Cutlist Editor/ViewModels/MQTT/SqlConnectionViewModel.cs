@@ -26,7 +26,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
         public static SqlConnectionStringBuilder Builder;
 
         private readonly IMqttClient _client;
-        private readonly string _subTopic = "alphapub";
+        private readonly string _subTopic = "alphapub/+/+";
         private readonly string _pubTopic = "alphasub";
 
         public SqlConnectionViewModel()
@@ -115,7 +115,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 return;
             }
 
-            // TODO: message received handler
             await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
             try
             {
@@ -148,32 +147,10 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 // Response to send on receiving a message.
                 _client.UseApplicationMessageReceivedHandler(e =>
                 {
-                    // Acknowledge application message and print some relevant data.
+                    // TODO: message received handler
                     string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 
-                    Debug.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
-                    Debug.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
-                    Debug.Write($"+ Payload = {payload}");
-                    Debug.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
-                    Debug.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}\n");
-
-                    try
-                    {
-                        // Attempt payload conversion and logging.
-                        dynamic machineData = JsonConvert.DeserializeObject(payload);
-                        if (machineData != null)
-                        {
-                            // Attempt an acknowledgement response.
-                            Task.Run(() => MachineDataViewModel.PublishMessage(
-                                _client,
-                                _pubTopic,
-                                $"Successful packet for job number: {machineData.SelectToken("tags.set1.MqttPub.JobNumber")}"));
-                        }
-                    }
-                    catch (JsonReaderException)
-                    {
-                        Debug.WriteLine("Error: invalid JSON value.");
-                    }
+                    Debug.WriteLine("### ALPHACUT RECEIVED APPLICATION MESSAGE ###");
                 });
 
                 try

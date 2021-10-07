@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Windows.Documents;
 using System.Windows.Threading;
 using AscCutlistEditor.Utility;
 using AscCutlistEditor.Utility.MQTT;
@@ -33,9 +35,9 @@ namespace AscCutlistEditor.Models.MQTT
         private async void MockMessageTimerTick(object sender, EventArgs e)
         {
             // TODO: update based on line stopped, custom job number, custom connected
-            // Pick a random line running status (weighted towards running).
-            string[] lineRunningStatuses = { "LINE RUNNING", "LINE RUNNING", "LINE STOPPED" };
-            string lineRunning = lineRunningStatuses[new Random().Next(0, lineRunningStatuses.Length)];
+            // Pick a random line running status.
+            var lineRunningStatuses = new List<string> { "LINE RUNNING", "LINE STOPPED" };
+            string lineRunning = lineRunningStatuses[new Random().Next(lineRunningStatuses.Count)];
 
             string payload =
                 "{\"connected\":\"true\"," +

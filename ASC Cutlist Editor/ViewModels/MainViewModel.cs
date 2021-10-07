@@ -73,6 +73,9 @@ namespace AscCutlistEditor.ViewModels
                 PartCollectionViewModel.ClearUi();
             });
 
+        public ICommand RefreshConnectionTabsCommand =>
+            new DelegateCommand(() => MachineConnectionsViewModel.Refresh());
+
         /// <summary>
         /// Create a new mock connection with MockMachineData to listen to.
         /// </summary>

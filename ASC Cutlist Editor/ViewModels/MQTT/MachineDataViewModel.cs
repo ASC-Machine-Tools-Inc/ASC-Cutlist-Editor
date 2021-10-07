@@ -23,7 +23,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
     /// <summary>
     /// Handles the data for a single machine connection.
     /// </summary>
-    ///
     internal class MachineDataViewModel : ObservableObject
     {
         private readonly IMqttClient _client;

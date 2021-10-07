@@ -31,7 +31,11 @@
                 Margin="5" />
             <Button
                 Command="{Binding ConnectToSqlServerCommand}"
-                Content="Connect"
+                Content="Connect to Database"
+                Margin="5" />
+            <Button
+                Command="{Binding RefreshConnectionTabsCommand}"
+                Content="Refresh Connection Tabs"
                 Margin="5" />
         </WrapPanel>
 
