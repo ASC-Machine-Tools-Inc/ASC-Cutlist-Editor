@@ -90,8 +90,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
         public async Task AddTab(string topic)
         {
             // Create a new model for listening to this topic.
-            MachineDataViewModel model =
-                new MachineDataViewModel(topic, _sqlConnection);
+            MachineMessageViewModel model =
+                new MachineMessageViewModel(topic, _sqlConnection);
             await model.StartClient();
 
             Dispatcher dispatcher = Application.Current != null ?

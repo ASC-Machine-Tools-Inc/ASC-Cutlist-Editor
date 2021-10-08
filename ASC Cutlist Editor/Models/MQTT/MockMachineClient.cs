@@ -47,7 +47,7 @@ namespace AscCutlistEditor.Models.MQTT
                             "{\"JobNumber\":\"JN12345\"," +
                             "\"LineRunning\":\"" + lineRunning + "\"}}}," +
                 "\"timestamp\":\"" + DateTime.Now + "\"}";
-            await MachineDataViewModel.PublishMessage(Client, Topic, payload);
+            await MachineMessageViewModel.PublishMessage(Client, Topic, payload);
         }
     }
 }

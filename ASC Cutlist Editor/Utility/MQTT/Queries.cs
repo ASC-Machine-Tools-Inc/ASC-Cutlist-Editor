@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using Windows.Media.Streaming.Adaptive;
 using AscCutlistEditor.ViewModels.MQTT;
 
 namespace AscCutlistEditor.Utility.MQTT
 {
-    internal class Queries
+    public class Queries
     {
         /// <summary>
         /// Get the coil data for a specific coil.
@@ -209,7 +204,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// </summary>
         /// <param name="usageData">The data to add to amsproduct.</param>
         /// <returns>The number of rows added to amsproduct.</returns>
-        private static async Task<int> SetUsageData(DataTable usageData)
+        public static async Task<int> SetUsageData(DataTable usageData)
         {
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
@@ -251,6 +246,33 @@ namespace AscCutlistEditor.Utility.MQTT
 
             // Query failed, no rows added.
             return 0;
+        }
+
+        /// <summary>
+        /// Converts a data table into a string where fields are separated with
+        /// commas and rows are separated with vertical bars for the HMI to parse.
+        /// </summary>
+        /// <param name="table">The table to convert.</param>
+        /// <returns>The string representation of the table for HMIs.</returns>
+        public static string DataTableToString(DataTable table)
+        {
+            string result = "";
+
+            foreach (DataRow row in table.Rows)
+            {
+                for (int i = 0; i < row.ItemArray.Length; i++)
+                {
+                    if (i > 0)
+                    {
+                        result += ",";
+                    }
+                    result += row[i].ToString()?.Trim();
+                }
+
+                result += "|";
+            }
+
+            return result;
         }
     }
 }

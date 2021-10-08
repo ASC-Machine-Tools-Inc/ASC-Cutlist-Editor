@@ -60,7 +60,7 @@ namespace AscCutlistEditor.Utility.MQTT
                 Debug.WriteLine("### MOCK " + mockClient.Id + " CONNECTED ###");
 
                 // Test publishing a message.
-                await MachineDataViewModel.PublishMessage(client, "self/success", "Mock connection successful!");
+                await MachineMessageViewModel.PublishMessage(client, "self/success", "Mock connection successful!");
             });
 
             try

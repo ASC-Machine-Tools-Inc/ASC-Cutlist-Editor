@@ -84,7 +84,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     Debug.WriteLine("### ALPHA CUTLIST - CONNECTED WITH SERVER ###");
 
                     // Test publishing a message.
-                    await MachineDataViewModel.PublishMessage(
+                    await MachineMessageViewModel.PublishMessage(
                         _client,
                         "self/success",
                         "Alpha cutlist generator connection successful!");
