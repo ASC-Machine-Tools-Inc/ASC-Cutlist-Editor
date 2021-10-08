@@ -10,38 +10,28 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using System;
 using System.Collections.ObjectModel;
-using System.Data.SqlClient;
+using System.Data;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
-using System.Windows.Input;
 using System.Windows.Threading;
+using AscCutlistEditor.Models.MQTT;
+using AscCutlistEditor.Utility.MQTT;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {
     /// <summary>
     /// Handles the data for a single machine connection.
     /// </summary>
-    internal class MachineDataViewModel : ObservableObject
+    internal class MachineMessageViewModel : ObservableObject
     {
-        private readonly IMqttClient _client;
+        // Model for storing the mqtt connection data.
+        private MachineConnection _machineConnection;
 
-        // The topic to read from.
-        private readonly string _subTopic;
-
-        // The topic to publish responses to.
-        private readonly string _pubTopic = "alphasub";
-
-        private ObservableCollection<MachineData> _machineDataCollection =
-            new ObservableCollection<MachineData>();
-
-        private MachineData _latestMachineData;
+        private MachineMessage _latestMachineMessage;
         private LineSeries _uptimeSeries;
         private LineSeries _uptimePercentageSeries;
-        private string _connectionStatus;
         private int _uptimeRunningCount;
         private double _uptimeRunningPercentage;
 
@@ -49,33 +39,23 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
         public PlotModel UptimePercentagePlot { get; set; }
 
-        public ObservableCollection<MachineData> MachineDataCollection
+        public ObservableCollection<MachineMessage> MachineMessageCollection
         {
-            get => _machineDataCollection;
+            get => _machineConnection.MachineMessageCollection;
             set
             {
-                _machineDataCollection = value;
-                RaisePropertyChangedEvent("MachineDataCollection");
+                _machineConnection.MachineMessageCollection = value;
+                RaisePropertyChangedEvent("MachineMessageCollection");
             }
         }
 
-        public MachineData LatestMachineData
+        public MachineMessage LatestMachineMessage
         {
-            get => _latestMachineData;
+            get => _latestMachineMessage;
             set
             {
-                _latestMachineData = value;
-                RaisePropertyChangedEvent("LatestMachineData");
-            }
-        }
-
-        public string ConnectionStatus
-        {
-            get => _connectionStatus;
-            set
-            {
-                _connectionStatus = value;
-                RaisePropertyChangedEvent("ConnectionStatus");
+                _latestMachineMessage = value;
+                RaisePropertyChangedEvent("LatestMachineMessage");
             }
         }
 
@@ -89,16 +69,21 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
         }
 
-        // TODO: assign connmodel
-        public MachineDataViewModel(string topic, SqlConnectionViewModel connModel)
+        public MachineMessageViewModel(string topic, SqlConnectionViewModel connModel)
         {
             var mqttFactory = new MqttFactory();
-            _client = mqttFactory.CreateMqttClient();
-            _subTopic = MachineConnectionsViewModel.MainTopic + topic;
+            IMqttClient client = mqttFactory.CreateMqttClient();
+            string subTopic = MachineConnectionsViewModel.MainTopic + topic;
+            string pubTopic = "alphasub";
 
-            MachineDataCollection = new ObservableCollection<MachineData>();
-            LatestMachineData = null;
-            ConnectionStatus = "disconnected";
+            _machineConnection = new MachineConnection(
+                client,
+                subTopic,
+                pubTopic,
+                connModel
+                );
+
+            LatestMachineMessage = null;
 
             CreateUptimeModel();
         }
@@ -114,26 +99,24 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 .Build();
 
             // Response to send on connection.
-            _client.UseConnectedHandler(async e =>
+            _machineConnection.Client.UseConnectedHandler(async e =>
             {
                 Debug.WriteLine("### CONNECTED WITH SERVER ###");
 
                 // Test publishing a message.
                 await PublishMessage(
-                    _client,
+                    _machineConnection.Client,
                     "self/success",
                     "Connection successful!");
 
                 // Subscribe to a topic.
-                await _client.SubscribeAsync(_subTopic);
+                await _machineConnection.Client.SubscribeAsync(_machineConnection.SubTopic);
 
-                Debug.WriteLine("### SUBSCRIBED TO " + _subTopic + "###");
-
-                ConnectionStatus = "connected";
+                Debug.WriteLine("### SUBSCRIBED TO " + _machineConnection.SubTopic + "###");
             });
 
             // Response to send on receiving a message.
-            _client.UseApplicationMessageReceivedHandler(e =>
+            _machineConnection.Client.UseApplicationMessageReceivedHandler(e =>
             {
                 // Acknowledge application message and print some relevant data.
                 string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
@@ -147,19 +130,24 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 try
                 {
                     // Attempt payload conversion and logging.
-                    dynamic machineData = JsonConvert.DeserializeObject(payload);
-                    if (machineData != null)
+                    MachineMessage machineMessage = (MachineMessage)JsonConvert.DeserializeObject(payload);
+                    if (machineMessage == null)
                     {
-                        // Add the data to our graph.
-                        AddMachineData(machineData);
-
-                        // Attempt an acknowledgement response.
-                        Task.Run(() => PublishMessage(
-                            _client,
-                            "self",
-                            $"Successful packet for job number: " +
-                            $"{machineData.SelectToken("tags.set1.MqttPub.JobNumber")}"));
+                        return;
                     }
+
+                    // Add the data to our graph.
+                    AddMachineMessage(machineMessage);
+
+                    // Bryan's code.
+                    // BryanCode(machineMessage);
+
+                    // Attempt an acknowledgement response.
+                    Task.Run(() => PublishMessage(
+                        _machineConnection.Client,
+                        "self",
+                        $"Successful packet for job number: " +
+                        $"{machineMessage.tags.set1.MqttPub.JobNumber}"));
                 }
                 catch (JsonReaderException)
                 {
@@ -169,7 +157,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             try
             {
-                await _client.ConnectAsync(options);
+                await _machineConnection.Client.ConnectAsync(options);
             }
             catch
             {
@@ -232,7 +220,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             UptimePercentagePlot = uptimePercentagePlot;
         }
 
-        private void AddMachineData(dynamic data)
+        private void AddMachineMessage(MachineMessage message)
         {
             // Run on UI thread.
             // Select the correct dispatcher: if Application.Current is null,
@@ -242,53 +230,148 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 Dispatcher.CurrentDispatcher;
             dispatcher.Invoke(() =>
             {
-                string lineRunning = data.SelectToken("tags.set1.MqttPub.LineRunning");
-                DateTime timeStamp = (DateTime)data.SelectToken("timestamp");
-
-                MachineData machineData = new MachineData
-                {
-                    ConnectionStatus = (string)data.SelectToken("connected"), // TODO: bool?
-                    JobNumber = (string)data.SelectToken("tags.set1.MqttPub.JobNumber"),
-                    LineStatus = lineRunning,
-                    TimeStamp = timeStamp
-                };
-
-                MachineDataCollection.Add(machineData);
+                MachineMessageCollection.Add(message);
 
                 // Calculate percentage for line running bars.
                 bool running = false;
-                if (lineRunning.Equals("LINE RUNNING"))
+                if (message.tags.set1.MqttPub.LineRunning.Equals("LINE RUNNING"))
                 {
                     _uptimeRunningCount++;
                     running = true;
                 }
-                UptimeRunningPercentage = (double)_uptimeRunningCount / MachineDataCollection.Count * 100;
+                UptimeRunningPercentage = (double)_uptimeRunningCount / MachineMessageCollection.Count * 100;
 
                 _uptimeSeries.Points.Add(
                     new DataPoint(
-                        DateTimeAxis.ToDouble(timeStamp),
+                        DateTimeAxis.ToDouble(message.timestamp),
                         running ? 100 : 0));
-                UptimePlot.InvalidatePlot(true); // Refresh plot with new data.
+                UptimePlot.InvalidatePlot(true); // Refresh plot with new message.
 
                 _uptimePercentageSeries.Points.Add(
             new DataPoint(
-                DateTimeAxis.ToDouble(timeStamp),
+                DateTimeAxis.ToDouble(message.timestamp),
                 UptimeRunningPercentage));
-                UptimePercentagePlot.InvalidatePlot(true); // Refresh plot with new data.
+                UptimePercentagePlot.InvalidatePlot(true); // Refresh plot with new message.
 
-                Debug.WriteLine($"Connection Status: {data.SelectToken("connected")}");
-                Debug.WriteLine($"Current Job Number: {lineRunning}");
-                Debug.WriteLine($"Line Status: {data.SelectToken("tags.set1.MqttPub.LineRunning")}");
-                Debug.WriteLine($"Time Received: {timeStamp}");
+                Debug.WriteLine($"Connection Status: {message.connected}");
+                Debug.WriteLine($"Current Job Number: {message.tags.set1.MqttPub.JobNumber}");
+                Debug.WriteLine($"Line Status: {message.tags.set1.MqttPub.LineRunning}");
+                Debug.WriteLine($"Time Received: {message.timestamp}");
             });
 
-            // Update the latest if our data is newer.
+            // Update the latest if our message is newer.
             /*
-            if (LatestMachineData == null ||
-                data.TimeStamp > MachineDataCollection.Max(d => d.TimeStamp))
+            if (LatestMachineMessage == null ||
+                message.TimeStamp > MachineMessageCollection.Max(d => d.TimeStamp))
             {
-                LatestMachineData = data;
+                LatestMachineMessage = message;
             } */
+        }
+
+        /// <summary>
+        /// Putting all the code for the message handler here temporarily.
+        /// </summary>
+        //TODO: change to task?
+        private async void BryanCode(MachineMessage message)
+        {
+            MachineMessage returnMessage = new MachineMessage();
+
+            // 1. Check job number
+            string jobNum = message.tags.set1.MqttPub.JobNumber;
+            if (string.IsNullOrEmpty(jobNum))
+            {
+                return;
+            }
+
+            // TODO: break by step into own methods
+
+            // 2. Check order dat req false
+            string orderDataRequested = message.tags.set1.MqttPub.OrderDatReq;
+            if (orderDataRequested.Equals("FALSE"))
+            {
+                // Check JN exists
+
+                // Update KPI displays
+
+                // Query SQL.
+                DataTable orderNumTable = await Queries.GetOrdersByMachineNum(jobNum);
+
+                // Add contents of orderNumTable into return message.
+                string orderData = "";
+                foreach (DataRow row in orderNumTable.Rows)
+                {
+                    string orderNum = row[0].ToString()?.Trim();
+                    string material = row[1].ToString()?.Trim();
+                    string partNum = row[2].ToString()?.Trim();
+                    string orderLen = row[3].ToString()?.Trim();
+
+                    orderData += $"{orderNum},{material},{orderLen},{partNum}|";
+                }
+
+                returnMessage.tags.set2.MqttSub.MqttDest = message.tags.set1.MqttPub.JobNumber;
+                returnMessage.tags.set2.MqttSub.MqttString = orderData;
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(message.tags.set1.MqttPub.OrderNo))
+                {
+                    // 3. Else if true and orderno not blank
+                    DataTable fullOrderTable = await Queries.GetOrdersByIdAndMachine(
+                        message.tags.set1.MqttPub.OrderNo,
+                        jobNum);
+
+                    string fullOrderData = "";
+                    foreach (DataRow row in fullOrderTable.Rows)
+                    {
+                        string itemId = row[0].ToString()?.Trim();
+                        string length = row[1].ToString()?.Trim();
+                        string quantity = row[2].ToString()?.Trim();
+                        string bundle = row[3].ToString()?.Trim();
+
+                        fullOrderData += $"{itemId},{length},{quantity},{bundle}|";
+                    }
+
+                    returnMessage.tags.set2.MqttSub.OrderDatRecv = fullOrderData;
+
+                    // Query for bundles.
+                    DataTable bundlesTable = await Queries.GetBundle(message.tags.set1.MqttPub.OrderNo);
+
+                    string bundleData = "";
+                    foreach (DataRow row in bundlesTable.Rows)
+                    {
+                        for (int i = 0; i < row.ItemArray.Length; i++)
+                        {
+                            if (i > 0)
+                            {
+                                bundleData += ",";
+                            }
+                            bundleData += row[i].ToString()?.Trim();
+                        }
+
+                        bundleData += "|";
+                    }
+                    // TODO: might just turn this into a helper method, since we do it so much.
+                    // Might need to reset the order to Bryan's standard?
+                }
+                else
+                {
+                    // 4. Else if true and orderno blank
+                    // Set flag to clear button.
+                    returnMessage.tags.set2.MqttSub.OrderDatAck = "TRUE";
+                }
+            }
+
+            // 5. Check coil dat req true and scan coil id not empty and order no not empty and order no not no order selected
+
+            // 6. Else if coil dat req false
+
+            // 7. Check if coil store req true and coil usage dat not empty
+
+            // 8. if coil usage send true and coil usage dat
+
+            // 9. write data back to hmi
+
+            // Notes: don't check for null, either empty string or not
         }
     }
 }

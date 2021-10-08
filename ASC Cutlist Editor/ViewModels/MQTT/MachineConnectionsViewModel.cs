@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using AscCutlistEditor.Frameworks;
+﻿using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Views.MQTT;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using MQTTnet.Server;
-using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {
@@ -30,10 +30,10 @@ namespace AscCutlistEditor.ViewModels.MQTT
         private HashSet<string> _knownTopics;
         private ObservableCollection<TabItem> _machineConnectionTabs;
 
-        private readonly SqlConnectionViewModel _sqlConnectionViewModel;
+        private readonly SqlConnectionViewModel _sqlConnection;
 
         public static int Port = 1883;
-        public static string Ip = "192.168.0.119";
+        public static string Ip = GetLocalIpAddress();
         public static string MainTopic = "alphapub";
 
         public MachineConnectionsViewModel(
@@ -47,7 +47,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             _knownTopics = new HashSet<string>();
             _machineConnectionTabs = new ObservableCollection<TabItem>();
 
-            _sqlConnectionViewModel = connModel;
+            _sqlConnection = connModel;
         }
 
         public ObservableCollection<TabItem> MachineConnectionTabs
@@ -68,7 +68,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             // Check that the server isn't already running, and that we have
             // a valid connection string to connect to.
             if (Server.IsStarted ||
-                !await _sqlConnectionViewModel.TestConnection())
+                !await _sqlConnection.TestConnection())
             {
                 return;
             }
@@ -91,7 +91,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
         {
             // Create a new model for listening to this topic.
             MachineDataViewModel model =
-                new MachineDataViewModel(topic, _sqlConnectionViewModel);
+                new MachineDataViewModel(topic, _sqlConnection);
             await model.StartClient();
 
             Dispatcher dispatcher = Application.Current != null ?
@@ -156,6 +156,15 @@ namespace AscCutlistEditor.ViewModels.MQTT
             {
                 Debug.WriteLine("Connection unsuccessful.");
             }
+        }
+
+        // Get the local IP address for use in our MQTT broker.
+        private static string GetLocalIpAddress()
+        {
+            using Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0);
+            socket.Connect("8.8.8.8", 65530);
+            IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
+            return endPoint?.Address.ToString();
         }
     }
 }

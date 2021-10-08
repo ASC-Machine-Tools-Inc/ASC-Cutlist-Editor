@@ -1,19 +1,15 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.Properties;
+using MQTTnet;
+using MQTTnet.Client;
+using MQTTnet.Client.Options;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Windows.UI.Notifications;
-using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.Properties;
-using AscCutlistEditor.Utility.MQTT;
-using MQTTnet;
-using MQTTnet.Client;
-using MQTTnet.Client.Options;
-using Newtonsoft.Json;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {
@@ -27,6 +23,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
         private readonly IMqttClient _client;
         private readonly string _subTopic = "alphapub/+/+";
+        private readonly string _pubTopic = "alphasub";
 
         public SqlConnectionViewModel()
         {
