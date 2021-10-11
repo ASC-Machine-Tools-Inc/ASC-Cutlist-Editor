@@ -92,7 +92,7 @@ namespace AscCutlistEditor.Utility.MQTT
             }
 
             // Stop timer to prevent memory leak - might be unnecessary?
-            mockClient.MessageTimer.Stop();
+            mockClient.StopTimers();
             _clients.Remove(mockClient);
         }
     }

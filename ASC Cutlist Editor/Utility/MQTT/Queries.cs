@@ -251,6 +251,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// <summary>
         /// Converts a data table into a string where fields are separated with
         /// commas and rows are separated with vertical bars for the HMI to parse.
+        /// Example result: row1-field1,row1-field2|row2-field1,row2-field2
         /// </summary>
         /// <param name="table">The table to convert.</param>
         /// <returns>The string representation of the table for HMIs.</returns>
@@ -258,18 +259,16 @@ namespace AscCutlistEditor.Utility.MQTT
         {
             string result = "";
 
-            foreach (DataRow row in table.Rows)
+            for (int i = 0; i < table.Rows.Count; i++)
             {
-                for (int i = 0; i < row.ItemArray.Length; i++)
-                {
-                    if (i > 0)
-                    {
-                        result += ",";
-                    }
-                    result += row[i].ToString()?.Trim();
-                }
+                DataRow row = table.Rows[i];
+                if (i > 0) result += "|";
 
-                result += "|";
+                for (int j = 0; j < row.ItemArray.Length; j++)
+                {
+                    if (j > 0) result += ",";
+                    result += row[j].ToString()?.Trim();
+                }
             }
 
             return result;

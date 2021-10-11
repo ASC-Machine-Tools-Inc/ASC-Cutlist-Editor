@@ -6,6 +6,7 @@ using AscCutlistEditor.Utility;
 using AscCutlistEditor.Utility.MQTT;
 using AscCutlistEditor.ViewModels.MQTT;
 using MQTTnet.Client;
+using Newtonsoft.Json;
 
 namespace AscCutlistEditor.Models.MQTT
 {
@@ -19,35 +20,72 @@ namespace AscCutlistEditor.Models.MQTT
 
         public DispatcherTimer MessageTimer { get; set; }
 
+        private readonly DispatcherTimer _statusTimer;
+
+        private string _lineStatus = "LINE STOPPED";
+
         public MockMachineClient(int id, IMqttClient client, string topic)
         {
             Id = id;
             Client = client;
             Topic = topic;
 
-            // Message timer is always initialized to send messages every 5 seconds.
-            MessageTimer = new DispatcherTimer();
+            // Initialize timer for randomizing machine status.
+            _statusTimer = new DispatcherTimer
+            {
+                Interval = new TimeSpan(0, 0, 15)
+            };
+            _statusTimer.Tick += StatusTimerTick;
+            _statusTimer.Start();
+
+            // Initialize timer for sending mock messages.
+            MessageTimer = new DispatcherTimer
+            {
+                Interval = new TimeSpan(0, 0, 1)
+            };
             MessageTimer.Tick += MockMessageTimerTick;
-            MessageTimer.Interval = new TimeSpan(0, 0, 1);
             MessageTimer.Start();
         }
 
+        // End the timers and remove their ticks to prevent memory leaks.
+        public void StopTimers()
+        {
+            _statusTimer.Stop();
+            _statusTimer.Tick -= StatusTimerTick;
+            MessageTimer.Stop();
+            MessageTimer.Tick -= MockMessageTimerTick;
+        }
+
+        // Pick a random line running status.
+        private void StatusTimerTick(object sender, EventArgs e)
+        {
+            var lineRunningStatuses = new List<string> { "LINE RUNNING", "LINE STOPPED" };
+            _lineStatus = lineRunningStatuses[new Random().Next(lineRunningStatuses.Count)];
+        }
+
+        // Publish a fake message for this machine.
         private async void MockMessageTimerTick(object sender, EventArgs e)
         {
-            // TODO: update based on line stopped, custom job number, custom connected
-            // Pick a random line running status.
-            var lineRunningStatuses = new List<string> { "LINE RUNNING", "LINE STOPPED" };
-            string lineRunning = lineRunningStatuses[new Random().Next(lineRunningStatuses.Count)];
-
-            string payload =
-                "{\"connected\":\"true\"," +
-                "\"tags\":" +
-                    "{\"set1\":" +
-                        "{\"MqttPub\":" +
-                            "{\"JobNumber\":\"JN12345\"," +
-                            "\"LineRunning\":\"" + lineRunning + "\"}}}," +
-                "\"timestamp\":\"" + DateTime.Now + "\"}";
-            await MachineMessageViewModel.PublishMessage(Client, Topic, payload);
+            MachineMessage message = new MachineMessage
+            {
+                connected = "true",
+                tags = new Tags
+                {
+                    set1 = new Set1
+                    {
+                        MqttPub = new MqttPub
+                        {
+                            JobNumber = "JN_TEST",
+                            LineRunning = _lineStatus
+                        }
+                    }
+                },
+                timestamp = DateTime.Now
+            };
+            await MachineMessageViewModel.PublishMessage(
+                Client,
+                Topic,
+                JsonConvert.SerializeObject(message));
         }
     }
 }

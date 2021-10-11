@@ -123,14 +123,14 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
                 Debug.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
                 Debug.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
-                Debug.Write($"+ Payload = {payload}");
+                Debug.WriteLine($"+ Payload = {payload}");
                 Debug.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
                 Debug.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}\n");
 
                 try
                 {
                     // Attempt payload conversion and logging.
-                    MachineMessage machineMessage = (MachineMessage)JsonConvert.DeserializeObject(payload);
+                    MachineMessage machineMessage = JsonConvert.DeserializeObject<MachineMessage>(payload);
                     if (machineMessage == null)
                     {
                         return;
@@ -246,11 +246,12 @@ namespace AscCutlistEditor.ViewModels.MQTT
                         DateTimeAxis.ToDouble(message.timestamp),
                         running ? 100 : 0));
                 UptimePlot.InvalidatePlot(true); // Refresh plot with new message.
+                // TODO: fix cast?
 
                 _uptimePercentageSeries.Points.Add(
-            new DataPoint(
-                DateTimeAxis.ToDouble(message.timestamp),
-                UptimeRunningPercentage));
+                    new DataPoint(
+                        DateTimeAxis.ToDouble(message.timestamp),
+                        UptimeRunningPercentage));
                 UptimePercentagePlot.InvalidatePlot(true); // Refresh plot with new message.
 
                 Debug.WriteLine($"Connection Status: {message.connected}");
@@ -319,38 +320,12 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     DataTable fullOrderTable = await Queries.GetOrdersByIdAndMachine(
                         message.tags.set1.MqttPub.OrderNo,
                         jobNum);
-
-                    string fullOrderData = "";
-                    foreach (DataRow row in fullOrderTable.Rows)
-                    {
-                        string itemId = row[0].ToString()?.Trim();
-                        string length = row[1].ToString()?.Trim();
-                        string quantity = row[2].ToString()?.Trim();
-                        string bundle = row[3].ToString()?.Trim();
-
-                        fullOrderData += $"{itemId},{length},{quantity},{bundle}|";
-                    }
-
-                    returnMessage.tags.set2.MqttSub.OrderDatRecv = fullOrderData;
+                    returnMessage.tags.set2.MqttSub.OrderDatRecv = Queries.DataTableToString(fullOrderTable);
 
                     // Query for bundles.
                     DataTable bundlesTable = await Queries.GetBundle(message.tags.set1.MqttPub.OrderNo);
+                    string bundleData = Queries.DataTableToString(bundlesTable);
 
-                    string bundleData = "";
-                    foreach (DataRow row in bundlesTable.Rows)
-                    {
-                        for (int i = 0; i < row.ItemArray.Length; i++)
-                        {
-                            if (i > 0)
-                            {
-                                bundleData += ",";
-                            }
-                            bundleData += row[i].ToString()?.Trim();
-                        }
-
-                        bundleData += "|";
-                    }
-                    // TODO: might just turn this into a helper method, since we do it so much.
                     // Might need to reset the order to Bryan's standard?
                 }
                 else

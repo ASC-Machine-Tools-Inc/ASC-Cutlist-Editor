@@ -21,8 +21,8 @@
             </Grid.ColumnDefinitions>
 
             <DataGrid
-                ItemsSource="{Binding MachineDataCollection}"
-                AutoGenerateColumns="True"
+                ItemsSource="{Binding MachineMessageCollection}"
+                AutoGenerateColumns="False"
                 IsReadOnly="True"
                 GridLinesVisibility="Horizontal"
                 HeadersVisibility="Column"
@@ -33,6 +33,17 @@
                         <Setter Property="IsHitTestVisible" Value="False" />
                     </Style>
                 </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Header="Timestamp"
+                        Binding="{Binding timestamp}" />
+                    <DataGridTextColumn
+                        Header="Job Number"
+                        Binding="{Binding tags.set1.MqttPub.JobNumber}" />
+                    <DataGridTextColumn
+                        Header="Line Running Status"
+                        Binding="{Binding tags.set1.MqttPub.LineRunning}" />
+                </DataGrid.Columns>
             </DataGrid>
 
             <oxy:PlotView
