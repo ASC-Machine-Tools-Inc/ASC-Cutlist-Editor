@@ -45,7 +45,8 @@ namespace AscCutlistEditor.Utility.MQTT
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
 
             string queryStr = "SELECT coilnumber, description, material, " +
-                              "startlength, lengthused " +
+                              "(CONVERT(DECIMAL(10,2),startlength) - " +
+                              "CONVERT(DECIMAL(10,2),lengthused)) AS currlength " +
                               "FROM amscoil " +
                               "WHERE dateout IS NULL";
 

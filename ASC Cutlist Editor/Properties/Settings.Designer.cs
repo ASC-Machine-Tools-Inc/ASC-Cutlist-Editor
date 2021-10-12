@@ -70,29 +70,5 @@ namespace AscCutlistEditor.Properties {
                 this["Password"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("TRUE")]
-        public string Requested {
-            get {
-                return ((string)(this["Requested"]));
-            }
-            set {
-                this["Requested"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("FALSE")]
-        public string NotRequested {
-            get {
-                return ((string)(this["NotRequested"]));
-            }
-            set {
-                this["NotRequested"] = value;
-            }
-        }
     }
 }

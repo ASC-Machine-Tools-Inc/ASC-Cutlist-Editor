@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Text;
 using System.Threading.Tasks;
 using AscCutlistEditor.Models.MQTT;
-using AscCutlistEditor.Utility.Constants;
-using AscCutlistEditor.ViewModels.MQTT;
 
 namespace AscCutlistEditor.Utility.MQTT
 {
@@ -66,14 +62,14 @@ namespace AscCutlistEditor.Utility.MQTT
             MachineMessage message,
             MachineMessage returnMessage)
         {
-            // 5. Check coil dat req true and scan coil id not empty and order no not empty and order no not no order selected
             MqttPub pub = message.tags.set1.MqttPub;
             MqttSub sub = returnMessage.tags.set2.MqttSub;
+            bool coilValid = false;
 
-            if (pub.CoilDatReq == MessageFlagResponses.Requested)
+            if (pub.CoilDatReq == "TRUE")
             {
                 // Coil data requested, check for parameters.
-                List<string> coilDataMessages = new List<string>();
+                var coilDataMessages = new List<string>();
                 if (!string.IsNullOrEmpty(pub.ScanCoilID) &&
                     !string.IsNullOrEmpty(pub.OrderNo) &&
                     !pub.OrderNo.Equals("NoOrderSelected"))
@@ -95,14 +91,45 @@ namespace AscCutlistEditor.Utility.MQTT
                     {
                         DataRow firstCoil = coilData.Rows[0];
                         DataRow firstOrder = orderData.Rows[0];
+
+                        double startingLength = (double)firstCoil[0];
+                        double usedLength = (double)firstCoil[1];
+                        double orderLength = (double)firstOrder[2];
+                        double lengthRemaining =
+                            (startingLength - usedLength) * 12 - orderLength;
+
+                        string coilMaterial = firstCoil[2].ToString()?.Trim();
+                        string orderMaterial = firstOrder[1].ToString()?.Trim();
+
+                        // Check that the coil has enough length remaining to
+                        // run and is the right material.
+                        if (coilMaterial == orderMaterial && lengthRemaining > 0.0)
+                        {
+                            coilValid = true;
+                            coilDataMessages.Add("Coil is OKAY to run!");
+                        }
+                        else
+                        {
+                            // Can't run this coil, add error messages.
+                            coilDataMessages.Add("Coil is NOT OKAY to run!");
+
+                            if (coilMaterial != orderMaterial)
+                            {
+                                coilDataMessages.Add("Coil and order " +
+                                                     "material are different.");
+                            }
+
+                            if (lengthRemaining <= 0.0)
+                            {
+                                coilDataMessages.Add("Not enough " +
+                                                     "material remaining.");
+                            }
+                        }
                     }
                 }
                 else
                 {
-                    // Coil parameters or table invalid.
-                    sub.CoilDatAck = "TRUE";
-                    sub.CoilDatValidAck = "FALSE";
-
+                    // Coil parameters invalid, add error message.
                     if (string.IsNullOrEmpty(pub.ScanCoilID))
                     {
                         coilDataMessages.Add("Coil ID blank - Tag or " +
@@ -118,15 +145,50 @@ namespace AscCutlistEditor.Utility.MQTT
                     }
                 }
 
+                if (coilValid)
+                {
+                    // Coil good to run.
+                    sub.CoilDatAck = "TRUE";
+                    sub.CoilDatValidAck = "TRUE";
+                }
+                else
+                {
+                    // Coil parameters or table invalid.
+                    sub.CoilDatAck = "TRUE";
+                    sub.CoilDatValidAck = "FALSE";
+                }
+
                 // Attach our message for response to the operator.
                 sub.CoilDatRecv = string.Join("|", coilDataMessages);
             }
-            else if (pub.CoilDatReq == MessageFlagResponses.NotRequested)
+            else if (pub.CoilDatReq == "FALSE")
             {
                 // No data requested, clear flags before the next message to
                 // prevent repeated popups.
                 sub.CoilDatAck = "FALSE";
                 sub.CoilDatValidAck = "FALSE";
+            }
+        }
+
+        /// <summary>
+        /// Handle updating the display when the HMI requests the list of coils.
+        /// </summary>
+        internal static async Task CoilStoreReqFlagHandler(
+            MachineMessage message,
+            MachineMessage returnMessage)
+        {
+            MqttPub pub = message.tags.set1.MqttPub;
+            MqttSub sub = returnMessage.tags.set2.MqttSub;
+
+            // Coils requested by HMI.
+            if (pub.CoilStoreReq == "TRUE" &&
+                !string.IsNullOrEmpty(pub.CoilUsageDat))
+            {
+                DataTable coils = await Queries.GetNonDepletedCoils();
+                int count = coils.Rows.Count - 1;
+
+                sub.CoilStoreRecv = count + "|" + Queries.DataTableToString(coils);
+                sub.CoilStoreAck = "TRUE";
             }
         }
     }

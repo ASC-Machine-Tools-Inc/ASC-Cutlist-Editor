@@ -221,19 +221,18 @@ namespace AscCutlistEditor.ViewModels.MQTT
             // Update the UI.
             UpdateMachineTab(message);
 
-            // Handle the order data requested flag.
+            // Handle the order data requested flag (getting the orders and bundles).
             await MessageFlagHandlers.OrderDatReqFlagHandler(message, returnMessage);
 
-            // Handle the coil data requested flag.
+            // Handle the coil data requested flag (running a specific coil and order).
             await MessageFlagHandlers.CoilDatReqFlagHandler(message, returnMessage);
 
-            // 7. Check if coil store req true and coil usage dat not empty
+            // Handle the coil list requested flag (all non-depleted coils).
+            await MessageFlagHandlers.CoilStoreReqFlagHandler(message, returnMessage);
 
             // 8. if coil usage send true and coil usage dat
 
             // 9. write data back to hmi
-
-            // Notes: don't check for null, either empty string or not
         }
 
         /// <summary>
