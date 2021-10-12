@@ -51,16 +51,20 @@ namespace AscCutlistEditor.Utility.MQTT
                 .Build();
             var clientId = _clients.Count();
             var client = new MqttFactory().CreateMqttClient();
-            var topic = MachineConnectionsViewModel.MainTopic + "/mockdata" + clientId + "/";
+            var topic = MachineConnectionsViewModel.MainTopic +
+                        "/mockdata" + clientId + "/";
             var mockClient = new MockMachineClient(clientId, client, topic);
 
             // Set the response to send on connection.
-            client.UseConnectedHandler(async e =>
+            client.UseConnectedHandler(e =>
             {
                 Debug.WriteLine("### MOCK " + mockClient.Id + " CONNECTED ###");
 
                 // Test publishing a message.
-                await MachineMessageViewModel.PublishMessage(client, "self/success", "Mock connection successful!");
+                MachineMessageViewModel.PublishMessage(
+                    client,
+                    "self/success",
+                    "Mock connection successful!");
             });
 
             try

@@ -1,14 +1,11 @@
 ﻿using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.Models;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
-using MQTTnet.Server;
 using Newtonsoft.Json;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
-using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
@@ -29,7 +26,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
         // Model for storing the mqtt connection data.
         private MachineConnection _machineConnection;
 
-        private MachineMessage _latestMachineMessage;
         private LineSeries _uptimeSeries;
         private LineSeries _uptimePercentageSeries;
         private int _uptimeRunningCount;
@@ -46,16 +42,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
             {
                 _machineConnection.MachineMessageCollection = value;
                 RaisePropertyChangedEvent("MachineMessageCollection");
-            }
-        }
-
-        public MachineMessage LatestMachineMessage
-        {
-            get => _latestMachineMessage;
-            set
-            {
-                _latestMachineMessage = value;
-                RaisePropertyChangedEvent("LatestMachineMessage");
             }
         }
 
@@ -81,14 +67,11 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 subTopic,
                 pubTopic,
                 connModel
-                );
-
-            LatestMachineMessage = null;
+            );
 
             CreateUptimeModel();
         }
 
-        // TODO: use connmodel to fire off our queries
         public async Task StartClient()
         {
             // Create MQTT client.
@@ -101,31 +84,20 @@ namespace AscCutlistEditor.ViewModels.MQTT
             // Response to send on connection.
             _machineConnection.Client.UseConnectedHandler(async e =>
             {
-                Debug.WriteLine("### CONNECTED WITH SERVER ###");
+                Debug.WriteLine("### SUBSCRIBED TO " + _machineConnection.SubTopic + " ###");
 
-                // Test publishing a message.
-                await PublishMessage(
+                PublishMessage(
                     _machineConnection.Client,
                     "self/success",
                     "Connection successful!");
 
-                // Subscribe to a topic.
                 await _machineConnection.Client.SubscribeAsync(_machineConnection.SubTopic);
-
-                Debug.WriteLine("### SUBSCRIBED TO " + _machineConnection.SubTopic + "###");
             });
 
             // Response to send on receiving a message.
             _machineConnection.Client.UseApplicationMessageReceivedHandler(e =>
             {
-                // Acknowledge application message and print some relevant data.
                 string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-
-                Debug.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
-                Debug.WriteLine($"+ Topic = {e.ApplicationMessage.Topic}");
-                Debug.WriteLine($"+ Payload = {payload}");
-                Debug.WriteLine($"+ QoS = {e.ApplicationMessage.QualityOfServiceLevel}");
-                Debug.WriteLine($"+ Retain = {e.ApplicationMessage.Retain}\n");
 
                 try
                 {
@@ -136,18 +108,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
                         return;
                     }
 
-                    // Add the data to our graph.
-                    AddMachineMessage(machineMessage);
-
-                    // Bryan's code.
-                    // BryanCode(machineMessage);
-
-                    // Attempt an acknowledgement response.
-                    Task.Run(() => PublishMessage(
-                        _machineConnection.Client,
-                        "self",
-                        $"Successful packet for job number: " +
-                        $"{machineMessage.tags.set1.MqttPub.JobNumber}"));
+                    // Bryan's code for handling messages TODO rename.
+                    BryanCode(machineMessage);
                 }
                 catch (JsonReaderException)
                 {
@@ -165,7 +127,13 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
         }
 
-        public static async Task PublishMessage(IMqttClient client, string topic, string payload)
+        /// <summary>
+        /// Publish an MQTT message.
+        /// </summary>
+        /// <param name="client">The IMqttClient to publish the message from.</param>
+        /// <param name="topic">The topic to publish the message under.</param>
+        /// <param name="payload">The contents of the message to publish.</param>
+        public static async void PublishMessage(IMqttClient client, string topic, string payload)
         {
             var message = new MqttApplicationMessageBuilder()
                 .WithTopic(topic)
@@ -198,7 +166,9 @@ namespace AscCutlistEditor.ViewModels.MQTT
             uptimePlot.Axes.Add(new LinearAxis
             {
                 Maximum = 105,
-                Minimum = 0
+                Minimum = 0,
+                AbsoluteMaximum = 105,
+                AbsoluteMinimum = 0
             });
 
             uptimePercentagePlot.Series.Add(percentSeries);
@@ -210,7 +180,9 @@ namespace AscCutlistEditor.ViewModels.MQTT
             uptimePercentagePlot.Axes.Add(new LinearAxis
             {
                 Maximum = 105,
-                Minimum = 0
+                Minimum = 0,
+                AbsoluteMaximum = 105,
+                AbsoluteMinimum = 0
             });
 
             _uptimeSeries = currentSeries;
@@ -220,125 +192,40 @@ namespace AscCutlistEditor.ViewModels.MQTT
             UptimePercentagePlot = uptimePercentagePlot;
         }
 
-        private void AddMachineMessage(MachineMessage message)
-        {
-            // Run on UI thread.
-            // Select the correct dispatcher: if Application.Current is null,
-            // we're running unit tests and should use CurrentDispatcher instead.
-            Dispatcher dispatcher = Application.Current != null ?
-                Application.Current.Dispatcher :
-                Dispatcher.CurrentDispatcher;
-            dispatcher.Invoke(() =>
-            {
-                MachineMessageCollection.Add(message);
-
-                // Calculate percentage for line running bars.
-                bool running = false;
-                if (message.tags.set1.MqttPub.LineRunning.Equals("LINE RUNNING"))
-                {
-                    _uptimeRunningCount++;
-                    running = true;
-                }
-                UptimeRunningPercentage = (double)_uptimeRunningCount / MachineMessageCollection.Count * 100;
-
-                _uptimeSeries.Points.Add(
-                    new DataPoint(
-                        DateTimeAxis.ToDouble(message.timestamp),
-                        running ? 100 : 0));
-                UptimePlot.InvalidatePlot(true); // Refresh plot with new message.
-                // TODO: fix cast?
-
-                _uptimePercentageSeries.Points.Add(
-                    new DataPoint(
-                        DateTimeAxis.ToDouble(message.timestamp),
-                        UptimeRunningPercentage));
-                UptimePercentagePlot.InvalidatePlot(true); // Refresh plot with new message.
-
-                Debug.WriteLine($"Connection Status: {message.connected}");
-                Debug.WriteLine($"Current Job Number: {message.tags.set1.MqttPub.JobNumber}");
-                Debug.WriteLine($"Line Status: {message.tags.set1.MqttPub.LineRunning}");
-                Debug.WriteLine($"Time Received: {message.timestamp}");
-            });
-
-            // Update the latest if our message is newer.
-            /*
-            if (LatestMachineMessage == null ||
-                message.TimeStamp > MachineMessageCollection.Max(d => d.TimeStamp))
-            {
-                LatestMachineMessage = message;
-            } */
-        }
-
         /// <summary>
         /// Putting all the code for the message handler here temporarily.
         /// </summary>
         //TODO: change to task?
         private async void BryanCode(MachineMessage message)
         {
-            MachineMessage returnMessage = new MachineMessage();
+            MachineMessage returnMessage = new MachineMessage
+            {
+                tags = new Tags
+                {
+                    set2 = new Set2
+                    {
+                        MqttSub = new MqttSub()
+                    }
+                }
+            };
 
-            // 1. Check job number
-            string jobNum = message.tags.set1.MqttPub.JobNumber;
-            if (string.IsNullOrEmpty(jobNum))
+            MqttPub pub = message.tags.set1.MqttPub;
+            MqttSub sub = returnMessage.tags.set2.MqttSub;
+
+            // Check that a job number was included in the message.
+            if (string.IsNullOrEmpty(pub.JobNumber))
             {
                 return;
             }
 
-            // TODO: break by step into own methods
+            // Update the UI.
+            UpdateMachineTab(message);
 
-            // 2. Check order dat req false
-            string orderDataRequested = message.tags.set1.MqttPub.OrderDatReq;
-            if (orderDataRequested.Equals("FALSE"))
-            {
-                // Check JN exists
+            // Handle the order data requested flag.
+            await MessageFlagHandlers.OrderDatReqFlagHandler(message, returnMessage);
 
-                // Update KPI displays
-
-                // Query SQL.
-                DataTable orderNumTable = await Queries.GetOrdersByMachineNum(jobNum);
-
-                // Add contents of orderNumTable into return message.
-                string orderData = "";
-                foreach (DataRow row in orderNumTable.Rows)
-                {
-                    string orderNum = row[0].ToString()?.Trim();
-                    string material = row[1].ToString()?.Trim();
-                    string partNum = row[2].ToString()?.Trim();
-                    string orderLen = row[3].ToString()?.Trim();
-
-                    orderData += $"{orderNum},{material},{orderLen},{partNum}|";
-                }
-
-                returnMessage.tags.set2.MqttSub.MqttDest = message.tags.set1.MqttPub.JobNumber;
-                returnMessage.tags.set2.MqttSub.MqttString = orderData;
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(message.tags.set1.MqttPub.OrderNo))
-                {
-                    // 3. Else if true and orderno not blank
-                    DataTable fullOrderTable = await Queries.GetOrdersByIdAndMachine(
-                        message.tags.set1.MqttPub.OrderNo,
-                        jobNum);
-                    returnMessage.tags.set2.MqttSub.OrderDatRecv = Queries.DataTableToString(fullOrderTable);
-
-                    // Query for bundles.
-                    DataTable bundlesTable = await Queries.GetBundle(message.tags.set1.MqttPub.OrderNo);
-                    string bundleData = Queries.DataTableToString(bundlesTable);
-
-                    // Might need to reset the order to Bryan's standard?
-                }
-                else
-                {
-                    // 4. Else if true and orderno blank
-                    // Set flag to clear button.
-                    returnMessage.tags.set2.MqttSub.OrderDatAck = "TRUE";
-                }
-            }
-
-            // 5. Check coil dat req true and scan coil id not empty and order no not empty and order no not no order selected
-
-            // 6. Else if coil dat req false
+            // Handle the coil data requested flag.
+            await MessageFlagHandlers.CoilDatReqFlagHandler(message, returnMessage);
 
             // 7. Check if coil store req true and coil usage dat not empty
 
@@ -347,6 +234,47 @@ namespace AscCutlistEditor.ViewModels.MQTT
             // 9. write data back to hmi
 
             // Notes: don't check for null, either empty string or not
+        }
+
+        /// <summary>
+        /// Update the UI for the corresponding machine from its message data.
+        /// </summary>
+        internal void UpdateMachineTab(MachineMessage message)
+        {
+            // Run on UI thread.
+            // Select the correct dispatcher: if Application.Current is null,
+            // we're running unit tests and should use CurrentDispatcher instead.
+            Dispatcher dispatcher = Application.Current != null
+                ? Application.Current.Dispatcher
+                : Dispatcher.CurrentDispatcher;
+            dispatcher.Invoke(() =>
+            {
+                MachineMessageCollection.Add(message);
+
+                MqttPub mqttPub = message.tags.set1.MqttPub;
+
+                // Calculate percentage for line running bars.
+                bool running = false;
+                if (mqttPub.LineRunning.Equals("LINE RUNNING"))
+                {
+                    _uptimeRunningCount++;
+                    running = true;
+                }
+
+                UptimeRunningPercentage = (double)_uptimeRunningCount / MachineMessageCollection.Count * 100;
+
+                _uptimeSeries.Points.Add(
+                    new DataPoint(
+                        DateTimeAxis.ToDouble(message.timestamp),
+                        running ? 100 : 0));
+                UptimePlot.InvalidatePlot(true); // Refresh plot with new message.
+
+                _uptimePercentageSeries.Points.Add(
+                    new DataPoint(
+                        DateTimeAxis.ToDouble(message.timestamp),
+                        UptimeRunningPercentage));
+                UptimePercentagePlot.InvalidatePlot(true); // Refresh plot with new message.
+            });
         }
     }
 }

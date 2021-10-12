@@ -6,10 +6,11 @@ using AscCutlistEditor.ViewModels.MQTT;
 
 namespace AscCutlistEditor.Utility.MQTT
 {
+    // Collection of queries that handle data for machine messages.
     public class Queries
     {
         /// <summary>
-        /// Get the coil data for a specific coil.
+        /// Get the starting length, used length, and material for a specific coil.
         /// </summary>
         /// <param name="coilId">The coil's corresponding id to get data for.</param>
         /// <returns>The data for that coil.</returns>
@@ -34,7 +35,8 @@ namespace AscCutlistEditor.Utility.MQTT
         }
 
         /// <summary>
-        /// Get all non-depleted coils.
+        /// Get the coil number, description, material, starting length, and
+        /// length used for all non-depleted coils.
         /// </summary>
         /// <returns>The list of non-depleted coils.</returns>
         public static async Task<DataTable> GetNonDepletedCoils()
@@ -98,8 +100,8 @@ namespace AscCutlistEditor.Utility.MQTT
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
 
             string queryStr =
-                "SELECT orderno, material, partno, " +
-                "SUM(length * CONVERT(DECIMAL(10,2),quantity)) AS orderlen " +
+                "SELECT orderno, material, " +
+                "SUM(length * CONVERT(DECIMAL(10,2),quantity)) AS orderlen, partno " +
                 "FROM amsorder " +
                 "WHERE orderno IS NOT NULL AND machinenum LIKE @machineID " +
                 "GROUP BY orderno, material, partno, machinenum";

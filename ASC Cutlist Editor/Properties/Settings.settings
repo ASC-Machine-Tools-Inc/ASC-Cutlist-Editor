@@ -14,5 +14,11 @@
     <Setting Name="Password" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="Requested" Type="System.String" Scope="User">
+      <Value Profile="(Default)">TRUE</Value>
+    </Setting>
+    <Setting Name="NotRequested" Type="System.String" Scope="User">
+      <Value Profile="(Default)">FALSE</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -64,7 +64,7 @@ namespace AscCutlistEditor.Models.MQTT
         }
 
         // Publish a fake message for this machine.
-        private async void MockMessageTimerTick(object sender, EventArgs e)
+        private void MockMessageTimerTick(object sender, EventArgs e)
         {
             MachineMessage message = new MachineMessage
             {
@@ -76,13 +76,14 @@ namespace AscCutlistEditor.Models.MQTT
                         MqttPub = new MqttPub
                         {
                             JobNumber = "JN_TEST",
-                            LineRunning = _lineStatus
+                            LineRunning = _lineStatus,
+                            OrderDatReq = "FALSE"
                         }
                     }
                 },
                 timestamp = DateTime.Now
             };
-            await MachineMessageViewModel.PublishMessage(
+            MachineMessageViewModel.PublishMessage(
                 Client,
                 Topic,
                 JsonConvert.SerializeObject(message));
