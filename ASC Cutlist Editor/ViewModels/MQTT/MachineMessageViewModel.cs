@@ -1,4 +1,5 @@
-﻿using AscCutlistEditor.Frameworks;
+﻿using System.Collections.Generic;
+using AscCutlistEditor.Frameworks;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
@@ -31,6 +32,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
         private int _uptimeRunningCount;
         private double _uptimeRunningPercentage;
 
+        private string _currentLineStatus;
+
         public PlotModel UptimePlot { get; set; }
 
         public PlotModel UptimePercentagePlot { get; set; }
@@ -52,6 +55,16 @@ namespace AscCutlistEditor.ViewModels.MQTT
             {
                 _uptimeRunningPercentage = value;
                 RaisePropertyChangedEvent("UptimeRunningPercentage");
+            }
+        }
+
+        public string CurrentLineStatus
+        {
+            get => _currentLineStatus;
+            set
+            {
+                _currentLineStatus = value;
+                RaisePropertyChangedEvent("CurrentLineStatus");
             }
         }
 
@@ -150,7 +163,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
         private void CreateUptimeModel()
         {
             var uptimePlot = new PlotModel { Title = "Uptime", Subtitle = "Current" };
-            var uptimePercentagePlot = new PlotModel { Title = "Uptime", Subtitle = "Percentage" };
+            var uptimePercentagePlot = new PlotModel { Title = "Uptime", Subtitle = "Avg. Percentage" };
 
             // Create line series (markers are hidden by default).
             var currentSeries = new LineSeries { Title = "Current Status", MarkerType = MarkerType.Square };
@@ -163,13 +176,21 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 Position = AxisPosition.Bottom,
                 StringFormat = "h:mm:ss",
             });
-            uptimePlot.Axes.Add(new LinearAxis
+
+            // Y axis with labels for current line status.
+            var uptimeAxis = new CategoryAxis
             {
-                Maximum = 105,
+                Position = AxisPosition.Left,
+                // A little buffer room is added to make sure "Running" is
+                // shown on the y-axis for the maximum.
+                Maximum = 1.05,
                 Minimum = 0,
-                AbsoluteMaximum = 105,
-                AbsoluteMinimum = 0
-            });
+                IsTickCentered = true,
+                IsZoomEnabled = false,
+                IsPanEnabled = false,
+                Labels = { "Stopped", "Running" }
+            };
+            uptimePlot.Axes.Add(uptimeAxis);
 
             uptimePercentagePlot.Series.Add(percentSeries);
             uptimePercentagePlot.Axes.Add(new DateTimeAxis
@@ -181,8 +202,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
             {
                 Maximum = 105,
                 Minimum = 0,
-                AbsoluteMaximum = 105,
-                AbsoluteMinimum = 0
+                IsZoomEnabled = false,
+                IsPanEnabled = false
             });
 
             _uptimeSeries = currentSeries;
@@ -263,11 +284,11 @@ namespace AscCutlistEditor.ViewModels.MQTT
             {
                 MachineMessageCollection.Add(message);
 
-                MqttPub mqttPub = message.tags.set1.MqttPub;
+                MqttPub pub = message.tags.set1.MqttPub;
 
                 // Calculate percentage for line running bars.
                 bool running = false;
-                if (mqttPub.LineRunning.Equals("LINE RUNNING"))
+                if (pub.LineRunning.Equals("LINE RUNNING"))
                 {
                     _uptimeRunningCount++;
                     running = true;
@@ -278,7 +299,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 _uptimeSeries.Points.Add(
                     new DataPoint(
                         DateTimeAxis.ToDouble(message.timestamp),
-                        running ? 100 : 0));
+                        running ? 1 : 0));
                 UptimePlot.InvalidatePlot(true); // Refresh plot with new message.
 
                 _uptimePercentageSeries.Points.Add(
@@ -286,6 +307,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
                         DateTimeAxis.ToDouble(message.timestamp),
                         UptimeRunningPercentage));
                 UptimePercentagePlot.InvalidatePlot(true); // Refresh plot with new message.
+
+                CurrentLineStatus = pub.LineRunning;
             });
         }
     }

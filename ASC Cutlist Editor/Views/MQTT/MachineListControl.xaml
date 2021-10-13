@@ -19,7 +19,7 @@
             <Button
                 Command="{Binding AddMockConnectionCommand}"
                 Content="Add Mock Connection"
-                Margin="10" />
+                Margin="5" />
         </WrapPanel>
 
         <!-- SQL Server connection settings. -->
