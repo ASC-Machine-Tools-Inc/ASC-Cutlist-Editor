@@ -140,4 +140,17 @@ namespace AscCutlistEditor.Models.MQTT
         public Tags tags { get; set; }
         public DateTime timestamp { get; set; }
     }
+
+    /// <summary>
+    /// Utility class for sending string data to SetUsageData.
+    /// </summary>
+    public class CoilUsage
+    {
+        public string orderno { get; set; }
+        public string CoilId { get; set; }
+        public string CoilMatl { get; set; }
+        public string ItemID { get; set; }
+        public decimal Length { get; set; }
+        public DateTime Time { get; set; }
+    }
 }

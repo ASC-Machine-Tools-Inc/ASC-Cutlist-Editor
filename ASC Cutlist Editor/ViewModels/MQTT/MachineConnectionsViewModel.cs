@@ -34,7 +34,16 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
         public static int Port = 1883;
         public static string Ip = GetLocalIpAddress();
-        public static string MainTopic = "alphapub";
+
+        /// <summary>
+        /// The topic to listen for machine messages on.
+        /// </summary>
+        public static string SubTopic = "alphapub";
+
+        /// <summary>
+        /// The topic to publish our message responses to.
+        /// </summary>
+        public static string PubTopic = "alphasub";
 
         public MachineConnectionsViewModel(
             SqlConnectionViewModel connModel)
@@ -42,7 +51,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             var mqttFactory = new MqttFactory();
             Server = mqttFactory.CreateMqttServer();
             _listener = mqttFactory.CreateMqttClient();
-            _listenerTopic = MainTopic + "/+/+";
+            _listenerTopic = SubTopic + "/+/+";
 
             _knownTopics = new HashSet<string>();
             _machineConnectionTabs = new ObservableCollection<TabItem>();
@@ -138,7 +147,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             _listener.UseApplicationMessageReceivedHandler(async e =>
             {
                 // Create a new tab if we haven't seen this topic before.
-                string topic = e.ApplicationMessage.Topic.Substring(MainTopic.Length);
+                string topic = e.ApplicationMessage.Topic.Substring(SubTopic.Length);
                 if (!_knownTopics.Contains(topic))
                 {
                     _knownTopics.Add(topic);

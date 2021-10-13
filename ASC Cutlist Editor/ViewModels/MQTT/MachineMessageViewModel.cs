@@ -59,8 +59,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
         {
             var mqttFactory = new MqttFactory();
             IMqttClient client = mqttFactory.CreateMqttClient();
-            string subTopic = MachineConnectionsViewModel.MainTopic + topic;
-            string pubTopic = "alphasub";
+            string subTopic = MachineConnectionsViewModel.SubTopic + topic;
+            string pubTopic = MachineConnectionsViewModel.PubTopic + topic;
 
             _machineConnection = new MachineConnection(
                 client,
@@ -108,8 +108,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
                         return;
                     }
 
-                    // Bryan's code for handling messages TODO rename.
-                    BryanCode(machineMessage);
+                    // Bryan's code for handling messages and their flags.
+                    ProcessResponseMessage(machineMessage);
                 }
                 catch (JsonReaderException)
                 {
@@ -193,11 +193,15 @@ namespace AscCutlistEditor.ViewModels.MQTT
         }
 
         /// <summary>
-        /// Putting all the code for the message handler here temporarily.
+        /// Handle returning the response message and performing any tasks
+        /// based off the flags set in the machine's message.
         /// </summary>
-        //TODO: change to task?
-        private async void BryanCode(MachineMessage message)
+        private async void ProcessResponseMessage(MachineMessage message)
         {
+            // To avoid confusion - the pub here refers to the machine's
+            // published message, and sub refers to the response the machine
+            // expects. The client publishes the return message to PubTopic.
+            MqttPub pub = message.tags.set1.MqttPub;
             MachineMessage returnMessage = new MachineMessage
             {
                 tags = new Tags
@@ -208,9 +212,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     }
                 }
             };
-
-            MqttPub pub = message.tags.set1.MqttPub;
-            MqttSub sub = returnMessage.tags.set2.MqttSub;
 
             // Check that a job number was included in the message.
             if (string.IsNullOrEmpty(pub.JobNumber))
@@ -230,9 +231,21 @@ namespace AscCutlistEditor.ViewModels.MQTT
             // Handle the coil list requested flag (all non-depleted coils).
             await MessageFlagHandlers.CoilStoreReqFlagHandler(message, returnMessage);
 
-            // 8. if coil usage send true and coil usage dat
+            // Handle the coil usage sending requested flag (write to database).
+            int rowsAdded = await MessageFlagHandlers.CoilUsageSendFlagHandler(
+                message,
+                returnMessage);
+            // TODO: remove if check? For debugging
+            if (rowsAdded > 0)
+            {
+                Debug.WriteLine($"Rows added from coil usage: {rowsAdded}");
+            }
 
-            // 9. write data back to hmi
+            // Finally, write the response message back out for the HMI.
+            PublishMessage(
+                _machineConnection.Client,
+                _machineConnection.PubTopic,
+                JsonConvert.SerializeObject(returnMessage));
         }
 
         /// <summary>

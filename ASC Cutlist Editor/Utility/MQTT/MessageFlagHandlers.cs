@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using AscCutlistEditor.Models.MQTT;
 
@@ -180,16 +183,80 @@ namespace AscCutlistEditor.Utility.MQTT
             MqttPub pub = message.tags.set1.MqttPub;
             MqttSub sub = returnMessage.tags.set2.MqttSub;
 
-            // Coils requested by HMI.
-            if (pub.CoilStoreReq == "TRUE" &&
-                !string.IsNullOrEmpty(pub.CoilUsageDat))
+            // Check if the coils are requested by the HMI.
+            if (pub.CoilStoreReq != "TRUE" ||
+                string.IsNullOrEmpty(pub.CoilUsageDat))
             {
-                DataTable coils = await Queries.GetNonDepletedCoils();
-                int count = coils.Rows.Count - 1;
-
-                sub.CoilStoreRecv = count + "|" + Queries.DataTableToString(coils);
-                sub.CoilStoreAck = "TRUE";
+                return;
             }
+
+            DataTable coils = await Queries.GetNonDepletedCoils();
+            int count = coils.Rows.Count - 1;
+
+            sub.CoilStoreRecv = count + "|" + Queries.DataTableToString(coils);
+            sub.CoilStoreAck = "TRUE";
+        }
+
+        /// <summary>
+        /// Handle adding the coil usage data to the database when received
+        /// from the machine.
+        /// </summary>
+        /// <returns>The number of rows added to the database.</returns>
+        internal static async Task<int> CoilUsageSendFlagHandler(
+            MachineMessage message,
+            MachineMessage returnMessage)
+        {
+            MqttPub pub = message.tags.set1.MqttPub;
+            MqttSub sub = returnMessage.tags.set2.MqttSub;
+
+            // Check if we have coil usage data requesting to be added.
+            if (pub.CoilUsageSend != "TRUE" ||
+                string.IsNullOrEmpty(pub.CoilUsageDat))
+            {
+                return 0;
+            }
+
+            List<List<string>> coilUsageFields = pub.CoilUsageDat
+                // Split the usage data into rows.
+                .Split("|")
+                // Split those rows into a list of fields.
+                .Select(usageRows =>
+                    new List<string>(usageRows.Split(",")))
+                .ToList();
+
+            List<CoilUsage> coilUsageList = coilUsageFields
+                // Group the fields into the ones with unique coil and item ids,
+                // with the total length for those groupings.
+                .GroupBy(
+                    usageRow =>
+                        new { coilId = usageRow[1], itemId = usageRow[3] },
+                    (key, fields) =>
+                    {
+                        // Convert fields to list to prevent multiple enumeration.
+                        var enumerable = fields.ToList();
+                        return new CoilUsage()
+                        {
+                            orderno = enumerable.ElementAt(0).ToString(),
+                            CoilId = key.coilId,
+                            CoilMatl = enumerable.ElementAt(2).ToString(),
+                            ItemID = key.itemId,
+                            Length = enumerable.ElementAt(4).Sum(Convert.ToDecimal),
+                            Time = DateTime.Now
+                        };
+                    })
+                .ToList();
+
+            // Add our rows to the DataTable for updating the database.
+            DataTable usageData = new DataTable();
+            foreach (CoilUsage usageRow in coilUsageList)
+            {
+                usageData.Rows.Add(usageRow);
+            }
+
+            sub.CoilUsageRecvAck = "TRUE";
+
+            // Update the database.
+            return await Queries.SetUsageData(usageData);
         }
     }
 }

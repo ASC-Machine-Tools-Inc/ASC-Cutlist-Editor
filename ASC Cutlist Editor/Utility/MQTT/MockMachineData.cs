@@ -51,7 +51,7 @@ namespace AscCutlistEditor.Utility.MQTT
                 .Build();
             var clientId = _clients.Count();
             var client = new MqttFactory().CreateMqttClient();
-            var topic = MachineConnectionsViewModel.MainTopic +
+            var topic = MachineConnectionsViewModel.SubTopic +
                         "/mockdata" + clientId + "/";
             var mockClient = new MockMachineClient(clientId, client, topic);
 
