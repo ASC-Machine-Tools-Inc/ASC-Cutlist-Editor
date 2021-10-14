@@ -51,7 +51,7 @@
             Grid.Row="3"
             Grid.Column="1"
             Text="{Binding SqlConnectionViewModel[Password]}"
-            Margin="10"></TextBox>
+            Margin="10" />
 
         <Button
             Grid.Column="0"

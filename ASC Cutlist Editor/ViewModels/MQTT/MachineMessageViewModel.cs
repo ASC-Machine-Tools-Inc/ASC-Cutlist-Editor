@@ -30,6 +30,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
         private LineSeries _uptimeSeries;
         private BarSeries _downtimeStatsSeries;
 
+        private MachineMessage _latestMachineMessage;
+
         public PlotModel UptimePlot { get; set; }
 
         public PlotModel DowntimeStatsPlot { get; set; }
@@ -44,10 +46,15 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
         }
 
-        public MachineMessage LatestMachineMessage =>
-            MachineMessageCollection.Any() ?
-                MachineMessageCollection.Last() :
-                null;
+        public MachineMessage LatestMachineMessage
+        {
+            get => _latestMachineMessage;
+            set
+            {
+                _latestMachineMessage = value;
+                RaisePropertyChangedEvent("LatestMachineMessage");
+            }
+        }
 
         public MachineMessageViewModel(string topic, SqlConnectionViewModel connModel)
         {
@@ -146,8 +153,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             // Create the plot models.
             var uptimePlot = new PlotModel
             {
-                Title = "Uptime",
-                Subtitle = "Current"
+                Title = "Status Over Time",
             };
             var downtimeStatsPlot = new PlotModel
             {
@@ -162,6 +168,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             };
             var downtimeStatsSeries = new BarSeries
             {
+                ItemsSource = new List<BarItem>(7),
                 LabelFormatString = "{0:.00}%"
             };
 
@@ -189,6 +196,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             downtimeStatsPlot.Series.Add(downtimeStatsSeries);
             downtimeStatsPlot.Axes.Add(new LinearAxis
             {
+                Position = AxisPosition.Bottom,
                 Maximum = 105,
                 Minimum = 0,
                 IsZoomEnabled = false,
@@ -196,18 +204,19 @@ namespace AscCutlistEditor.ViewModels.MQTT
             });
             downtimeStatsPlot.Axes.Add(new CategoryAxis
             {
+                Position = AxisPosition.Left,
                 IsTickCentered = true,
                 IsZoomEnabled = false,
                 IsPanEnabled = false,
-                Labels =
+                ItemsSource = new[]
                 {
-                    "Material Changeover",
+                    "Material Change",
                     "Bundle Unloading",
-                    "Machine Maintenance",
+                    "Maintenance",
                     "Emergency",
-                    "No Workorder in Standby",
+                    "Idle",
                     "Shift Change",
-                    "Operator Break"
+                    "Break"
                 }
             });
 
@@ -288,6 +297,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             dispatcher.Invoke(() =>
             {
                 MachineMessageCollection.Add(message);
+                LatestMachineMessage = message;
 
                 MqttPub pub = message.tags.set1.MqttPub;
                 KPI kpi = message.tags.set1.PlantData.KPI;
