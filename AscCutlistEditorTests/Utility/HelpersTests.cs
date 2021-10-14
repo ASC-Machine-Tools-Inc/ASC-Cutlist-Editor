@@ -26,23 +26,5 @@ namespace AscCutlistEditorTests.Utility
             Assert.AreNotEqual(brush1, brush3);
             Assert.AreNotEqual(brush2, brush3);
         }
-
-        [TestMethod]
-        [DataRow(0, 100)]
-        [DataRow(3, 97)]
-        [DataRow(47.0, 53.0)]
-        [DataRow(47.986, 52.014)]
-        [DataRow(100, 0)]
-        [DataRow(103, -3)]
-        public void InversePercentageConverterTest(double input, double output)
-        {
-            InversePercentageConverter converter = new InversePercentageConverter();
-
-            object converted = converter.Convert(input, typeof(double), null, CultureInfo.DefaultThreadCurrentCulture);
-            Assert.AreEqual(converted, output);
-
-            object reverted = converter.ConvertBack(converted, typeof(double), null, CultureInfo.DefaultThreadCurrentCulture);
-            Assert.AreEqual(reverted, input);
-        }
     }
 }

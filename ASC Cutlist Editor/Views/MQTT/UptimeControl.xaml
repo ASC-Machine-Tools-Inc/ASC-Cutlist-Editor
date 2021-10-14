@@ -69,7 +69,7 @@
                         Text="Current Status: " />
                     <TextBlock
                         FontSize="24"
-                        Text="{Binding CurrentLineStatus}" />
+                        Text="{Binding LatestMachineMessage.tags.set1.MqttPub.LineRunning}" />
                 </WrapPanel>
 
                 <TextBlock
@@ -82,30 +82,26 @@
                 <TextBlock
                     Grid.Row="2" Grid.Column="0"
                     DockPanel.Dock="Left"
-                    Text="{Binding UptimeRunningPercentage,
-                    StringFormat=Uptime: {0:#0.0}%}"
+                    Text="{Binding LatestMachineMessage.tags.set1.PlantData.KPI.UptimePct}"
                     VerticalAlignment="Center"
                     Margin="0 0 10 0" />
                 <ProgressBar
                     Grid.Row="2" Grid.Column="1"
                     MinHeight="50" MinWidth="100"
                     Foreground="Green"
-                    Value="{Binding UptimeRunningPercentage}">
+                    Value="{Binding LatestMachineMessage.tags.set1.PlantData.KPI.UptimePct}">
                 </ProgressBar>
 
                 <TextBlock
                     Grid.Row="3" Grid.Column="0"
-                    Text="{Binding UptimeRunningPercentage,
-                    Converter={StaticResource InversePercentageConverter},
-                    StringFormat=Downtime: {0:#0.0}%}"
+                    Text="{Binding LatestMachineMessage.tags.set1.PlantData.KPI.DowntimePct}"
                     VerticalAlignment="Center"
                     Margin="0 0 10 0" />
                 <ProgressBar
                     Grid.Row="3" Grid.Column="1"
                     MinHeight="50" MinWidth="100"
                     Foreground="Red"
-                    Value="{Binding UptimeRunningPercentage,
-                    Converter={StaticResource InversePercentageConverter}}">
+                    Value="{Binding LatestMachineMessage.tags.set1.PlantData.KPI.DowntimePct}">
                 </ProgressBar>
             </Grid>
         </Grid>
@@ -123,7 +119,7 @@
             <oxy:PlotView
                 Grid.Column="1"
                 Margin="5"
-                Model="{Binding UptimePercentagePlot}" />
+                Model="{Binding DowntimeStatsPlot}" />
         </Grid>
     </Grid>
 </UserControl>

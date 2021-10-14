@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:helpers="clr-namespace:AscCutlistEditor.Utility"
     StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -14,7 +13,6 @@
             </ResourceDictionary.MergedDictionaries>
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <helpers:InversePercentageConverter x:Key="InversePercentageConverter" />
             <!-- Other app resources here -->
         </ResourceDictionary>
     </Application.Resources>

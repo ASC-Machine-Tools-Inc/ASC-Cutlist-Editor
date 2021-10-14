@@ -8,8 +8,8 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,18 +25,14 @@ namespace AscCutlistEditor.ViewModels.MQTT
     internal class MachineMessageViewModel : ObservableObject
     {
         // Model for storing the mqtt connection data.
-        private MachineConnection _machineConnection;
+        private readonly MachineConnection _machineConnection;
 
         private LineSeries _uptimeSeries;
-        private LineSeries _uptimePercentageSeries;
-        private int _uptimeRunningCount;
-        private double _uptimeRunningPercentage;
-
-        private string _currentLineStatus;
+        private BarSeries _downtimeStatsSeries;
 
         public PlotModel UptimePlot { get; set; }
 
-        public PlotModel UptimePercentagePlot { get; set; }
+        public PlotModel DowntimeStatsPlot { get; set; }
 
         public ObservableCollection<MachineMessage> MachineMessageCollection
         {
@@ -48,25 +44,10 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
         }
 
-        public double UptimeRunningPercentage
-        {
-            get => _uptimeRunningPercentage;
-            set
-            {
-                _uptimeRunningPercentage = value;
-                RaisePropertyChangedEvent("UptimeRunningPercentage");
-            }
-        }
-
-        public string CurrentLineStatus
-        {
-            get => _currentLineStatus;
-            set
-            {
-                _currentLineStatus = value;
-                RaisePropertyChangedEvent("CurrentLineStatus");
-            }
-        }
+        public MachineMessage LatestMachineMessage =>
+            MachineMessageCollection.Any() ?
+                MachineMessageCollection.Last() :
+                null;
 
         public MachineMessageViewModel(string topic, SqlConnectionViewModel connModel)
         {
@@ -162,12 +143,27 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// </summary>
         private void CreateUptimeModel()
         {
-            var uptimePlot = new PlotModel { Title = "Uptime", Subtitle = "Current" };
-            var uptimePercentagePlot = new PlotModel { Title = "Uptime", Subtitle = "Avg. Percentage" };
+            // Create the plot models.
+            var uptimePlot = new PlotModel
+            {
+                Title = "Uptime",
+                Subtitle = "Current"
+            };
+            var downtimeStatsPlot = new PlotModel
+            {
+                Title = "Downtime Statistics"
+            };
 
-            // Create line series (markers are hidden by default).
-            var currentSeries = new LineSeries { Title = "Current Status", MarkerType = MarkerType.Square };
-            var percentSeries = new LineSeries { Title = "Uptime Percentage", MarkerType = MarkerType.Square };
+            // Create the line series.
+            var currentSeries = new LineSeries
+            {
+                Title = "Current Status",
+                MarkerType = MarkerType.Square
+            };
+            var downtimeStatsSeries = new BarSeries
+            {
+                LabelFormatString = "{0:.00}%"
+            };
 
             // Add the series to the plot models.
             uptimePlot.Series.Add(currentSeries);
@@ -176,9 +172,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 Position = AxisPosition.Bottom,
                 StringFormat = "h:mm:ss",
             });
-
             // Y axis with labels for current line status.
-            var uptimeAxis = new CategoryAxis
+            uptimePlot.Axes.Add(new CategoryAxis
             {
                 Position = AxisPosition.Left,
                 // A little buffer room is added to make sure "Running" is
@@ -189,28 +184,38 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 IsZoomEnabled = false,
                 IsPanEnabled = false,
                 Labels = { "Stopped", "Running" }
-            };
-            uptimePlot.Axes.Add(uptimeAxis);
-
-            uptimePercentagePlot.Series.Add(percentSeries);
-            uptimePercentagePlot.Axes.Add(new DateTimeAxis
-            {
-                Position = AxisPosition.Bottom,
-                StringFormat = "h:mm:ss",
             });
-            uptimePercentagePlot.Axes.Add(new LinearAxis
+
+            downtimeStatsPlot.Series.Add(downtimeStatsSeries);
+            downtimeStatsPlot.Axes.Add(new LinearAxis
             {
                 Maximum = 105,
                 Minimum = 0,
                 IsZoomEnabled = false,
                 IsPanEnabled = false
             });
+            downtimeStatsPlot.Axes.Add(new CategoryAxis
+            {
+                IsTickCentered = true,
+                IsZoomEnabled = false,
+                IsPanEnabled = false,
+                Labels =
+                {
+                    "Material Changeover",
+                    "Bundle Unloading",
+                    "Machine Maintenance",
+                    "Emergency",
+                    "No Workorder in Standby",
+                    "Shift Change",
+                    "Operator Break"
+                }
+            });
 
             _uptimeSeries = currentSeries;
-            _uptimePercentageSeries = percentSeries;
+            _downtimeStatsSeries = downtimeStatsSeries;
 
             UptimePlot = uptimePlot;
-            UptimePercentagePlot = uptimePercentagePlot;
+            DowntimeStatsPlot = downtimeStatsPlot;
         }
 
         /// <summary>
@@ -285,30 +290,27 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 MachineMessageCollection.Add(message);
 
                 MqttPub pub = message.tags.set1.MqttPub;
+                KPI kpi = message.tags.set1.PlantData.KPI;
 
-                // Calculate percentage for line running bars.
-                bool running = false;
-                if (pub.LineRunning.Equals("LINE RUNNING"))
-                {
-                    _uptimeRunningCount++;
-                    running = true;
-                }
-
-                UptimeRunningPercentage = (double)_uptimeRunningCount / MachineMessageCollection.Count * 100;
-
+                // Add new data point for line status.
                 _uptimeSeries.Points.Add(
                     new DataPoint(
                         DateTimeAxis.ToDouble(message.timestamp),
-                        running ? 1 : 0));
-                UptimePlot.InvalidatePlot(true); // Refresh plot with new message.
+                        pub.LineRunning.Equals("LINE RUNNING") ? 1 : 0));
+                UptimePlot.InvalidatePlot(true);
 
-                _uptimePercentageSeries.Points.Add(
-                    new DataPoint(
-                        DateTimeAxis.ToDouble(message.timestamp),
-                        UptimeRunningPercentage));
-                UptimePercentagePlot.InvalidatePlot(true); // Refresh plot with new message.
-
-                CurrentLineStatus = pub.LineRunning;
+                // Recalculate percentage for downtime bars.
+                _downtimeStatsSeries.ItemsSource = new List<BarItem>
+                {
+                    new BarItem { Value = kpi.CoilChangePct },
+                    new BarItem { Value = kpi.BundlePct },
+                    new BarItem { Value = kpi.MaintPct },
+                    new BarItem { Value = kpi.EmergencyPct },
+                    new BarItem { Value = kpi.IdlePct },
+                    new BarItem { Value = kpi.ShiftChangePct },
+                    new BarItem { Value = kpi.BreakPct }
+                };
+                DowntimeStatsPlot.InvalidatePlot(true);
             });
         }
     }

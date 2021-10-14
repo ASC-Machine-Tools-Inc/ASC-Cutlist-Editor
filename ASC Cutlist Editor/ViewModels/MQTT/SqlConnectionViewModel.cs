@@ -14,21 +14,12 @@ using System.Windows.Input;
 namespace AscCutlistEditor.ViewModels.MQTT
 {
     /// <summary>
-    /// This handles Bryan's code - connecting to the database, querying,
-    /// and updating the ams data.
+    /// SqlConnectionViewModel handles saving the user's connection string and
+    /// checking that it is a valid connection string..
     /// </summary>
     internal class SqlConnectionViewModel : ObservableObject
     {
         public static SqlConnectionStringBuilder Builder;
-
-        private readonly IMqttClient _client;
-        private readonly string _subTopic = "alphapub/+/+";
-        private readonly string _pubTopic = "alphasub";
-
-        public SqlConnectionViewModel()
-        {
-            _client = new MqttFactory().CreateMqttClient();
-        }
 
         public object this[string settingsName]
         {
@@ -53,74 +44,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             config.Save();
             Settings.Default.Save();
-        }
-
-        /// <summary>
-        /// Begin listening for and handling MQTT payloads.
-        /// </summary>
-        public async void StartClient()
-        {
-            // Check that we can create a connection string.
-            if (!CreateConnectionString())
-            {
-                return;
-            }
-
-            await using SqlConnection conn = new SqlConnection(Builder.ConnectionString);
-            try
-            {
-                await conn.OpenAsync();
-
-                // Start listener for MQTT messages.
-                var options = new MqttClientOptionsBuilder()
-                    .WithTcpServer(
-                        MachineConnectionsViewModel.Ip,
-                        MachineConnectionsViewModel.Port)
-                    .Build();
-
-                // Response to send on connection.
-                _client.UseConnectedHandler(async e =>
-                {
-                    Debug.WriteLine("### ALPHA CUTLIST - CONNECTED WITH SERVER ###");
-
-                    // Test publishing a message.
-                    MachineMessageViewModel.PublishMessage(
-                        _client,
-                        "self/success",
-                        "Alpha cutlist generator connection successful!");
-
-                    // Subscribe to a topic.
-                    await _client.SubscribeAsync(_subTopic);
-
-                    Debug.WriteLine("### SUBSCRIBED TO " + _subTopic + "###");
-                });
-
-                // Response to send on receiving a message.
-                _client.UseApplicationMessageReceivedHandler(e =>
-                {
-                    // TODO: message received handler
-                    string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-
-                    Debug.WriteLine("### ALPHACUT RECEIVED APPLICATION MESSAGE ###");
-                });
-
-                try
-                {
-                    await _client.ConnectAsync(options);
-                }
-                catch
-                {
-                    Debug.WriteLine("Connection unsuccessful.");
-                }
-            }
-            catch (SqlException)
-            {
-                MessageBox.Show(
-                    "Error connecting to the server.",
-                    "ASC Cutlist Editor",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
         }
 
         /// <summary>

@@ -2,6 +2,8 @@
 using System.Collections.Immutable;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using AscCutlistEditor.Utility.MQTT;
 using AscCutlistEditor.ViewModels.MQTT;
@@ -36,6 +38,16 @@ namespace AscCutlistEditorTests.Utility.MQTT
         {
             // Act
             DataTable results = await Queries.GetCoilData(coilId);
+
+            /*
+            Debug.WriteLine($"Getting coil data for id {coilId}, expected count {count}");
+            foreach (DataRow row in results.Rows)
+            {
+                // DEBUG: gets rows, trimming fields first
+                Debug.WriteLine(string.Join(", ", row.ItemArray
+                    .Select(item => item.ToString()?.Trim())));
+            }
+            */
 
             // Assert
             Assert.AreEqual(results.Rows.Count, count);

@@ -90,13 +90,6 @@ namespace AscCutlistEditor.ViewModels
             new DelegateCommand(() => MockMachineData.AddMockClient());
 
         /// <summary>
-        /// Use the saved connection string to open a connection and start the MQTT client.
-        /// </summary>
-        ///  TODO: probably remove this
-        public ICommand ConnectToSqlServerCommand =>
-            new DelegateCommand(() => SqlConnectionViewModel.StartClient());
-
-        /// <summary>
         /// Test the current connection string.
         /// </summary>
         public ICommand TestSqlConnectionCommand =>
