@@ -25,8 +25,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
     public class MachineConnectionsViewModel : ObservableObject
     {
         internal readonly IMqttServer Server;
-        private readonly IMqttClient _listener;
-        private readonly string _listenerTopic;
+        internal readonly IMqttClient Listener;
+        internal string ListenerTopic;
 
         private HashSet<string> _knownTopics;
         private ObservableCollection<TabItem> _machineConnectionTabs;
@@ -51,8 +51,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
         {
             var mqttFactory = new MqttFactory();
             Server = mqttFactory.CreateMqttServer();
-            _listener = mqttFactory.CreateMqttClient();
-            _listenerTopic = SubTopic + "/+/+";
+            Listener = mqttFactory.CreateMqttClient();
+            ListenerTopic = SubTopic + "/+/+";
 
             _knownTopics = new HashSet<string>();
             _machineConnectionTabs = new ObservableCollection<TabItem>();
@@ -73,12 +73,16 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// <summary>
         /// Start the server and client for listening for new connections.
         /// </summary>
-        public async void Start()
+        /// <param name="checkConnection">
+        /// Skip checking the SQL connection for testing/situations where you
+        /// don't want to connect to the database.
+        /// </param>
+        public async Task Start(bool checkConnection = true)
         {
             // Check that the server isn't already running, and that we have
             // a valid connection string to connect to.
             if (Server.IsStarted ||
-                !await _sqlConnection.TestConnection())
+                checkConnection && !await _sqlConnection.TestConnection())
             {
                 return;
             }
@@ -136,21 +140,22 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 .Build();
 
             // Response to send on connection.
-            _listener.UseConnectedHandler(async e =>
+            Listener.UseConnectedHandler(async e =>
             {
                 Debug.WriteLine("### LISTENER CONNECTED ###");
 
                 // Subscribe to a topic.
-                await _listener.SubscribeAsync(_listenerTopic);
+                await Listener.SubscribeAsync(ListenerTopic);
             });
 
             // Response to send on receiving a message.
-            _listener.UseApplicationMessageReceivedHandler(async e =>
+            Listener.UseApplicationMessageReceivedHandler(async e =>
             {
                 // Create a new tab if we haven't seen this topic before.
                 string topic = e.ApplicationMessage.Topic.Substring(SubTopic.Length);
                 if (!_knownTopics.Contains(topic))
                 {
+                    Debug.WriteLine($"NEW TOPIC SPOTTED: {topic}");
                     _knownTopics.Add(topic);
                     string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
                     await AddTab(topic, payload);
@@ -161,7 +166,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             try
             {
-                await _listener.ConnectAsync(options);
+                await Listener.ConnectAsync(options);
             }
             catch
             {

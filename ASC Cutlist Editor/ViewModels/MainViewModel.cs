@@ -75,7 +75,7 @@ namespace AscCutlistEditor.ViewModels
         /// Start listening for new connections under the chosen topic.
         /// </summary>
         public ICommand StartListeningForConnectionsCommand =>
-            new DelegateCommand(() => MachineConnectionsViewModel.Start());
+            new DelegateCommand(async () => await MachineConnectionsViewModel.Start());
 
         /// <summary>
         /// Resets the list of connections (does not stop connection listener!)

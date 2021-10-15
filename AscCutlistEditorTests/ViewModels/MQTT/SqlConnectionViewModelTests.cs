@@ -21,11 +21,10 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
             SqlConnectionViewModel model = new SqlConnectionViewModel(
                 new Mocks.MockSettings(),
                 new Mocks.MockDialog());
+            model.UpdateConnectionString(Strings.ConnectionString);
 
             // Act
-            bool connResult = await model.TestConnection(
-                Strings.ConnectionString,
-                false);
+            bool connResult = await model.TestConnection(false, false);
 
             // Assert
             Assert.IsTrue(connResult);
@@ -47,7 +46,7 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
                 new Mocks.MockDialog());
 
             // Act
-            bool connResult = await model.TestConnection(toggleCursor: false);
+            bool connResult = await model.TestConnection(true, false);
 
             // Assert
             Assert.IsFalse(connResult);

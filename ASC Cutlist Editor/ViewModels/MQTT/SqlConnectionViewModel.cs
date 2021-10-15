@@ -38,8 +38,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// <summary>
         /// Attempt opening a connection to the current connection string in Builder.
         /// </summary>
-        /// <param name="connString">
-        /// Optional parameter to test as connection string.
+        /// <param name="updateConnectionString">
+        /// Optional parameter if we should check the connection string for updates..
         /// </param>
         /// <param name="toggleCursor">
         /// Optional parameter to change cursor appearance while waiting to connect.
@@ -48,11 +48,11 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// Returns true if the connection was successful, false otherwise.
         /// </returns>
         public async Task<bool> TestConnection(
-            string connString = null,
+            bool updateConnectionString = true,
             bool toggleCursor = true)
         {
-            // Check that we can create a connection string.
-            if (!CreateConnectionString(connString))
+            // Check that we can create a connection string if requested.
+            if (updateConnectionString && !UpdateConnectionString())
             {
                 return false;
             }
@@ -124,7 +124,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// <returns>
         /// True if a connection string was created, false otherwise.
         /// </returns>
-        public bool CreateConnectionString(string connString = null)
+        public bool UpdateConnectionString(string connString = null)
         {
             if (!string.IsNullOrEmpty(connString))
             {
