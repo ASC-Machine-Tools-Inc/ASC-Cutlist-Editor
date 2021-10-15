@@ -35,7 +35,7 @@
                 Margin="5" />
             <Button
                 Command="{Binding RefreshConnectionTabsCommand}"
-                Content="Refresh Connection Tabs"
+                Content="Clear Connection Tabs"
                 Margin="5" />
         </WrapPanel>
 

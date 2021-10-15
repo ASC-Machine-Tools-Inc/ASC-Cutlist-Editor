@@ -56,7 +56,10 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
         }
 
-        public MachineMessageViewModel(string topic, SqlConnectionViewModel connModel)
+        public MachineMessageViewModel(
+            string topic,
+            SqlConnectionViewModel connModel,
+            string payload = null)
         {
             var mqttFactory = new MqttFactory();
             IMqttClient client = mqttFactory.CreateMqttClient();
@@ -71,6 +74,24 @@ namespace AscCutlistEditor.ViewModels.MQTT
             );
 
             CreateUptimeModel();
+
+            // If we have a payload, process it.
+            if (!string.IsNullOrEmpty(payload))
+            {
+                try
+                {
+                    // Attempt payload conversion and logging.
+                    MachineMessage machineMessage =
+                        JsonConvert.DeserializeObject<MachineMessage>(payload);
+
+                    // Bryan's code for handling messages and their flags.
+                    ProcessResponseMessage(machineMessage);
+                }
+                catch (JsonReaderException)
+                {
+                    Debug.WriteLine("Error: invalid JSON value.");
+                }
+            }
         }
 
         public async Task StartClient()
@@ -103,11 +124,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 try
                 {
                     // Attempt payload conversion and logging.
-                    MachineMessage machineMessage = JsonConvert.DeserializeObject<MachineMessage>(payload);
-                    if (machineMessage == null)
-                    {
-                        return;
-                    }
+                    MachineMessage machineMessage =
+                        JsonConvert.DeserializeObject<MachineMessage>(payload);
 
                     // Bryan's code for handling messages and their flags.
                     ProcessResponseMessage(machineMessage);
@@ -233,6 +251,11 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// </summary>
         private async void ProcessResponseMessage(MachineMessage message)
         {
+            if (message == null)
+            {
+                return;
+            }
+
             // To avoid confusion - the pub here refers to the machine's
             // published message, and sub refers to the response the machine
             // expects. The client publishes the return message to PubTopic.

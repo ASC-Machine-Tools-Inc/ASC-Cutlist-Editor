@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AscCutlistEditor.Utility.MQTT;
 using AscCutlistEditor.ViewModels.MQTT;
+using AscCutlistEditorTests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AscCutlistEditorTests.Utility.MQTT
@@ -20,10 +21,7 @@ namespace AscCutlistEditorTests.Utility.MQTT
         {
             SqlConnectionViewModel.Builder = new SqlConnectionStringBuilder
             {
-                ConnectionString =
-                    "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\" +
-                    "Users\\PTON\\Documents\\cutlistEditorTestDb.mdf;Integrated " +
-                    "Security=True;Connect Timeout=30"
+                ConnectionString = Strings.ConnectionString
             };
         }
 

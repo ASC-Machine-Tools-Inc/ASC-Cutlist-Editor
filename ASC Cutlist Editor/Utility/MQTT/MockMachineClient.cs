@@ -22,13 +22,20 @@ namespace AscCutlistEditor.Models.MQTT
 
         private readonly DispatcherTimer _statusTimer;
 
-        private string _lineStatus = "LINE STOPPED";
+        private string _lineStatus;
+        private double _totalMessages;
+        private double _totalRunningMessages;
 
         public MockMachineClient(int id, IMqttClient client, string topic)
         {
             Id = id;
             Client = client;
             Topic = topic;
+
+            _totalMessages = _totalRunningMessages = 0;
+
+            // Pick initial line status.
+            PickRandomLineStatus();
 
             // Initialize timer for randomizing machine status.
             _statusTimer = new DispatcherTimer
@@ -57,15 +64,26 @@ namespace AscCutlistEditor.Models.MQTT
         }
 
         // Pick a random line running status.
-        private void StatusTimerTick(object sender, EventArgs e)
+        private void PickRandomLineStatus()
         {
             var lineRunningStatuses = new List<string> { "LINE RUNNING", "LINE STOPPED" };
             _lineStatus = lineRunningStatuses[new Random().Next(lineRunningStatuses.Count)];
         }
 
+        private void StatusTimerTick(object sender, EventArgs e)
+        {
+            PickRandomLineStatus();
+        }
+
         // Publish a fake message for this machine.
         private void MockMessageTimerTick(object sender, EventArgs e)
         {
+            _totalMessages++;
+            if (_lineStatus == "LINE RUNNING") _totalRunningMessages++;
+
+            double uptimePercentage = _totalRunningMessages / _totalMessages * 100;
+            double downtimePercentage = 100 - uptimePercentage;
+
             MachineMessage message = new MachineMessage
             {
                 connected = "true",
@@ -78,11 +96,27 @@ namespace AscCutlistEditor.Models.MQTT
                             JobNumber = "JN_TEST",
                             LineRunning = _lineStatus,
                             OrderDatReq = "FALSE"
+                        },
+                        PlantData = new PlantData
+                        {
+                            KPI = new KPI
+                            {
+                                CoilChangePct = 0,
+                                BundlePct = 1.2,
+                                MaintPct = 14.5,
+                                EmergencyPct = 2,
+                                IdlePct = 67.38,
+                                ShiftChangePct = 4.15,
+                                BreakPct = 10.77,
+                                UptimePct = uptimePercentage,
+                                DowntimePct = downtimePercentage
+                            }
                         }
                     }
                 },
                 timestamp = DateTime.Now
             };
+
             MachineMessageViewModel.PublishMessage(
                 Client,
                 Topic,

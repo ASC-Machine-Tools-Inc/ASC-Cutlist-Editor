@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,7 +22,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
     /// Handles listening for new machines on alphapub and creating uptime
     /// status tabs for them.
     /// </summary>
-    internal class MachineConnectionsViewModel : ObservableObject
+    public class MachineConnectionsViewModel : ObservableObject
     {
         internal readonly IMqttServer Server;
         private readonly IMqttClient _listener;
@@ -94,13 +95,13 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// <summary>
         /// Add a new TabItem to track the KPI data for that connection.
         /// </summary>
-        /// <param name="topic"></param>
-        /// <returns></returns>
-        public async Task AddTab(string topic)
+        /// <param name="topic">The topic this payload came through on.</param>
+        /// <param name="payload">The first message from the machine.</param>
+        public async Task AddTab(string topic, string payload)
         {
             // Create a new model for listening to this topic.
             MachineMessageViewModel model =
-                new MachineMessageViewModel(topic, _sqlConnection);
+                new MachineMessageViewModel(topic, _sqlConnection, payload);
             await model.StartClient();
 
             Dispatcher dispatcher = Application.Current != null ?
@@ -151,7 +152,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 if (!_knownTopics.Contains(topic))
                 {
                     _knownTopics.Add(topic);
-                    await AddTab(topic);
+                    string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+                    await AddTab(topic, payload);
 
                     Debug.WriteLine("### ADDING TOPIC " + topic + " ###");
                 }
