@@ -1,17 +1,11 @@
 ﻿using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.Models.MQTT;
 using AscCutlistEditor.Properties;
-using MQTTnet;
-using MQTTnet.Client;
-using MQTTnet.Client.Options;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
-using AscCutlistEditor.Models.MQTT;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {

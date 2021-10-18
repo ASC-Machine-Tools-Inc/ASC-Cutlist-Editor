@@ -1,12 +1,11 @@
 ﻿using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
-using AscCutlistEditor.Views;
+using AscCutlistEditor.Views.Bundles;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using AscCutlistEditor.Views.Bundles;
 
 namespace AscCutlistEditor.ViewModels.Parts
 {

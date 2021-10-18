@@ -1,8 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using System.Windows;
-using AscCutlistEditor.ViewModels;
+﻿using AscCutlistEditor.ViewModels;
 using AscCutlistEditor.ViewModels.MQTT;
+using System;
+using System.Windows;
 
 namespace AscCutlistEditor.Views
 {

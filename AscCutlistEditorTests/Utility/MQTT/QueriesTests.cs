@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Immutable;
-using System.Data;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using AscCutlistEditor.Utility.MQTT;
+﻿using AscCutlistEditor.Utility.MQTT;
 using AscCutlistEditor.ViewModels.MQTT;
 using AscCutlistEditorTests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Data;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace AscCutlistEditorTests.Utility.MQTT
 {

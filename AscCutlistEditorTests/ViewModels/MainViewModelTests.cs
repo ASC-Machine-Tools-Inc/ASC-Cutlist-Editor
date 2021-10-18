@@ -2,12 +2,11 @@
 using AscCutlistEditor.ViewModels;
 using AscCutlistEditor.ViewModels.Cutlists;
 using AscCutlistEditor.ViewModels.Parts;
-using AscCutlistEditor.Views;
+using AscCutlistEditor.Views.Bundles;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using AscCutlistEditor.Views.Bundles;
 
 namespace AscCutlistEditorTests.ViewModels
 {

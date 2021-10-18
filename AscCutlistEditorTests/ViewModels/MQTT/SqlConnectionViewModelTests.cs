@@ -1,13 +1,8 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Threading;
-using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.ViewModels.MQTT;
-using AscCutlistEditor.Views.MQTT;
+﻿using AscCutlistEditor.ViewModels.MQTT;
 using AscCutlistEditorTests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Threading.Tasks;
 
 namespace AscCutlistEditorTests.ViewModels.MQTT
 {

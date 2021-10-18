@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AscCutlistEditor.Frameworks;
 using System.Diagnostics;
-using System.Text;
 using System.Windows;
-using AscCutlistEditor.Frameworks;
 
 namespace AscCutlistEditorTests.Common
 {

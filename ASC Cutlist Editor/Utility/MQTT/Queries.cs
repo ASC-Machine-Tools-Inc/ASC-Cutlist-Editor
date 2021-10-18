@@ -1,8 +1,8 @@
-﻿using System.Data;
+﻿using AscCutlistEditor.ViewModels.MQTT;
+using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Windows;
-using AscCutlistEditor.ViewModels.MQTT;
 
 namespace AscCutlistEditor.Utility.MQTT
 {

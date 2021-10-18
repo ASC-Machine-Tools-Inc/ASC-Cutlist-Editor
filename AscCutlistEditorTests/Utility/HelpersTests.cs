@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using AscCutlistEditor.Utility;
+﻿using AscCutlistEditor.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Media;
 

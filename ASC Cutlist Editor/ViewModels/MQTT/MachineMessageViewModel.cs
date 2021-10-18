@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using AscCutlistEditor.Frameworks;
+﻿using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.Models.MQTT;
+using AscCutlistEditor.Utility.MQTT;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
@@ -7,15 +8,13 @@ using Newtonsoft.Json;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using AscCutlistEditor.Models.MQTT;
-using AscCutlistEditor.Utility.MQTT;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {

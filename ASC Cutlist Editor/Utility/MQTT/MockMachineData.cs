@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using AscCutlistEditor.Models.MQTT;
+﻿using AscCutlistEditor.Models.MQTT;
 using AscCutlistEditor.ViewModels.MQTT;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AscCutlistEditor.Utility.MQTT
 {

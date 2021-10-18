@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Documents;
-using System.Windows.Threading;
-using AscCutlistEditor.Utility;
-using AscCutlistEditor.Utility.MQTT;
-using AscCutlistEditor.ViewModels.MQTT;
+﻿using AscCutlistEditor.ViewModels.MQTT;
 using MQTTnet.Client;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Windows.Threading;
 
 namespace AscCutlistEditor.Models.MQTT
 {

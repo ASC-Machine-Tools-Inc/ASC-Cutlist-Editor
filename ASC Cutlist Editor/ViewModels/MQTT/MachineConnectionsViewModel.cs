@@ -108,6 +108,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 new MachineMessageViewModel(topic, _sqlConnection, payload);
             await model.StartClient();
 
+            // UI thread workaround for async.
             Dispatcher dispatcher = Application.Current != null ?
                 Application.Current.Dispatcher :
                 Dispatcher.CurrentDispatcher;

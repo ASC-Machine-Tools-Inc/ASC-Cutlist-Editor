@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AscCutlistEditorTests.Common
+﻿namespace AscCutlistEditorTests.Common
 {
     internal class Strings
     {

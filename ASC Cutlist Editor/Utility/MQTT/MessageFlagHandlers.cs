@@ -1,10 +1,9 @@
-﻿using System;
+﻿using AscCutlistEditor.Models.MQTT;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using AscCutlistEditor.Models.MQTT;
 
 namespace AscCutlistEditor.Utility.MQTT
 {
@@ -234,7 +233,7 @@ namespace AscCutlistEditor.Utility.MQTT
                     {
                         // Convert fields to list to prevent multiple enumeration.
                         var enumerable = fields.ToList();
-                        return new CoilUsage()
+                        return new CoilUsage
                         {
                             orderno = enumerable.ElementAt(0).ToString(),
                             CoilId = key.coilId,

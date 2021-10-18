@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
-using AscCutlistEditor.ViewModels.MQTT;
+﻿using AscCutlistEditor.ViewModels.MQTT;
 using MQTTnet.Client;
+using System.Collections.ObjectModel;
 
 namespace AscCutlistEditor.Models.MQTT
 {
