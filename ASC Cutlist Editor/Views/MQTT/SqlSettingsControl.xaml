@@ -1,0 +1,77 @@
+﻿<Window x:Class="AscCutlistEditor.Views.MQTT.SqlSettingsControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:AscCutlistEditor.ViewModels"
+        d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
+        mc:Ignorable="d"
+        Title="Sql Connection Settings" Height="450" Width="800">
+    <Grid Margin="50 25">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Label Content="Data Source:" />
+        <TextBox
+            Grid.Column="1"
+            Text="{Binding SqlConnectionViewModel
+            .UserSqlSettings.DataSource}"
+            Margin="10" />
+
+        <Label
+            Grid.Row="1"
+            Content="Database Name:" />
+        <TextBox
+            Grid.Row="1"
+            Grid.Column="1"
+            Text="{Binding SqlConnectionViewModel
+            .UserSqlSettings.DatabaseName}"
+            Margin="10" />
+
+        <Label
+            Grid.Row="2"
+            Content="Username:" />
+        <TextBox
+            Grid.Row="2"
+            Grid.Column="1"
+            Text="{Binding SqlConnectionViewModel
+            .UserSqlSettings.Username}"
+            Margin="10" />
+
+        <Label
+            Grid.Row="3"
+            Content="Password:" />
+        <TextBox
+            Grid.Row="3"
+            Grid.Column="1"
+            Text="{Binding SqlConnectionViewModel
+            .UserSqlSettings.Password}"
+            Margin="10" />
+
+        <Button
+            Grid.Column="0"
+            Grid.Row="4"
+            Command="{Binding TestSqlConnectionCommand}"
+            Content="Test Connection"
+            Margin="10">
+        </Button>
+
+        <!-- Settings automatically save, but this helps reassure users. -->
+        <Button
+            Grid.Column="1"
+            Grid.Row="4"
+            Content="Save and Close"
+            IsCancel="True"
+            Margin="10">
+        </Button>
+    </Grid>
+</Window>

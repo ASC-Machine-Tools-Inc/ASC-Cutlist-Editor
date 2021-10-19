@@ -1,4 +1,4 @@
-﻿using AscCutlistEditor.Views;
+﻿using AscCutlistEditor.Views.FlatParts;
 using System.Collections.ObjectModel;
 using System.Windows;
 

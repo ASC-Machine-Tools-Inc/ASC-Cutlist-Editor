@@ -1,7 +1,8 @@
 ﻿using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
 using AscCutlistEditor.Utility;
-using AscCutlistEditor.Views;
+using AscCutlistEditor.Views.Bundles;
+using AscCutlistEditor.Views.FlatParts;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;

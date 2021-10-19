@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace AscCutlistEditor.Views
+namespace AscCutlistEditor.Views.Bundles
 {
     /// <summary>
     /// Interaction logic for SingleBundleControl.xaml

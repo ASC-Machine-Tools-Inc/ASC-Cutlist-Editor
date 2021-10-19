@@ -1,6 +1,6 @@
 ﻿using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
-using AscCutlistEditor.Views;
+using AscCutlistEditor.Views.Bundles;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;

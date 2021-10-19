@@ -1,4 +1,4 @@
-﻿namespace AscCutlistEditor.Views
+﻿namespace AscCutlistEditor.Views.FlatParts
 {
     /// <summary>
     /// Interaction logic for SinglePartControl.xaml

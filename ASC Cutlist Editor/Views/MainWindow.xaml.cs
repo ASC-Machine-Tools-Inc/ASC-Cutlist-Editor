@@ -1,7 +1,9 @@
 ﻿using AscCutlistEditor.ViewModels;
+using AscCutlistEditor.ViewModels.MQTT;
+using System;
 using System.Windows;
 
-namespace AscCutlistEditor
+namespace AscCutlistEditor.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -11,7 +13,13 @@ namespace AscCutlistEditor
         public MainWindow()
         {
             InitializeComponent();
+            Closed += MainWindow_Closed;
             DataContext = new MainViewModel();
+        }
+
+        private static void MainWindow_Closed(object sender, EventArgs e)
+        {
+            SqlConnectionViewModel.Save();
         }
     }
 }

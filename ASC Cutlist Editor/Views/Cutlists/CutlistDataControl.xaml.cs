@@ -1,4 +1,4 @@
-﻿namespace AscCutlistEditor.Views
+﻿namespace AscCutlistEditor.Views.Cutlists
 {
     /// <summary>
     /// Interaction logic for CutlistDataControl.xaml

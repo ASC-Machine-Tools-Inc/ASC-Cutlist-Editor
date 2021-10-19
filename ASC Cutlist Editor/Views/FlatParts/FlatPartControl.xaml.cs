@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace AscCutlistEditor.Views
+namespace AscCutlistEditor.Views.FlatParts
 {
     /// <summary>
     /// Interaction logic for FlatPartControl.xaml

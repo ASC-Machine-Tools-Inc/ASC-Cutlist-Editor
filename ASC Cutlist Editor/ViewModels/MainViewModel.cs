@@ -1,10 +1,10 @@
 ﻿using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.Utility.MQTT;
 using AscCutlistEditor.ViewModels.Cutlists;
 using AscCutlistEditor.ViewModels.MQTT;
 using AscCutlistEditor.ViewModels.Parts;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using AscCutlistEditor.Utility.MQTT;
 
 namespace AscCutlistEditor.ViewModels
 {
@@ -23,13 +23,17 @@ namespace AscCutlistEditor.ViewModels
 
         public MockMachineData MockMachineData { get; }
 
+        public SqlConnectionViewModel SqlConnectionViewModel { get; }
+
         public MainViewModel()
         {
             CutlistViewModel = new CutlistImportViewModel(DrawParts);
 
             PartCollectionViewModel = new PartCollectionViewModel();
 
-            MachineConnectionsViewModel = new MachineConnectionsViewModel();
+            SqlConnectionViewModel = new SqlConnectionViewModel();
+
+            MachineConnectionsViewModel = new MachineConnectionsViewModel(SqlConnectionViewModel);
 
             MockMachineData = new MockMachineData(MachineConnectionsViewModel);
         }
@@ -37,17 +41,20 @@ namespace AscCutlistEditor.ViewModels
         /// <summary>
         /// Toggles the cutlist and its corresponding splitter's visibility.
         /// </summary>
-        public ICommand ToggleCutlistCommand => new DelegateCommand(() => ToggleView(0));
+        public ICommand ToggleCutlistCommand =>
+            new DelegateCommand(() => ToggleView(0));
 
         /// <summary>
         /// Toggles the flat part view and its corresponding splitters' visibility.
         /// </summary>
-        public ICommand ToggleFlatViewCommand => new DelegateCommand(() => ToggleView(1));
+        public ICommand ToggleFlatViewCommand =>
+            new DelegateCommand(() => ToggleView(1));
 
         /// <summary>
         /// Toggles the 3D view and its corresponding splitter's visibility.
         /// </summary>
-        public ICommand Toggle3DCommand => new DelegateCommand(() => ToggleView(2));
+        public ICommand Toggle3DCommand =>
+            new DelegateCommand(() => ToggleView(2));
 
         /// <summary>
         /// Draw the 2D and 3D views from the current cutlist.
@@ -57,17 +64,37 @@ namespace AscCutlistEditor.ViewModels
         /// <summary>
         /// Remove the current loaded cutlist, clearing the UI.
         /// </summary>
-        public ICommand ClearCutlistCommand => new DelegateCommand(ClearCutlist);
+        public ICommand ClearCutlistCommand =>
+            new DelegateCommand(() =>
+            {
+                CutlistViewModel.ClearUi();
+                PartCollectionViewModel.ClearUi();
+            });
 
         /// <summary>
-        /// Start listening for machine connections.
+        /// Start listening for new connections under the chosen topic.
         /// </summary>
-        public ICommand StartListeningCommand => new DelegateCommand(StartListening);
+        public ICommand StartListeningForConnectionsCommand =>
+            new DelegateCommand(async () => await MachineConnectionsViewModel.Start());
+
+        /// <summary>
+        /// Resets the list of connections (does not stop connection listener!)
+        /// </summary>
+        public ICommand RefreshConnectionTabsCommand =>
+            new DelegateCommand(() => MachineConnectionsViewModel.Refresh());
 
         /// <summary>
         /// Create a new mock connection with MockMachineData to listen to.
         /// </summary>
-        public ICommand AddMockConnectionCommand => new DelegateCommand(AddMockConnection);
+        public ICommand AddMockConnectionCommand =>
+            new DelegateCommand(() => MockMachineData.AddMockClient());
+
+        /// <summary>
+        /// Test the current connection string.
+        /// </summary>
+        public ICommand TestSqlConnectionCommand =>
+            new DelegateCommand(async () =>
+                await SqlConnectionViewModel.TestConnection());
 
         private void ToggleView(int index)
         {
@@ -80,28 +107,7 @@ namespace AscCutlistEditor.ViewModels
         /// </summary>
         private void DrawParts()
         {
-            PartCollectionViewModel.CreateRows(
-                CutlistViewModel.Cutlists);
-        }
-
-        /// <summary>
-        /// Clear the cutlist and all UI elements drawn from it.
-        /// </summary>
-        private void ClearCutlist()
-        {
-            CutlistViewModel.ClearUi();
-            PartCollectionViewModel.ClearUi();
-        }
-
-        private void StartListening()
-        {
-            // TODO: debug this, what if we add mock connections before we start listening??
-            MachineConnectionsViewModel.Start();
-        }
-
-        private void AddMockConnection()
-        {
-            MockMachineData.AddMockClient();
+            PartCollectionViewModel.CreateRows(CutlistViewModel.Cutlists);
         }
     }
 }

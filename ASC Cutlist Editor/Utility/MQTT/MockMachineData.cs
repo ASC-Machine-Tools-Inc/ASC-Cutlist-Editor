@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using AscCutlistEditor.Models.MQTT;
+﻿using AscCutlistEditor.Models.MQTT;
 using AscCutlistEditor.ViewModels.MQTT;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AscCutlistEditor.Utility.MQTT
 {
@@ -22,17 +22,6 @@ namespace AscCutlistEditor.Utility.MQTT
         {
             _clients = new List<MockMachineClient>();
             _machineConnectionsViewModel = model;
-        }
-
-        public static async Task PublishMessage(IMqttClient client, string topic, string payload)
-        {
-            var message = new MqttApplicationMessageBuilder()
-                .WithTopic(topic)
-                .WithPayload(payload)
-                .WithExactlyOnceQoS()
-                .WithRetainFlag()
-                .Build();
-            await client.PublishAsync(message);
         }
 
         public async void AddMockClient()
@@ -62,16 +51,20 @@ namespace AscCutlistEditor.Utility.MQTT
                 .Build();
             var clientId = _clients.Count();
             var client = new MqttFactory().CreateMqttClient();
-            var topic = MachineConnectionsViewModel.MainTopic + "/mockdata" + clientId + "/";
+            var topic = MachineConnectionsViewModel.SubTopic +
+                        "/mockdata" + clientId + "/";
             var mockClient = new MockMachineClient(clientId, client, topic);
 
             // Set the response to send on connection.
-            client.UseConnectedHandler(async e =>
+            client.UseConnectedHandler(e =>
             {
                 Debug.WriteLine("### MOCK " + mockClient.Id + " CONNECTED ###");
 
                 // Test publishing a message.
-                await PublishMessage(client, "self/success", "Mock connection successful!");
+                MachineMessageViewModel.PublishMessage(
+                    client,
+                    "self/success",
+                    "Mock connection successful!");
             });
 
             try
@@ -103,7 +96,7 @@ namespace AscCutlistEditor.Utility.MQTT
             }
 
             // Stop timer to prevent memory leak - might be unnecessary?
-            mockClient.MessageTimer.Stop();
+            mockClient.StopTimers();
             _clients.Remove(mockClient);
         }
     }
