@@ -23,7 +23,8 @@
         <Label Content="Data Source:" />
         <TextBox
             Grid.Column="1"
-            Text="{Binding SqlConnectionViewModel[DataSource]}"
+            Text="{Binding SqlConnectionViewModel
+            .UserSqlSettings.DataSource}"
             Margin="10" />
 
         <Label
@@ -32,7 +33,8 @@
         <TextBox
             Grid.Row="1"
             Grid.Column="1"
-            Text="{Binding SqlConnectionViewModel[DatabaseName]}"
+            Text="{Binding SqlConnectionViewModel
+            .UserSqlSettings.DatabaseName}"
             Margin="10" />
 
         <Label
@@ -41,7 +43,8 @@
         <TextBox
             Grid.Row="2"
             Grid.Column="1"
-            Text="{Binding SqlConnectionViewModel[Username]}"
+            Text="{Binding SqlConnectionViewModel
+            .UserSqlSettings.Username}"
             Margin="10" />
 
         <Label
@@ -50,7 +53,8 @@
         <TextBox
             Grid.Row="3"
             Grid.Column="1"
-            Text="{Binding SqlConnectionViewModel[Password]}"
+            Text="{Binding SqlConnectionViewModel
+            .UserSqlSettings.Password}"
             Margin="10" />
 
         <Button

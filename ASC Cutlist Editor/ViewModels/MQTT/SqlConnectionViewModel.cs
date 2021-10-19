@@ -17,7 +17,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
     {
         public static SqlConnectionStringBuilder Builder;
 
-        public ISettings UserSqlSettings;
+        public ISettings UserSqlSettings { get; set; }
 
         private readonly IDialogService _dialog;
 
