@@ -24,7 +24,7 @@ namespace AscCutlistEditor.Utility.MQTT
             string orderDataRequested = pub.OrderDatReq;
             switch (orderDataRequested)
             {
-                case "TRUE" when !string.IsNullOrEmpty(pub.OrderNo):
+                case "TRUE" when pub.OrderNo != null:
                     {
                         // Respond with the order and bundle data.
                         DataTable fullOrderTable = await Queries.GetOrdersByIdAndMachine(
@@ -72,9 +72,9 @@ namespace AscCutlistEditor.Utility.MQTT
             {
                 // Coil data requested, check for parameters.
                 var coilDataMessages = new List<string>();
-                if (!string.IsNullOrEmpty(pub.ScanCoilID) &&
-                    !string.IsNullOrEmpty(pub.OrderNo) &&
-                    !pub.OrderNo.Equals("NoOrderSelected"))
+                if (pub.ScanCoilID != "" &&
+                    pub.OrderNo != null &&
+                    pub.OrderNo != "NoOrderSelected")
                 {
                     // Valid parameters, grab the coil data.
                     DataTable coilData = await Queries.GetCoilData(pub.ScanCoilID);
@@ -217,7 +217,7 @@ namespace AscCutlistEditor.Utility.MQTT
 
             // Check if we have coil usage data requesting to be added.
             if (pub.CoilUsageSend != "TRUE" ||
-                string.IsNullOrEmpty(pub.CoilUsageDat))
+                pub.CoilUsageDat == null)
             {
                 return 0;
             }

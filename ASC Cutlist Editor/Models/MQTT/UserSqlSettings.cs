@@ -29,5 +29,7 @@ namespace AscCutlistEditor.Models.MQTT
             get => (string)Settings.Default["Password"];
             set => Settings.Default["Password"] = value;
         }
+
+        // TODO: add customizable table & column settings
     }
 }
