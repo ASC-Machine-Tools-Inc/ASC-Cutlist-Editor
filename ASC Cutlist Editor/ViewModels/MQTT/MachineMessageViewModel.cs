@@ -31,6 +31,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
         private MachineMessage _latestMachineMessage;
 
+        private SqlConnectionViewModel _sqlConn;
+
         public PlotModel UptimePlot { get; set; }
 
         public PlotModel DowntimeStatsPlot { get; set; }
@@ -71,6 +73,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 pubTopic,
                 connModel
             );
+
+            _sqlConn = connModel;
 
             CreateUptimeModel();
 
@@ -279,17 +283,19 @@ namespace AscCutlistEditor.ViewModels.MQTT
             // Update the UI.
             UpdateMachineTab(message);
 
+            MessageFlagHandlers handlers = new MessageFlagHandlers(_sqlConn);
+
             // Handle the order data requested flag (getting the orders and bundles).
-            await MessageFlagHandlers.OrderDatReqFlagHandler(message, returnMessage);
+            await handlers.OrderDatReqFlagHandler(message, returnMessage);
 
             // Handle the coil data requested flag (running a specific coil and order).
-            await MessageFlagHandlers.CoilDatReqFlagHandler(message, returnMessage);
+            await handlers.CoilDatReqFlagHandler(message, returnMessage);
 
             // Handle the coil list requested flag (all non-depleted coils).
-            await MessageFlagHandlers.CoilStoreReqFlagHandler(message, returnMessage);
+            await handlers.CoilStoreReqFlagHandler(message, returnMessage);
 
             // Handle the coil usage sending requested flag (write to database).
-            int rowsAdded = await MessageFlagHandlers.CoilUsageSendFlagHandler(
+            int rowsAdded = await handlers.CoilUsageSendFlagHandler(
                 message,
                 returnMessage);
             // TODO: remove if check? For debugging

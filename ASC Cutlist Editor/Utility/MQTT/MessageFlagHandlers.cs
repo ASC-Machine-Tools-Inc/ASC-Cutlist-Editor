@@ -4,17 +4,25 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using AscCutlistEditor.ViewModels.MQTT;
 
 namespace AscCutlistEditor.Utility.MQTT
 {
     // Collection of handlers to deal with the set flags in machine messages.
     internal class MessageFlagHandlers
     {
+        private readonly Queries _queries;
+
+        public MessageFlagHandlers(SqlConnectionViewModel sqlConn)
+        {
+            _queries = new Queries(sqlConn.UserSqlSettings);
+        }
+
         /// <summary>
         /// Handle updating the display and returning order data depending on
         /// the set flags from the received machine message.
         /// </summary>
-        internal static async Task OrderDatReqFlagHandler(
+        internal async Task OrderDatReqFlagHandler(
             MachineMessage message,
             MachineMessage returnMessage)
         {
@@ -27,13 +35,13 @@ namespace AscCutlistEditor.Utility.MQTT
                 case "TRUE" when pub.OrderNo != null:
                     {
                         // Respond with the order and bundle data.
-                        DataTable fullOrderTable = await Queries.GetOrdersByIdAndMachine(
+                        DataTable fullOrderTable = await _queries.GetOrdersByIdAndMachine(
                             pub.OrderNo,
                             pub.JobNumber);
-                        sub.OrderDatRecv = Queries.DataTableToString(fullOrderTable);
+                        sub.OrderDatRecv = _queries.DataTableToString(fullOrderTable);
 
-                        DataTable bundlesTable = await Queries.GetBundle(pub.OrderNo);
-                        sub.BundleDatRecv = Queries.DataTableToString(bundlesTable);
+                        DataTable bundlesTable = await _queries.GetBundle(pub.OrderNo);
+                        sub.BundleDatRecv = _queries.DataTableToString(bundlesTable);
                         sub.OrderDatAck = "TRUE";
                         sub.OrderNo = pub.OrderNo;
                         break;
@@ -47,9 +55,9 @@ namespace AscCutlistEditor.Utility.MQTT
                 case "FALSE":
                     {
                         // Otherwise, respond with the current job numbers.
-                        DataTable orderNumTable = await Queries.GetOrdersByMachineNum(pub.JobNumber);
+                        DataTable orderNumTable = await _queries.GetOrdersByMachineNum(pub.JobNumber);
 
-                        sub.MqttString = Queries.DataTableToString(orderNumTable);
+                        sub.MqttString = _queries.DataTableToString(orderNumTable);
                         sub.MqttDest = pub.JobNumber;
                         break;
                     }
@@ -60,7 +68,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// Handle updating the display and returning coil data depending on
         /// the set flags from the received machine message.
         /// </summary>
-        internal static async Task CoilDatReqFlagHandler(
+        internal async Task CoilDatReqFlagHandler(
             MachineMessage message,
             MachineMessage returnMessage)
         {
@@ -77,8 +85,8 @@ namespace AscCutlistEditor.Utility.MQTT
                     pub.OrderNo != "NoOrderSelected")
                 {
                     // Valid parameters, grab the coil data.
-                    DataTable coilData = await Queries.GetCoilData(pub.ScanCoilID);
-                    DataTable orderData = await Queries.GetOrdersById(pub.OrderNo);
+                    DataTable coilData = await _queries.GetCoilData(pub.ScanCoilID);
+                    DataTable orderData = await _queries.GetOrdersById(pub.OrderNo);
 
                     if (coilData.Rows.Count == 0)
                     {
@@ -183,7 +191,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// <summary>
         /// Handle updating the display when the HMI requests the list of coils.
         /// </summary>
-        internal static async Task CoilStoreReqFlagHandler(
+        internal async Task CoilStoreReqFlagHandler(
             MachineMessage message,
             MachineMessage returnMessage)
         {
@@ -196,10 +204,10 @@ namespace AscCutlistEditor.Utility.MQTT
                 return;
             }
 
-            DataTable coils = await Queries.GetNonDepletedCoils();
+            DataTable coils = await _queries.GetNonDepletedCoils();
             int count = coils.Rows.Count - 1;
 
-            sub.CoilStoreRecv = count + "|" + Queries.DataTableToString(coils);
+            sub.CoilStoreRecv = count + "|" + _queries.DataTableToString(coils);
             sub.CoilStoreAck = "TRUE";
         }
 
@@ -208,7 +216,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// from the machine.
         /// </summary>
         /// <returns>The number of rows added to the database.</returns>
-        internal static async Task<int> CoilUsageSendFlagHandler(
+        internal async Task<int> CoilUsageSendFlagHandler(
             MachineMessage message,
             MachineMessage returnMessage)
         {
@@ -262,7 +270,7 @@ namespace AscCutlistEditor.Utility.MQTT
             sub.CoilUsageRecvAck = "TRUE";
 
             // Update the database.
-            return await Queries.SetUsageData(usageData);
+            return await _queries.SetUsageData(usageData);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
     /// </summary>
     public class SqlConnectionViewModel : ObservableObject
     {
-        public static SqlConnectionStringBuilder Builder;
+        public static SqlConnectionStringBuilder Builder { get; set; }
 
         public ISettings UserSqlSettings { get; set; }
 
@@ -105,6 +105,15 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             config.Save();
             Settings.Default.Save();
+        }
+
+        /// <summary>
+        /// Reset the application settings.
+        /// </summary>
+        public static void Reset()
+        {
+            Settings.Default.Reset();
+            Save();
         }
 
         /// <summary>
