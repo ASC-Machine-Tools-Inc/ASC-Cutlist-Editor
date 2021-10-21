@@ -1,6 +1,7 @@
 ﻿using AscCutlistEditor.Frameworks;
 using System.Diagnostics;
 using System.Windows;
+using AscCutlistEditor.Properties;
 
 namespace AscCutlistEditorTests.Common
 {
@@ -12,6 +13,31 @@ namespace AscCutlistEditorTests.Common
             public string DatabaseName { get; set; }
             public string Username { get; set; }
             public string Password { get; set; }
+            public string CoilTableName { get; set; }
+            public string CoilStartLengthName { get; set; }
+            public string CoilLengthUsedName { get; set; }
+            public string CoilMaterialName { get; set; }
+            public string CoilNumberName { get; set; }
+            public string CoilDescriptionName { get; set; }
+            public string CoilDateName { get; set; }
+            public string OrderTableName { get; set; }
+            public string OrderNumName { get; set; }
+            public string OrderMaterialName { get; set; }
+            public string OrderQuantityName { get; set; }
+            public string OrderPartNumName { get; set; }
+            public string OrderMachineNumName { get; set; }
+            public string OrderItemIdName { get; set; }
+            public string OrderLengthName { get; set; }
+            public string OrderBundleName { get; set; }
+            public string BundleTableName { get; set; }
+            public string BundleOrderNumName { get; set; }
+            public string BundleColumns { get; set; }
+            public string UsageTableName { get; set; }
+            public string UsageOrderNumName { get; set; }
+            public string UsageMaterialName { get; set; }
+            public string UsageItemIdName { get; set; }
+            public string UsageLengthName { get; set; }
+            public string UsageDateName { get; set; }
         }
 
         public class MockDialog : IDialogService

@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:AscCutlistEditor.ViewModels"
         xmlns:mqtt="clr-namespace:AscCutlistEditor.Models.MQTT"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
         mc:Ignorable="d"
         Title="Sql Connection Settings" Height="450" Width="800">
@@ -377,6 +378,7 @@
                             Grid.ColumnSpan="5"
                             Text="{Binding Source={StaticResource settings},
                             Path=BundleColumns}"
+                            ui:ControlHelper.PlaceholderText="Enter a comma-separated list"
                             Margin="10" />
                             </Grid>
                         </Expander>

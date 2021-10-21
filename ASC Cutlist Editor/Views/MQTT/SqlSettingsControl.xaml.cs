@@ -16,16 +16,24 @@ namespace AscCutlistEditor.Views.MQTT
         // Close and reopen the settings so the reset changes apply.
         private void ResetSqlSettings(object sender, RoutedEventArgs e)
         {
-            Close();
-
-            UserSqlSettings.Reset();
-
-            SqlSettingsControl settings = new SqlSettingsControl
+            MessageBoxResult dialogResult = MessageBox.Show(
+                "Your current settings will be cleared.",
+                "Reset settings",
+                MessageBoxButton.OKCancel,
+                MessageBoxImage.Warning);
+            if (dialogResult == MessageBoxResult.OK)
             {
-                // Grab the data context of MainWindow so we can access our settings.
-                DataContext = Application.Current.MainWindow?.DataContext
-            };
-            settings.ShowDialog();
+                Close();
+
+                UserSqlSettings.Reset();
+
+                SqlSettingsControl settings = new SqlSettingsControl
+                {
+                    // Grab the data context of MainWindow so we can access our settings.
+                    DataContext = Application.Current.MainWindow?.DataContext
+                };
+                settings.ShowDialog();
+            }
         }
     }
 }

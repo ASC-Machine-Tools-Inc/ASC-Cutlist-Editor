@@ -46,9 +46,9 @@ namespace AscCutlistEditor.Utility.MQTT
             string coilnumber = builder.QuoteIdentifier(_settings.CoilNumberName);
 
             string queryStr =
-                "SELECT " + startlength + ", " + lengthused + ", " + material + " " +
-                "FROM " + coilTableName + " " +
-                "WHERE " + coilnumber + " LIKE @coilID";
+                $"SELECT {startlength}, {lengthused}, {material} " +
+                $"FROM {coilTableName} " +
+                $"WHERE {coilnumber} LIKE @coilID";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
@@ -70,28 +70,30 @@ namespace AscCutlistEditor.Utility.MQTT
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
 
-            string queryStr = "SELECT @coilnumber, @description, @material, " +
-                              "(CONVERT(DECIMAL(10,2),@startlength) - " +
-                              "CONVERT(DECIMAL(10,2),@lengthused)) AS currlength " +
-                              "FROM @coilTableName " +
-                              "WHERE dateout IS NULL";
+            SqlCommandBuilder builder = new SqlCommandBuilder();
+
+            // Selected columns.
+            string coilnumber = builder.QuoteIdentifier(_settings.CoilNumberName);
+            string description = builder.QuoteIdentifier(_settings.CoilDescriptionName);
+            string material = builder.QuoteIdentifier(_settings.CoilMaterialName);
+            string startlength = builder.QuoteIdentifier(_settings.CoilStartLengthName);
+            string lengthused = builder.QuoteIdentifier(_settings.CoilLengthUsedName);
+
+            // Table name.
+            string coilTableName = builder.QuoteIdentifier(_settings.CoilTableName);
+
+            // Filter columns.
+            string dateout = builder.QuoteIdentifier(_settings.CoilDateName);
+
+            string queryStr = $"SELECT {coilnumber}, {description}, {material}, " +
+                              $"(CONVERT(DECIMAL(10,2),{startlength}) - " +
+                              $"CONVERT(DECIMAL(10,2),{lengthused})) AS currlength " +
+                              $"FROM {coilTableName} " +
+                              $"WHERE {dateout} IS NULL";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
             cmd.CommandType = CommandType.Text;
-
-            // Selected columns.
-            cmd.Parameters.AddWithValue("@coilnumber", _settings.CoilNumberName);
-            cmd.Parameters.AddWithValue("@description", _settings.CoilDescriptionName);
-            cmd.Parameters.AddWithValue("@material", _settings.CoilMaterialName);
-            cmd.Parameters.AddWithValue("@startlength", _settings.CoilStartLengthName);
-            cmd.Parameters.AddWithValue("@lengthused", _settings.CoilLengthUsedName);
-
-            // Table name.
-            cmd.Parameters.AddWithValue("@coilTableName", _settings.CoilTableName);
-
-            // Filter parameters.
-            cmd.Parameters.AddWithValue("@coilDateName", _settings.CoilDateName);
 
             return await SelectHelper(conn, cmd);
         }
@@ -109,25 +111,27 @@ namespace AscCutlistEditor.Utility.MQTT
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
 
+            SqlCommandBuilder builder = new SqlCommandBuilder();
+
+            // Selected columns.
+            string orderno = builder.QuoteIdentifier(_settings.OrderNumName);
+            string material = builder.QuoteIdentifier(_settings.OrderMaterialName);
+            string length = builder.QuoteIdentifier(_settings.OrderLengthName);
+            string quantity = builder.QuoteIdentifier(_settings.OrderQuantityName);
+
+            // Table name.
+            string orderTableName = builder.QuoteIdentifier(_settings.OrderTableName);
+
             string queryStr =
-                "SELECT @orderno, @material, " +
-                "SUM(@length * CONVERT(DECIMAL(10,2),@quantity)) AS orderlen " +
-                "FROM @orderTableName " +
-                "WHERE @orderno LIKE @orderNum " +
-                "GROUP BY @orderno, @material";
+                $"SELECT {orderno}, {material}, " +
+                $"SUM({length} * CONVERT(DECIMAL(10,2),{quantity})) AS orderlen " +
+                $"FROM {orderTableName} " +
+                $"WHERE {orderno} LIKE @orderNum " +
+                $"GROUP BY {orderno}, {material}";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
             cmd.CommandType = CommandType.Text;
-
-            // Selected columns.
-            cmd.Parameters.AddWithValue("@orderno", _settings.OrderNumName);
-            cmd.Parameters.AddWithValue("@material", _settings.OrderMaterialName);
-            cmd.Parameters.AddWithValue("@length", _settings.OrderLengthName);
-            cmd.Parameters.AddWithValue("@quantity", _settings.OrderQuantityName);
-
-            // Table name.
-            cmd.Parameters.AddWithValue("@orderTableName", _settings.OrderTableName);
 
             // Filter parameters.
             cmd.Parameters.AddWithValue("@orderNum", "%" + orderNum + "%");
@@ -148,29 +152,34 @@ namespace AscCutlistEditor.Utility.MQTT
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
 
+            SqlCommandBuilder builder = new SqlCommandBuilder();
+
+            // Selected columns.
+            string orderno = builder.QuoteIdentifier(_settings.OrderNumName);
+            string material = builder.QuoteIdentifier(_settings.OrderMaterialName);
+            string length = builder.QuoteIdentifier(_settings.OrderLengthName);
+            string quantity = builder.QuoteIdentifier(_settings.OrderQuantityName);
+            string partno = builder.QuoteIdentifier(_settings.OrderPartNumName);
+
+            // Table name.
+            string orderTableName = builder.QuoteIdentifier(_settings.OrderTableName);
+
+            // Filter columns.
+            string machinenum = builder.QuoteIdentifier(_settings.OrderMachineNumName);
+
             string queryStr =
-                "SELECT @orderno, @material, " +
-                "SUM(@length * CONVERT(DECIMAL(10,2),@quantity)) AS orderlen, @partno " +
-                "FROM @orderTableName " +
-                "WHERE @orderno IS NOT NULL AND @machinenum LIKE @machineID " +
-                "GROUP BY @orderno, @material, @partno, @machinenum";
+                $"SELECT {orderno}, {material}, " +
+                $"SUM({length} * CONVERT(DECIMAL(10,2),{quantity})) AS orderlen, " +
+                $"{partno} " +
+                $"FROM {orderTableName} " +
+                $"WHERE {orderno} IS NOT NULL AND {machinenum} LIKE @machineID " +
+                $"GROUP BY {orderno}, {material}, {partno}, {machinenum}";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
             cmd.CommandType = CommandType.Text;
 
-            // Selected columns.
-            cmd.Parameters.AddWithValue("@orderno", _settings.OrderNumName);
-            cmd.Parameters.AddWithValue("@material", _settings.OrderMaterialName);
-            cmd.Parameters.AddWithValue("@length", _settings.OrderLengthName);
-            cmd.Parameters.AddWithValue("@quantity", _settings.OrderQuantityName);
-            cmd.Parameters.AddWithValue("@partno", _settings.OrderPartNumName);
-
-            // Table name.
-            cmd.Parameters.AddWithValue("@orderTableName", _settings.OrderTableName);
-
             // Filter parameters.
-            cmd.Parameters.AddWithValue("@machinenum", _settings.OrderMachineNumName);
             cmd.Parameters.AddWithValue("@machineID", "%" + machineId + "%");
 
             return await SelectHelper(conn, cmd);
@@ -187,28 +196,32 @@ namespace AscCutlistEditor.Utility.MQTT
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
 
+            SqlCommandBuilder builder = new SqlCommandBuilder();
+
+            // Selected columns.
+            string itemId = builder.QuoteIdentifier(_settings.OrderItemIdName);
+            string length = builder.QuoteIdentifier(_settings.OrderLengthName);
+            string quantity = builder.QuoteIdentifier(_settings.OrderQuantityName);
+            string bundle = builder.QuoteIdentifier(_settings.OrderBundleName);
+
+            // Table name.
+            string orderTableName = builder.QuoteIdentifier(_settings.OrderTableName);
+
+            // Filter columns.
+            string machinenum = builder.QuoteIdentifier(_settings.OrderMachineNumName);
+            string orderno = builder.QuoteIdentifier(_settings.OrderNumName);
+
             string queryStr =
-                "SELECT @item_id, @length, @quantity, @bundle " +
-                "FROM @orderTableName " +
-                "WHERE @machinenum LIKE @machineId AND @orderno LIKE @orderNum";
+                $"SELECT {itemId}, {length}, {quantity}, {bundle} " +
+                $"FROM {orderTableName} " +
+                $"WHERE {machinenum} LIKE @machineId AND {orderno} LIKE @orderNum";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
             cmd.CommandType = CommandType.Text;
 
-            // Selected columns.
-            cmd.Parameters.AddWithValue("@item_id", _settings.OrderItemIdName);
-            cmd.Parameters.AddWithValue("@length", _settings.OrderLengthName);
-            cmd.Parameters.AddWithValue("@quantity", _settings.OrderQuantityName);
-            cmd.Parameters.AddWithValue("@bundle", _settings.OrderBundleName);
-
-            // Table name.
-            cmd.Parameters.AddWithValue("@orderTableName", _settings.OrderTableName);
-
             // Filter parameters.
-            cmd.Parameters.AddWithValue("@machinenum", _settings.OrderMachineNumName);
             cmd.Parameters.AddWithValue("@machineID", "%" + machineId + "%");
-            cmd.Parameters.AddWithValue("@orderno", _settings.OrderNumName);
             cmd.Parameters.AddWithValue("@orderNum", "%" + orderNum + "%");
 
             return await SelectHelper(conn, cmd);
@@ -224,23 +237,34 @@ namespace AscCutlistEditor.Utility.MQTT
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
 
+            SqlCommandBuilder builder = new SqlCommandBuilder();
+
+            // Selected columns.
+            string[] bundlesCols = _settings.BundleColumns.Split(",");
+
+            // Table name.
+            string bundleTableName = builder.QuoteIdentifier(_settings.BundleTableName);
+
+            // Filter columns.
+            string orderno = builder.QuoteIdentifier(_settings.BundleOrderNumName);
+
             string queryStr =
-                "SELECT DISTINCT @bundleCols " +
-                "FROM @orderTableName " +
-                "WHERE @orderno LIKE @orderNum";
+                $"SELECT DISTINCT ";
+
+            // Add columns.
+            foreach (string col in bundlesCols)
+            {
+                queryStr += $"{col.Trim()}, ";
+            }
+
+            queryStr += $"FROM {bundleTableName} " +
+                $"WHERE {orderno} LIKE @orderNum";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
             cmd.CommandType = CommandType.Text;
 
-            // Selected columns.
-            cmd.Parameters.AddWithValue("@bundleCols", _settings.BundleColumns);
-
-            // Table name.
-            cmd.Parameters.AddWithValue("@orderTableName", _settings.OrderTableName);
-
             // Filter parameters.
-            cmd.Parameters.AddWithValue("@orderno", _settings.OrderNumName);
             cmd.Parameters.AddWithValue("@orderNum", "%" + orderNum + "%");
 
             return await SelectHelper(conn, cmd);
@@ -275,9 +299,21 @@ namespace AscCutlistEditor.Utility.MQTT
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
 
+            SqlCommandBuilder builder = new SqlCommandBuilder();
+
+            // Selected columns.
+            string ordernoCol = builder.QuoteIdentifier(_settings.UsageOrderNumName);
+            string materialCol = builder.QuoteIdentifier(_settings.OrderMaterialName);
+            string itemIdCol = builder.QuoteIdentifier(_settings.UsageItemIdName);
+            string totallengthCol = builder.QuoteIdentifier(_settings.UsageLengthName);
+            string adddateCol = builder.QuoteIdentifier(_settings.UsageDateName);
+
+            // Table name.
+            string usageTableName = builder.QuoteIdentifier(_settings.UsageTableName);
+
             string queryStr =
-                "INSERT INTO @usageTableName " +
-                "(@orderno, @material, @itemid, @totallength, @adddate) " +
+                $"INSERT INTO {usageTableName} " +
+                $"({ordernoCol}, {materialCol}, {itemIdCol}, {totallengthCol}, {adddateCol}) " +
                 "VALUES ";
 
             // Append the fields to add from our DataTable to our SqlCommand text.
@@ -295,16 +331,6 @@ namespace AscCutlistEditor.Utility.MQTT
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
             cmd.CommandType = CommandType.Text;
-
-            // Selected columns.
-            cmd.Parameters.AddWithValue("@orderno", _settings.UsageOrderNumName);
-            cmd.Parameters.AddWithValue("@material", _settings.UsageMaterialName);
-            cmd.Parameters.AddWithValue("@itemid", _settings.UsageItemIdName);
-            cmd.Parameters.AddWithValue("@totallength", _settings.UsageLengthName);
-            cmd.Parameters.AddWithValue("@adddate", _settings.UsageDateName);
-
-            // Table name.
-            cmd.Parameters.AddWithValue("@usageTableName", _settings.UsageTableName);
 
             conn.Open();
             return await cmd.ExecuteNonQueryAsync();

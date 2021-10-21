@@ -146,7 +146,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             });
 
             // Response to send on receiving a message.
-            Listener.UseApplicationMessageReceivedHandler(async e =>
+            Listener.UseApplicationMessageReceivedHandler(e =>
             {
                 // Create a new tab if we haven't seen this topic before.
                 string topic = e.ApplicationMessage.Topic.Substring(SubTopic.Length);

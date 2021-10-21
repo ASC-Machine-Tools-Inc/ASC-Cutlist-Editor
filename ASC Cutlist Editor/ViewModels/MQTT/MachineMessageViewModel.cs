@@ -278,9 +278,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
             try
             {
                 // Handle the order data requested flag (getting the orders and bundles).
-                // await handlers.OrderDatReqFlagHandler(message, returnMessage);
+                await handlers.OrderDatReqFlagHandler(message, returnMessage);
 
-                /*
                 // Handle the coil data requested flag (running a specific coil and order).
                 await handlers.CoilDatReqFlagHandler(message, returnMessage);
 
@@ -296,7 +295,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 {
                     Debug.WriteLine($"Rows added from coil usage: {rowsAdded}");
                 }
-                */
             }
             catch (Exception)
             {
