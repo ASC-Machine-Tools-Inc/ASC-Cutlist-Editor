@@ -11,14 +11,15 @@
     <Window.Resources>
         <mqtt:UserSqlSettings x:Key="settings" />
     </Window.Resources>
-    <TabControl>
-        <TabItem Header="Connection">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
 
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <TabControl>
+            <TabItem Header="Connection">
                 <ScrollViewer>
                     <!-- SQL connection settings -->
                     <StackPanel Margin="50,25">
@@ -85,36 +86,8 @@
                         </Grid>
                     </StackPanel>
                 </ScrollViewer>
-
-                <Border
-                    Grid.Row="1"
-                    BorderBrush="Gray"
-                    BorderThickness="0 1 0 0">
-                    <DockPanel
-                        Dock="Bottom"
-                        HorizontalAlignment="Right">
-                        <Button
-                            Command="{Binding TestSqlConnectionCommand}"
-                            Content="Test Connection"
-                            Margin="5 10">
-                        </Button>
-
-                        <!-- Settings automatically save, but this helps reassure users. -->
-                        <Button
-                            Content="Save and Close"
-                            IsCancel="True"
-                            Margin="10">
-                        </Button>
-                    </DockPanel>
-                </Border>
-            </Grid>
-        </TabItem>
-        <TabItem Header="Queries">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
+            </TabItem>
+            <TabItem Header="Queries">
                 <ScrollViewer>
                     <StackPanel Margin="50 25">
                         <!-- Query settings -->
@@ -128,398 +101,405 @@
                         Background="Black"
                         Margin="0 10" />
 
-                        <TextBlock
-                        FontSize="16"
-                        FontWeight="SemiBold"
-                        Text="Coil Table &amp; Column Names" />
+                        <Expander Margin="0 5">
+                            <Expander.Header>
+                                <TextBlock
+                                    FontSize="16"
+                                    FontWeight="SemiBold"
+                                    Text="Coil Table &amp; Column Names" />
+                            </Expander.Header>
 
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
 
-                            <Label
+                                <Label
                         Content="Coil Table:" />
-                            <TextBox
+                                <TextBox
                         Grid.Column="1"
                         Grid.ColumnSpan="3"
                         Text="{Binding Source={StaticResource settings},
                             Path=CoilTableName}"
                         Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="1"
                             Grid.Column="0"
                             Content="Coil Number:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="1"
                             Grid.Column="1"
                             Text="{Binding Source={StaticResource settings},
                             Path=CoilNumberName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="1"
                             Grid.Column="2"
                             Content="Length Used:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="1"
                             Grid.Column="3"
                             Text="{Binding Source={StaticResource settings},
                             Path=CoilLengthUsedName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="1"
                             Grid.Column="4"
                             Content="Material:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="1"
                             Grid.Column="5"
                             Text="{Binding Source={StaticResource settings},
                             Path=CoilMaterialName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="2"
                             Grid.Column="0"
                             Content="Starting Length:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="2"
                             Grid.Column="1"
                             Text="{Binding Source={StaticResource settings},
                             Path=CoilStartLengthName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="2"
                             Grid.Column="2"
                             Content="Description:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="2"
                             Grid.Column="3"
                             Text="{Binding Source={StaticResource settings},
                             Path=CoilDescriptionName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="2"
                             Grid.Column="4"
                             Content="Date:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="2"
                             Grid.Column="5"
                             Text="{Binding Source={StaticResource settings},
                             Path=CoilDateName}"
                             Margin="10" />
-                        </Grid>
+                            </Grid>
+                        </Expander>
 
-                        <Separator
-                        Height="2"
-                        Background="Black"
-                        Margin="0 10" />
+                        <Expander Margin="0 5">
+                            <Expander.Header>
+                                <TextBlock
+                                    FontSize="16"
+                                    FontWeight="SemiBold"
+                                    Text="Order Table &amp; Column Names" />
+                            </Expander.Header>
 
-                        <TextBlock
-                        FontSize="16"
-                        FontWeight="SemiBold"
-                        Text="Order Table &amp; Column Names" />
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
 
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-
-                            <Label
+                                <Label
                         Content="Order Table:" />
-                            <TextBox
+                                <TextBox
                         Grid.Column="1"
                         Grid.ColumnSpan="3"
                         Text="{Binding Source={StaticResource settings},
                             Path=OrderTableName}"
                         Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="1"
                             Grid.Column="0"
                             Content="Order Number:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="1"
                             Grid.Column="1"
                             Text="{Binding Source={StaticResource settings},
                             Path=OrderNumName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="1"
                             Grid.Column="2"
                             Content="Material:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="1"
                             Grid.Column="3"
                             Text="{Binding Source={StaticResource settings},
                             Path=OrderMaterialName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="1"
                             Grid.Column="4"
                             Content="Quantity:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="1"
                             Grid.Column="5"
                             Text="{Binding Source={StaticResource settings},
                             Path=OrderQuantityName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="2"
                             Grid.Column="0"
                             Content="Part Number:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="2"
                             Grid.Column="1"
                             Text="{Binding Source={StaticResource settings},
                             Path=OrderPartNumName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="2"
                             Grid.Column="2"
                             Content="Machine Number:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="2"
                             Grid.Column="3"
                             Text="{Binding Source={StaticResource settings},
                             Path=OrderMachineNumName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="2"
                             Grid.Column="4"
                             Content="Item Id:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="2"
                             Grid.Column="5"
                             Text="{Binding Source={StaticResource settings},
                             Path=OrderItemIdName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="3"
                             Grid.Column="0"
                             Content="Length:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="3"
                             Grid.Column="1"
                             Text="{Binding Source={StaticResource settings},
                             Path=OrderLengthName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="3"
                             Grid.Column="2"
                             Content="Bundle:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="3"
                             Grid.Column="3"
                             Text="{Binding Source={StaticResource settings},
                             Path=OrderBundleName}"
                             Margin="10" />
-                        </Grid>
+                            </Grid>
+                        </Expander>
 
-                        <Separator
-                        Height="2"
-                        Background="Black"
-                        Margin="0 10" />
+                        <Expander Margin="0 5">
+                            <Expander.Header>
+                                <TextBlock
+                                    FontSize="16"
+                                    FontWeight="SemiBold"
+                                    Text="Bundle Table &amp; Column Names" />
+                            </Expander.Header>
 
-                        <TextBlock
-                        FontSize="16"
-                        FontWeight="SemiBold"
-                        Text="Bundle Table &amp; Column Names" />
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
 
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-
-                            <Label
+                                <Label
                         Content="Bundle Table:" />
-                            <TextBox
+                                <TextBox
                         Grid.Column="1"
                         Grid.ColumnSpan="3"
                         Text="{Binding Source={StaticResource settings},
                             Path=BundleTableName}"
                         Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="1"
                             Grid.Column="0"
                             Content="Order Number:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="1"
                             Grid.Column="1"
                             Text="{Binding Source={StaticResource settings},
                             Path=BundleOrderNumName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="2"
                             Grid.Column="0"
                             Content="Columns:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="2"
                             Grid.Column="1"
                             Grid.ColumnSpan="5"
                             Text="{Binding Source={StaticResource settings},
                             Path=BundleColumns}"
                             Margin="10" />
-                        </Grid>
+                            </Grid>
+                        </Expander>
 
-                        <Separator
-                        Height="2"
-                        Background="Black"
-                        Margin="0 10" />
+                        <Expander Margin="0 5">
+                            <Expander.Header>
+                                <TextBlock
+                                    FontSize="16"
+                                    FontWeight="SemiBold"
+                                    Text="Usage Table &amp; Column Names" />
+                            </Expander.Header>
 
-                        <TextBlock
-                        FontSize="16"
-                        FontWeight="SemiBold"
-                        Text="Usage Table &amp; Column Names" />
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
 
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-
-                            <Label
+                                <Label
                                 Content="Usage Table:" />
-                            <TextBox
+                                <TextBox
                                 Grid.Column="1"
                                 Grid.ColumnSpan="3"
                                 Text="{Binding Source={StaticResource settings},
                                     Path=UsageTableName}"
                                 Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="1"
                             Grid.Column="0"
                             Content="Order Number:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="1"
                             Grid.Column="1"
                             Text="{Binding Source={StaticResource settings},
                             Path=UsageOrderNumName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="1"
                             Grid.Column="2"
                             Content="Material:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="1"
                             Grid.Column="3"
                             Text="{Binding Source={StaticResource settings},
                             Path=UsageMaterialName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                             Grid.Row="1"
                             Grid.Column="4"
                             Content="Item Id:" />
-                            <TextBox
+                                <TextBox
                             Grid.Row="1"
                             Grid.Column="5"
                             Text="{Binding Source={StaticResource settings},
                             Path=UsageItemIdName}"
                             Margin="10" />
 
-                            <Label
+                                <Label
                                     Grid.Row="2"
                                     Grid.Column="0"
                                     Content="Length:" />
-                            <TextBox
+                                <TextBox
                                     Grid.Row="2"
                                     Grid.Column="1"
                                     Text="{Binding Source={StaticResource settings},
                                     Path=UsageLengthName}"
                                     Margin="10" />
 
-                            <Label
+                                <Label
                                     Grid.Row="2"
                                     Grid.Column="2"
                                     Content="Date:" />
-                            <TextBox
+                                <TextBox
                                     Grid.Row="2"
                                     Grid.Column="3"
                                     Text="{Binding Source={StaticResource settings},
                                     Path=UsageDateName}"
                                     Margin="10" />
-                        </Grid>
+                            </Grid>
+                        </Expander>
                     </StackPanel>
                 </ScrollViewer>
+            </TabItem>
+        </TabControl>
 
-                <Border
-                    Grid.Row="1"
-                    BorderBrush="Gray"
-                    BorderThickness="0 1 0 0">
-                    <DockPanel
-                        Dock="Bottom"
-                        HorizontalAlignment="Right">
-                        <Button
-                            Command="{Binding ResetQuerySettingsCommand}"
-                            Content="Reset Settings to Default"
-                            Margin="5 10">
-                        </Button>
+        <Border
+        Grid.Row="1"
+        BorderBrush="Gray"
+        BorderThickness="0 1 0 0">
+            <DockPanel
+            Dock="Bottom"
+            HorizontalAlignment="Right">
+                <Button
+                    Command="{Binding TestSqlConnectionCommand}"
+                    Content="Test Connection"
+                    Margin="5 10">
+                </Button>
 
-                        <!-- Settings automatically save, but this helps reassure users. -->
-                        <Button
-                            Content="Save and Close"
-                            IsCancel="True"
-                            Margin="10">
-                        </Button>
-                    </DockPanel>
-                </Border>
-            </Grid>
-        </TabItem>
-    </TabControl>
+                <Button
+                Click="ResetSqlSettings"
+                Content="Reset Settings to Default"
+                Margin="5 10">
+                </Button>
+
+                <!-- Settings automatically save, but this helps reassure users. -->
+                <Button
+                Content="Save and Close"
+                IsCancel="True"
+                Margin="10">
+                </Button>
+            </DockPanel>
+        </Border>
+    </Grid>
 </Window>

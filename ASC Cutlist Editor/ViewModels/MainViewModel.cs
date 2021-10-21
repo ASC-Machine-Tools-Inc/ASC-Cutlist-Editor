@@ -96,9 +96,6 @@ namespace AscCutlistEditor.ViewModels
             new DelegateCommand(async () =>
                 await SqlConnectionViewModel.TestConnection());
 
-        public ICommand ResetQuerySettingsCommand =>
-            new DelegateCommand(SqlConnectionViewModel.Reset);
-
         private void ToggleView(int index)
         {
             UiVisibility[index] = !UiVisibility[index];

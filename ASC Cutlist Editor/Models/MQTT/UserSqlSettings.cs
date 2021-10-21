@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using System.Configuration;
+using System.Data.SqlClient;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Properties;
 
@@ -7,6 +8,32 @@ namespace AscCutlistEditor.Models.MQTT
     // Wrapper class over settings for SQL connection string.
     public class UserSqlSettings : ObservableObject, ISettings
     {
+        /// <summary>
+        /// Save the user settings and encrypt them.
+        /// </summary>
+        public static void Save()
+        {
+            string sectionName = "userSettings/AscCutlistEditor.Properties.Settings";
+            string protectionProvider = "DataProtectionConfigurationProvider";
+
+            Configuration config = ConfigurationManager.OpenExeConfiguration(
+                ConfigurationUserLevel.PerUserRoamingAndLocal);
+            ConfigurationSection userSettings = config.GetSection(sectionName);
+            userSettings.SectionInformation.ProtectSection(protectionProvider);
+
+            config.Save();
+            Settings.Default.Save();
+        }
+
+        /// <summary>
+        /// Reset and save the user settings.
+        /// </summary>
+        public static void Reset()
+        {
+            Settings.Default.Reset();
+            Save();
+        }
+
         public string DataSource
         {
             get => (string)Settings.Default["DataSource"];

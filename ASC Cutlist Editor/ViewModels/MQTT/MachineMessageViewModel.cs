@@ -312,9 +312,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             catch (Exception)
             {
                 // Query error. Close the connection.
-                // TODO: remove tab from connections list?
-                Debug.WriteLine("Caught error on level 2.");
-                await _machineConnection.Client.DisconnectAsync();
+                // TODO: set status to sql failed
             }
 
             // Finally, write the response message back out for the HMI.

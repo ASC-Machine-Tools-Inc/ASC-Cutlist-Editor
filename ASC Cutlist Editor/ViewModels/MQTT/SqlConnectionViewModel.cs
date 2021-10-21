@@ -91,32 +91,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
         }
 
         /// <summary>
-        /// Save the user settings and encrypt them.
-        /// </summary>
-        public static void Save()
-        {
-            string sectionName = "userSettings/AscCutlistEditor.Properties.Settings";
-            string protectionProvider = "DataProtectionConfigurationProvider";
-
-            Configuration config = ConfigurationManager.OpenExeConfiguration(
-                ConfigurationUserLevel.PerUserRoamingAndLocal);
-            ConfigurationSection userSettings = config.GetSection(sectionName);
-            userSettings.SectionInformation.ProtectSection(protectionProvider);
-
-            config.Save();
-            Settings.Default.Save();
-        }
-
-        /// <summary>
-        /// Reset the application settings.
-        /// </summary>
-        public static void Reset()
-        {
-            Settings.Default.Reset();
-            Save();
-        }
-
-        /// <summary>
         /// Creates a new connection string from the SQL Server connection
         /// parameters.
         /// </summary>

@@ -2,6 +2,7 @@
 using AscCutlistEditor.ViewModels.MQTT;
 using System;
 using System.Windows;
+using AscCutlistEditor.Models.MQTT;
 
 namespace AscCutlistEditor.Views
 {
@@ -19,7 +20,7 @@ namespace AscCutlistEditor.Views
 
         private static void MainWindow_Closed(object sender, EventArgs e)
         {
-            SqlConnectionViewModel.Save();
+            UserSqlSettings.Save();
         }
     }
 }
