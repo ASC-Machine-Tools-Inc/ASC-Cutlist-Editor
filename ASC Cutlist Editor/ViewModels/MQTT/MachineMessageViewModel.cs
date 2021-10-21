@@ -1,4 +1,5 @@
-﻿using AscCutlistEditor.Frameworks;
+﻿using System;
+using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models.MQTT;
 using AscCutlistEditor.Utility.MQTT;
 using MQTTnet;
@@ -21,7 +22,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
     /// <summary>
     /// Handles the data for a single machine connection.
     /// </summary>
-    internal class MachineMessageViewModel : ObservableObject
+    public class MachineMessageViewModel : ObservableObject
     {
         // Model for storing the mqtt connection data.
         private readonly MachineConnection _machineConnection;
@@ -285,23 +286,35 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             MessageFlagHandlers handlers = new MessageFlagHandlers(_sqlConn);
 
-            // Handle the order data requested flag (getting the orders and bundles).
-            await handlers.OrderDatReqFlagHandler(message, returnMessage);
-
-            // Handle the coil data requested flag (running a specific coil and order).
-            await handlers.CoilDatReqFlagHandler(message, returnMessage);
-
-            // Handle the coil list requested flag (all non-depleted coils).
-            await handlers.CoilStoreReqFlagHandler(message, returnMessage);
-
-            // Handle the coil usage sending requested flag (write to database).
-            int rowsAdded = await handlers.CoilUsageSendFlagHandler(
-                message,
-                returnMessage);
-            // TODO: remove if check? For debugging
-            if (rowsAdded > 0)
+            try
             {
-                Debug.WriteLine($"Rows added from coil usage: {rowsAdded}");
+                // Handle the order data requested flag (getting the orders and bundles).
+                await handlers.OrderDatReqFlagHandler(message, returnMessage);
+
+                /*
+                // Handle the coil data requested flag (running a specific coil and order).
+                await handlers.CoilDatReqFlagHandler(message, returnMessage);
+
+                // Handle the coil list requested flag (all non-depleted coils).
+                await handlers.CoilStoreReqFlagHandler(message, returnMessage);
+
+                // Handle the coil usage sending requested flag (write to database).
+                int rowsAdded = await handlers.CoilUsageSendFlagHandler(
+                    message,
+                    returnMessage);
+                // TODO: remove if check? For debugging
+                if (rowsAdded > 0)
+                {
+                    Debug.WriteLine($"Rows added from coil usage: {rowsAdded}");
+                }
+                */
+            }
+            catch (Exception)
+            {
+                // Query error. Close the connection.
+                // TODO: remove tab from connections list?
+                Debug.WriteLine("Caught error on level 2.");
+                await _machineConnection.Client.DisconnectAsync();
             }
 
             // Finally, write the response message back out for the HMI.

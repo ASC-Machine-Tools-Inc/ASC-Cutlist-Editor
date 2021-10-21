@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AscCutlistEditor.ViewModels.MQTT;
@@ -30,37 +31,33 @@ namespace AscCutlistEditor.Utility.MQTT
             MqttSub sub = returnMessage.tags.set2.MqttSub;
 
             string orderDataRequested = pub.OrderDatReq;
-            switch (orderDataRequested)
+            if (orderDataRequested == "TRUE" && pub.OrderNo != null)
             {
-                case "TRUE" when pub.OrderNo != null:
-                    {
-                        // Respond with the order and bundle data.
-                        DataTable fullOrderTable = await _queries.GetOrdersByIdAndMachine(
-                            pub.OrderNo,
-                            pub.JobNumber);
-                        sub.OrderDatRecv = _queries.DataTableToString(fullOrderTable);
+                // Respond with the order and bundle data.
+                DataTable fullOrderTable = await _queries.GetOrdersByIdAndMachine(
+                    pub.OrderNo,
+                    pub.JobNumber);
+                sub.OrderDatRecv = _queries.DataTableToString(fullOrderTable);
 
-                        DataTable bundlesTable = await _queries.GetBundle(pub.OrderNo);
-                        sub.BundleDatRecv = _queries.DataTableToString(bundlesTable);
-                        sub.OrderDatAck = "TRUE";
-                        sub.OrderNo = pub.OrderNo;
-                        break;
-                    }
-                case "TRUE":
-                    // If data was requested but no order number was included,
-                    // set the flag to clear the button.
-                    sub.OrderDatAck = "TRUE";
-                    break;
+                DataTable bundlesTable = await _queries.GetBundle(pub.OrderNo);
+                sub.BundleDatRecv = _queries.DataTableToString(bundlesTable);
+                sub.OrderDatAck = "TRUE";
+                sub.OrderNo = pub.OrderNo;
+            }
+            else if (orderDataRequested == "TRUE")
+            {
+                // If data was requested but no order number was included,
+                // set the flag to clear the button.
+                sub.OrderDatAck = "TRUE";
+            }
+            else if (orderDataRequested == "FALSE")
+            {
+                // Otherwise, respond with the current job numbers.
+                DataTable orderNumTable = await _queries
+                    .GetOrdersByMachineNum(pub.JobNumber);
 
-                case "FALSE":
-                    {
-                        // Otherwise, respond with the current job numbers.
-                        DataTable orderNumTable = await _queries.GetOrdersByMachineNum(pub.JobNumber);
-
-                        sub.MqttString = _queries.DataTableToString(orderNumTable);
-                        sub.MqttDest = pub.JobNumber;
-                        break;
-                    }
+                sub.MqttString = _queries.DataTableToString(orderNumTable);
+                sub.MqttDest = pub.JobNumber;
             }
         }
 
@@ -246,8 +243,8 @@ namespace AscCutlistEditor.Utility.MQTT
                         new { coilId = usageRow[1], itemId = usageRow[3] },
                     (key, fields) =>
                     {
-                        // Convert fields to list to prevent multiple enumeration.
-                        var enumerable = fields.ToList();
+                    // Convert fields to list to prevent multiple enumeration.
+                    var enumerable = fields.ToList();
                         return new CoilUsage
                         {
                             orderno = enumerable.ElementAt(0).ToString(),

@@ -4,7 +4,6 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using MQTTnet.Server;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -15,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using AscCutlistEditor.Models.MQTT;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {
@@ -29,7 +29,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
         internal string ListenerTopic;
 
         private HashSet<string> _knownTopics;
-        private ObservableCollection<TabItem> _machineConnectionTabs;
+        private ObservableCollection<MachineMessageViewModel> _machineConnections;
 
         private readonly SqlConnectionViewModel _sqlConnection;
 
@@ -55,18 +55,18 @@ namespace AscCutlistEditor.ViewModels.MQTT
             ListenerTopic = SubTopic + "/+/+";
 
             _knownTopics = new HashSet<string>();
-            _machineConnectionTabs = new ObservableCollection<TabItem>();
+            _machineConnections = new ObservableCollection<MachineMessageViewModel>();
 
             _sqlConnection = connModel;
         }
 
-        public ObservableCollection<TabItem> MachineConnectionTabs
+        public ObservableCollection<MachineMessageViewModel> MachineConnections
         {
-            get => _machineConnectionTabs;
+            get => _machineConnections;
             set
             {
-                _machineConnectionTabs = value;
-                RaisePropertyChangedEvent("MachineConnectionTabs");
+                _machineConnections = value;
+                RaisePropertyChangedEvent("MachineConnections");
             }
         }
 
@@ -108,19 +108,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 new MachineMessageViewModel(topic, _sqlConnection, payload);
             await model.StartClient();
 
-            // UI thread workaround for async.
-            Dispatcher dispatcher = Application.Current != null ?
-                Application.Current.Dispatcher :
-                Dispatcher.CurrentDispatcher;
-            dispatcher.Invoke(() =>
-            {
-                MachineConnectionTabs.Add(new TabItem
-                {
-                    Header = topic.Replace("/", ""),
-                    Content = new UptimeControl(),
-                    DataContext = model
-                });
-            });
+            MachineConnections.Add(model);
         }
 
         /// <summary>
@@ -130,7 +118,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
         public void Refresh()
         {
             _knownTopics = new HashSet<string>();
-            MachineConnectionTabs = new ObservableCollection<TabItem>();
+            MachineConnections = new ObservableCollection<MachineMessageViewModel>();
         }
 
         private async Task StartListener()

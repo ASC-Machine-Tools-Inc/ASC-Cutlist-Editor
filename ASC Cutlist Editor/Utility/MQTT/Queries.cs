@@ -1,6 +1,8 @@
-﻿using AscCutlistEditor.ViewModels.MQTT;
+﻿using System;
+using AscCutlistEditor.ViewModels.MQTT;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using AscCutlistEditor.Frameworks;
@@ -30,25 +32,29 @@ namespace AscCutlistEditor.Utility.MQTT
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
 
+            SqlCommandBuilder builder = new SqlCommandBuilder();
+
+            // Selected columns.
+            string startlength = builder.QuoteIdentifier(_settings.CoilStartLengthName);
+            string lengthused = builder.QuoteIdentifier(_settings.CoilLengthUsedName);
+            string material = builder.QuoteIdentifier(_settings.CoilMaterialName);
+
+            // Table name.
+            string coilTableName = builder.QuoteIdentifier(_settings.CoilTableName);
+
+            // Filter columns.
+            string coilnumber = builder.QuoteIdentifier(_settings.CoilNumberName);
+
             string queryStr =
-                "SELECT @startlength, @lengthused, @material " +
-                "FROM @coilTableName " +
-                "WHERE @coilnumber LIKE @coilID";
+                "SELECT " + startlength + ", " + lengthused + ", " + material + " " +
+                "FROM " + coilTableName + " " +
+                "WHERE " + coilnumber + " LIKE @coilID";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
             cmd.CommandType = CommandType.Text;
 
-            // Selected columns.
-            cmd.Parameters.AddWithValue("@startlength", _settings.CoilStartLengthName);
-            cmd.Parameters.AddWithValue("@lengthused", _settings.CoilLengthUsedName);
-            cmd.Parameters.AddWithValue("@material", _settings.CoilMaterialName);
-
-            // Table name.
-            cmd.Parameters.AddWithValue("@coilTableName", _settings.CoilTableName);
-
             // Filter parameters.
-            cmd.Parameters.AddWithValue("@coilnumber", _settings.CoilNumberName);
             cmd.Parameters.AddWithValue("@coilID", "%" + coilId + "%");
 
             return await SelectHelper(conn, cmd);
@@ -252,20 +258,9 @@ namespace AscCutlistEditor.Utility.MQTT
         {
             DataTable result = new DataTable();
 
-            try
-            {
-                conn.Open();
-                await using SqlDataReader reader = await cmd.ExecuteReaderAsync();
-                result.Load(reader);
-            }
-            catch (SqlException)
-            {
-                MessageBox.Show(
-                    $"SQL exception for query: {cmd.CommandText}.",
-                    "ASC Cutlist Editor",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
+            conn.Open();
+            await using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            result.Load(reader);
 
             return result;
         }
@@ -311,22 +306,8 @@ namespace AscCutlistEditor.Utility.MQTT
             // Table name.
             cmd.Parameters.AddWithValue("@usageTableName", _settings.UsageTableName);
 
-            try
-            {
-                conn.Open();
-                return await cmd.ExecuteNonQueryAsync();
-            }
-            catch (SqlException)
-            {
-                MessageBox.Show(
-                    $"SQL exception for query: {cmd.CommandText}.",
-                    "ASC Cutlist Editor",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
-
-            // Query failed, no rows added.
-            return 0;
+            conn.Open();
+            return await cmd.ExecuteNonQueryAsync();
         }
 
         /// <summary>
