@@ -101,14 +101,22 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// </summary>
         /// <param name="topic">The topic this payload came through on.</param>
         /// <param name="payload">The first message from the machine.</param>
-        public async Task AddTab(string topic, string payload)
+        public void AddTab(string topic, string payload)
         {
             // Create a new model for listening to this topic.
             MachineMessageViewModel model =
                 new MachineMessageViewModel(topic, _sqlConnection, payload);
-            await model.StartClient();
 
-            MachineConnections.Add(model);
+            // Run on UI thread.
+            // Select the correct dispatcher: if Application.Current is null,
+            // we're running unit tests and should use CurrentDispatcher instead.
+            Dispatcher dispatcher = Application.Current != null ?
+                Application.Current.Dispatcher :
+                Dispatcher.CurrentDispatcher;
+            dispatcher.Invoke(() =>
+            {
+                MachineConnections.Add(model);
+            });
         }
 
         /// <summary>
@@ -147,7 +155,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     Debug.WriteLine($"NEW TOPIC SPOTTED: {topic}");
                     _knownTopics.Add(topic);
                     string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-                    await AddTab(topic, payload);
+                    AddTab(topic, payload);
 
                     Debug.WriteLine("### ADDING TOPIC " + topic + " ###");
                 }

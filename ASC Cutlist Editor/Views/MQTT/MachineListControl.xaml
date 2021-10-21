@@ -46,12 +46,13 @@
             MachineConnectionsViewModel.MachineConnections}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding LatestMachineMessage.connected}"></TextBlock>
+                    <TextBlock Text="{Binding
+LatestMachineMessage.tags.set1.MqttPub.JobNumber}"></TextBlock>
                 </DataTemplate>
             </TabControl.ItemTemplate>
             <TabControl.ContentTemplate>
                 <DataTemplate>
-                    <mqtt:UptimeControl />
+                    <mqtt:UptimeControl></mqtt:UptimeControl>
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>

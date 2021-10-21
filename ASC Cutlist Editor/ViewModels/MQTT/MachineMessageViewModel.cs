@@ -77,28 +77,19 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             _sqlConn = connModel;
 
+            StartClient();
             CreateUptimeModel();
-
-            // If we have a payload, process it.
-            if (!string.IsNullOrEmpty(payload))
-            {
-                try
-                {
-                    // Attempt payload conversion and logging.
-                    MachineMessage machineMessage =
-                        JsonConvert.DeserializeObject<MachineMessage>(payload);
-
-                    // Bryan's code for handling messages and their flags.
-                    ProcessResponseMessage(machineMessage);
-                }
-                catch (JsonReaderException)
-                {
-                    Debug.WriteLine("Error: invalid JSON value.");
-                }
-            }
         }
 
-        public async Task StartClient()
+        /// <summary>
+        /// Fire & forget for initializing client.
+        /// </summary>
+        public async void StartClient()
+        {
+            await StartClientAsync();
+        }
+
+        private async Task StartClientAsync()
         {
             // Create MQTT client.
             var options = new MqttClientOptionsBuilder()
@@ -110,8 +101,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
             // Response to send on connection.
             _machineConnection.Client.UseConnectedHandler(async e =>
             {
-                Debug.WriteLine("### SUBSCRIBED TO " + _machineConnection.SubTopic + " ###");
-
                 PublishMessage(
                     _machineConnection.Client,
                     "self/success",
@@ -289,7 +278,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             try
             {
                 // Handle the order data requested flag (getting the orders and bundles).
-                await handlers.OrderDatReqFlagHandler(message, returnMessage);
+                // await handlers.OrderDatReqFlagHandler(message, returnMessage);
 
                 /*
                 // Handle the coil data requested flag (running a specific coil and order).
@@ -316,6 +305,11 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
 
             // Finally, write the response message back out for the HMI.
+            if (!_machineConnection.Client.IsConnected)
+            {
+                Debug.WriteLine("Connecting");
+            }
+
             PublishMessage(
                 _machineConnection.Client,
                 _machineConnection.PubTopic,
