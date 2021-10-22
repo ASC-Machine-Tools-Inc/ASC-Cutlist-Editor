@@ -7,19 +7,19 @@ namespace AscCutlistEditor.Models.MQTT
     /// <summary>
     /// Model for a single machine connection.
     /// </summary>
-    internal class MachineConnection
+    public class MachineConnection
     {
         public IMqttClient Client;
 
         /// <summary>
         /// The topic to listen for messages from.
         /// </summary>
-        public string SubTopic;
+        public string SubTopic { get; set; }
 
         /// <summary>
         /// The topic to publish response messages to.
         /// </summary>
-        public string PubTopic;
+        public string PubTopic { get; set; }
 
         public SqlConnectionViewModel SqlConnection;
 

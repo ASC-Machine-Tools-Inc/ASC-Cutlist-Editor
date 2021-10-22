@@ -34,6 +34,22 @@ namespace AscCutlistEditor.Models.MQTT
             Save();
         }
 
+        public string ConnectionString
+        {
+            get => (string)Settings.Default["ConnectionString"];
+            set
+            {
+                Settings.Default["ConnectionString"] = value;
+                RaisePropertyChangedEvent("ConnectionString");
+            }
+        }
+
+        public bool UseConnectionString
+        {
+            get => (bool)Settings.Default["UseConnectionString"];
+            set => Settings.Default["UseConnectionString"] = value;
+        }
+
         public string DataSource
         {
             get => (string)Settings.Default["DataSource"];

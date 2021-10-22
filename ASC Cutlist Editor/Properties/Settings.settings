@@ -89,5 +89,11 @@
     <Setting Name="UsageDateName" Type="System.String" Scope="User">
       <Value Profile="(Default)">adddate</Value>
     </Setting>
+    <Setting Name="ConnectionString" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UseConnectionString" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

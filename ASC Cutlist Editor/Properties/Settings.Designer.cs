@@ -371,5 +371,29 @@ namespace AscCutlistEditor.Properties {
                 this["UsageDateName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ConnectionString {
+            get {
+                return ((string)(this["ConnectionString"]));
+            }
+            set {
+                this["ConnectionString"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseConnectionString {
+            get {
+                return ((bool)(this["UseConnectionString"]));
+            }
+            set {
+                this["UseConnectionString"] = value;
+            }
+        }
     }
 }

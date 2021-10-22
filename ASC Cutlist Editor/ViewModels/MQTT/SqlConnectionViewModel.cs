@@ -1,4 +1,5 @@
-﻿using AscCutlistEditor.Frameworks;
+﻿using System;
+using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models.MQTT;
 using AscCutlistEditor.Properties;
 using System.Configuration;
@@ -96,6 +97,37 @@ namespace AscCutlistEditor.ViewModels.MQTT
             if (!string.IsNullOrEmpty(connString))
             {
                 Builder = new SqlConnectionStringBuilder(connString);
+                return true;
+            }
+
+            if (UserSqlSettings.UseConnectionString)
+            {
+                string savedConnectionString = UserSqlSettings.ConnectionString;
+
+                if (string.IsNullOrEmpty(savedConnectionString))
+                {
+                    _dialog.ShowMessageBox(
+                        "Please enter a connection string.",
+                        "ASC Cutlist Editor",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return false;
+                }
+
+                try
+                {
+                    Builder = new SqlConnectionStringBuilder(savedConnectionString);
+                }
+                catch (Exception)
+                {
+                    _dialog.ShowMessageBox(
+                        "Invalid connection string.",
+                        "ASC Cutlist Editor",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return false;
+                }
+
                 return true;
             }
 

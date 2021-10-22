@@ -29,62 +29,76 @@
                                 FontWeight="SemiBold"
                                 Text="SQL Connection Settings" />
 
+                        <TextBlock
+                            FontSize="16"
+                            Text="Connection choices: fill out the fields, or enter a custom connection string." />
+
                         <Separator
                             Height="2"
                             Background="Black"
                             Margin="0 10" />
 
+                        <RadioButton
+                            GroupName="ConnectionChoice"
+                            Content="Individual Fields"
+                            IsChecked="{Binding SqlConnectionViewModel
+                                .UserSqlSettings.UseConnectionString,
+                            Converter={StaticResource BoolInverterConverter}}" />
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition></RowDefinition>
                                 <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
                             </Grid.ColumnDefinitions>
 
-                            <Label
-                        Content="Data Source:" />
                             <TextBox
-                        Grid.Column="1"
-                        Text="{Binding
-                            SqlConnectionViewModel
-                            .UserSqlSettings.DataSource}"
-                        Margin="10" />
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Text="{Binding
+                                    SqlConnectionViewModel
+                                    .UserSqlSettings.DataSource}"
+                                ui:ControlHelper.Header="Data Source:"
+                                Margin="10" />
 
-                            <Label
-                        Grid.Column="2"
-                        Content="Database Name:" />
                             <TextBox
-                        Grid.Column="3"
-                        Text="{Binding SqlConnectionViewModel
-                            .UserSqlSettings.DatabaseName}"
-                        Margin="10" />
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Text="{Binding SqlConnectionViewModel
+                                    .UserSqlSettings.DatabaseName}"
+                                ui:ControlHelper.Header="Database Name:"
+                                Margin="10" />
 
-                            <Label
-                        Grid.Row="1"
-                        Content="Username:" />
                             <TextBox
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Text="{Binding SqlConnectionViewModel
-                            .UserSqlSettings.Username}"
-                        Margin="10" />
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Text="{Binding SqlConnectionViewModel
+                                    .UserSqlSettings.Username}"
+                                ui:ControlHelper.Header="Username:"
+                                Margin="10" />
 
-                            <Label
-                        Grid.Row="1"
-                        Grid.Column="2"
-                        Content="Password:" />
                             <TextBox
-                        Grid.Row="1"
-                        Grid.Column="3"
-                        Text="{Binding SqlConnectionViewModel
-                            .UserSqlSettings.Password}"
-                        Margin="10" />
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Text="{Binding SqlConnectionViewModel
+                                    .UserSqlSettings.Password}"
+                                ui:ControlHelper.Header="Password:"
+                                Margin="10" />
                         </Grid>
+
+                        <RadioButton
+                            GroupName="ConnectionChoice"
+                            Content="Connection String"
+                            IsChecked="{Binding SqlConnectionViewModel
+                                .UserSqlSettings.UseConnectionString}" />
+
+                        <TextBox
+                            Text="{Binding SqlConnectionViewModel
+                            .UserSqlSettings.ConnectionString}"
+                            ui:ControlHelper.Header="Connection String:"
+                            Margin="10" />
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

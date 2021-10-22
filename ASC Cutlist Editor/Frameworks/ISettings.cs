@@ -2,6 +2,10 @@
 {
     public interface ISettings
     {
+        string ConnectionString { get; set; }
+
+        bool UseConnectionString { get; set; }
+
         string DataSource { get; set; }
 
         string DatabaseName { get; set; }

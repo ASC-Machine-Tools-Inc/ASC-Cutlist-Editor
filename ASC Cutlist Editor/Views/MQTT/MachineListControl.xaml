@@ -46,8 +46,7 @@
             MachineConnectionsViewModel.MachineConnections}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding
-LatestMachineMessage.tags.set1.MqttPub.JobNumber}"></TextBlock>
+                    <TextBlock Text="{Binding MachineConnection.SubTopic}"></TextBlock>
                 </DataTemplate>
             </TabControl.ItemTemplate>
             <TabControl.ContentTemplate>

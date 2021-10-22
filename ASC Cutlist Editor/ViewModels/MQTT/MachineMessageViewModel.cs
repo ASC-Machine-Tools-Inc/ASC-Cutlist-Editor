@@ -25,7 +25,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
     public class MachineMessageViewModel : ObservableObject
     {
         // Model for storing the mqtt connection data.
-        private readonly MachineConnection _machineConnection;
+        private MachineConnection _machineConnection;
 
         private LineSeries _uptimeSeries;
         private BarSeries _downtimeStatsSeries;
@@ -37,6 +37,16 @@ namespace AscCutlistEditor.ViewModels.MQTT
         public PlotModel UptimePlot { get; set; }
 
         public PlotModel DowntimeStatsPlot { get; set; }
+
+        public MachineConnection MachineConnection
+        {
+            get => _machineConnection;
+            set
+            {
+                _machineConnection = value;
+                RaisePropertyChangedEvent("MachineConnection");
+            }
+        }
 
         public ObservableCollection<MachineMessage> MachineMessageCollection
         {
@@ -296,11 +306,11 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     Debug.WriteLine($"Rows added from coil usage: {rowsAdded}");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // Query error. Close the connection.
                 // TODO: set status to sql failed
-                Debug.WriteLine("Query error.");
+                Debug.WriteLine("Query error." + ex);
             }
 
             // Finally, write the response message back out for the HMI.
