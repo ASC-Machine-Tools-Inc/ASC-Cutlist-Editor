@@ -3,6 +3,7 @@ using AscCutlistEditor.Models.MQTT;
 using AscCutlistEditor.Properties;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -29,18 +30,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
             _dialog = dialog ?? new Dialog();
         }
 
-        /// <summary>
-        /// Attempt opening a connection to the current connection string in Builder.
-        /// </summary>
-        /// <param name="updateConnectionString">
-        /// Optional parameter if we should check the connection string for updates..
-        /// </param>
-        /// <param name="toggleCursor">
-        /// Optional parameter to change cursor appearance while waiting to connect.
-        /// </param>
-        /// <returns>
-        /// Returns true if the connection was successful, false otherwise.
-        /// </returns>
         public async Task<bool> TestConnection(
             bool updateConnectionString = true,
             bool toggleCursor = true)
@@ -101,7 +90,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// <returns>
         /// True if a connection string was created, false otherwise.
         /// </returns>
-        public bool UpdateConnectionString(string connString = null)
+        public bool UpdateConnectionString(
+            string connString = null)
         {
             if (!string.IsNullOrEmpty(connString))
             {

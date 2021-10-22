@@ -90,7 +90,7 @@ namespace AscCutlistEditor.Models.MQTT
                     {
                         MqttPub = new MqttPub
                         {
-                            JobNumber = "JN_TEST",
+                            JobNumber = $"JN_MOCK_{Id}",
                             LineRunning = _lineStatus,
                             OrderDatReq = "FALSE"
                         },

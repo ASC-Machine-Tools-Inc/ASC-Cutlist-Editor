@@ -2,6 +2,8 @@
 using AscCutlistEditorTests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace AscCutlistEditorTests.ViewModels.MQTT
@@ -39,9 +41,12 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
             SqlConnectionViewModel model = new SqlConnectionViewModel(
                 settings,
                 new Mocks.MockDialog());
+            model.UpdateConnectionString();
+            // TODO: figure out why ConnectTimeout doesn't work.
+            SqlConnectionViewModel.Builder.ConnectTimeout = 5;
 
             // Act
-            bool connResult = await model.TestConnection(true, false);
+            bool connResult = await model.TestConnection(false, false);
 
             // Assert
             Assert.IsFalse(connResult);

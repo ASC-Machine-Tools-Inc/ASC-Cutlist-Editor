@@ -300,14 +300,10 @@ namespace AscCutlistEditor.ViewModels.MQTT
             {
                 // Query error. Close the connection.
                 // TODO: set status to sql failed
+                Debug.WriteLine("Query error.");
             }
 
             // Finally, write the response message back out for the HMI.
-            if (!_machineConnection.Client.IsConnected)
-            {
-                Debug.WriteLine("Connecting");
-            }
-
             PublishMessage(
                 _machineConnection.Client,
                 _machineConnection.PubTopic,

@@ -202,7 +202,7 @@ namespace AscCutlistEditor.Utility.MQTT
             }
 
             DataTable coils = await _queries.GetNonDepletedCoils();
-            int count = coils.Rows.Count - 1;
+            int count = coils.Rows.Count;
 
             sub.CoilStoreRecv = count + "|" + _queries.DataTableToString(coils);
             sub.CoilStoreAck = "TRUE";
@@ -243,8 +243,8 @@ namespace AscCutlistEditor.Utility.MQTT
                         new { coilId = usageRow[1], itemId = usageRow[3] },
                     (key, fields) =>
                     {
-                    // Convert fields to list to prevent multiple enumeration.
-                    var enumerable = fields.ToList();
+                        // Convert fields to list to prevent multiple enumeration.
+                        var enumerable = fields.ToList();
                         return new CoilUsage
                         {
                             orderno = enumerable.ElementAt(0).ToString(),

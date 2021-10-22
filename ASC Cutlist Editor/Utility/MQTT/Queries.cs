@@ -90,6 +90,7 @@ namespace AscCutlistEditor.Utility.MQTT
                               $"CONVERT(DECIMAL(10,2),{lengthused})) AS currlength " +
                               $"FROM {coilTableName} " +
                               $"WHERE {dateout} IS NULL";
+            Debug.WriteLine(queryStr);
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
@@ -252,12 +253,9 @@ namespace AscCutlistEditor.Utility.MQTT
                 $"SELECT DISTINCT ";
 
             // Add columns.
-            foreach (string col in bundlesCols)
-            {
-                queryStr += $"{col.Trim()}, ";
-            }
+            queryStr += string.Join(", ", bundlesCols);
 
-            queryStr += $"FROM {bundleTableName} " +
+            queryStr += $" FROM {bundleTableName} " +
                 $"WHERE {orderno} LIKE @orderNum";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
