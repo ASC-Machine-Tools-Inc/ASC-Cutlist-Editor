@@ -57,8 +57,10 @@ namespace AscCutlistEditor.Utility.MQTT
                     .GetOrdersByMachineNum(pub.JobNumber);
 
                 sub.MqttString = _queries.DataTableToString(orderNumTable);
-                sub.MqttDest = pub.JobNumber;
             }
+
+            // Set the destination as a workaround so the data always gets written.
+            sub.MqttDest = pub.JobNumber;
         }
 
         /// <summary>
@@ -151,7 +153,8 @@ namespace AscCutlistEditor.Utility.MQTT
                                              "inventory data invalid!");
                     }
 
-                    if (string.IsNullOrEmpty(pub.OrderNo))
+                    if (string.IsNullOrEmpty(pub.OrderNo) ||
+                        pub.OrderNo == "NoOrderSelected")
                     {
                         coilDataMessages.Add("No order number " +
                                              "selected! Select order " +

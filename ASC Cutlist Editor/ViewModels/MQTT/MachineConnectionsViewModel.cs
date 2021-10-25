@@ -29,7 +29,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
         internal string ListenerTopic;
 
         private HashSet<string> _knownTopics;
-        private ObservableCollection<MachineMessageViewModel> _machineConnections;
 
         private readonly SqlConnectionViewModel _sqlConnection;
 
@@ -55,19 +54,15 @@ namespace AscCutlistEditor.ViewModels.MQTT
             ListenerTopic = SubTopic + "/+/+";
 
             _knownTopics = new HashSet<string>();
-            _machineConnections = new ObservableCollection<MachineMessageViewModel>();
+            MachineConnections = new ObservableCollection<MachineMessageViewModel>();
 
             _sqlConnection = connModel;
         }
 
         public ObservableCollection<MachineMessageViewModel> MachineConnections
         {
-            get => _machineConnections;
-            set
-            {
-                _machineConnections = value;
-                RaisePropertyChangedEvent("MachineConnections");
-            }
+            get;
+            set;
         }
 
         /// <summary>

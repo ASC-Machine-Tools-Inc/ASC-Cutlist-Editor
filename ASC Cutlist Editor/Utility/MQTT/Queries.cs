@@ -1,12 +1,9 @@
-﻿using System;
-using AscCutlistEditor.ViewModels.MQTT;
+﻿using AscCutlistEditor.ViewModels.MQTT;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Windows;
 using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.Models.MQTT;
 
 // ReSharper disable All
 
@@ -15,7 +12,7 @@ namespace AscCutlistEditor.Utility.MQTT
     // Collection of queries that handle data for machine messages.
     public class Queries
     {
-        private ISettings _settings;
+        private readonly ISettings _settings;
 
         public Queries(ISettings settings)
         {
