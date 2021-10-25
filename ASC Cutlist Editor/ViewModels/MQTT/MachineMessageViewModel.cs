@@ -24,64 +24,42 @@ namespace AscCutlistEditor.ViewModels.MQTT
     /// </summary>
     public class MachineMessageViewModel : ObservableObject
     {
-        // Model for storing the mqtt connection data.
-        private MachineConnection _machineConnection;
+        /// <summary>
+        /// Model for storing the mqtt connection data.
+        /// </summary>
+        public MachineConnection MachineConnection { get; set; }
 
-        private LineSeries _uptimeSeries;
-        private BarSeries _downtimeStatsSeries;
-
-        private MachineMessage _latestMachineMessage;
-
-        private SqlConnectionViewModel _sqlConn;
+        /// <summary>
+        /// Last machine message the client listener received.
+        /// </summary>
+        public MachineMessage LatestMachineMessage { get; set; }
 
         public PlotModel UptimePlot { get; set; }
 
         public PlotModel DowntimeStatsPlot { get; set; }
 
-        public MachineConnection MachineConnection
-        {
-            get => _machineConnection;
-            set
-            {
-                _machineConnection = value;
-                RaisePropertyChangedEvent("MachineConnection");
-            }
-        }
+        private LineSeries _uptimeSeries;
+        private BarSeries _downtimeStatsSeries;
 
-        public ObservableCollection<MachineMessage> MachineMessageCollection
-        {
-            get => _machineConnection.MachineMessageCollection;
-            set
-            {
-                _machineConnection.MachineMessageCollection = value;
-                RaisePropertyChangedEvent("MachineMessageCollection");
-            }
-        }
-
-        public MachineMessage LatestMachineMessage
-        {
-            get => _latestMachineMessage;
-            set
-            {
-                _latestMachineMessage = value;
-                RaisePropertyChangedEvent("LatestMachineMessage");
-            }
-        }
+        private SqlConnectionViewModel _sqlConn;
 
         public MachineMessageViewModel(
             string topic,
-            SqlConnectionViewModel connModel,
-            string payload = null)
+            SqlConnectionViewModel connModel)
         {
             var mqttFactory = new MqttFactory();
             IMqttClient client = mqttFactory.CreateMqttClient();
             string subTopic = MachineConnectionsViewModel.SubTopic + topic;
             string pubTopic = MachineConnectionsViewModel.PubTopic + topic;
 
-            _machineConnection = new MachineConnection(
+            // Strip slashes to just display the subscribed topic.
+            string displayTopic = topic.Replace("/", "");
+
+            MachineConnection = new MachineConnection(
                 client,
                 subTopic,
                 pubTopic,
+                displayTopic,
                 connModel
             );
 
@@ -109,18 +87,18 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 .Build();
 
             // Response to send on connection.
-            _machineConnection.Client.UseConnectedHandler(async e =>
+            MachineConnection.Client.UseConnectedHandler(async e =>
             {
                 PublishMessage(
-                    _machineConnection.Client,
+                    MachineConnection.Client,
                     "self/success",
                     "Connection successful!");
 
-                await _machineConnection.Client.SubscribeAsync(_machineConnection.SubTopic);
+                await MachineConnection.Client.SubscribeAsync(MachineConnection.SubTopic);
             });
 
             // Response to send on receiving a message.
-            _machineConnection.Client.UseApplicationMessageReceivedHandler(e =>
+            MachineConnection.Client.UseApplicationMessageReceivedHandler(e =>
             {
                 string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 
@@ -141,7 +119,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             try
             {
-                await _machineConnection.Client.ConnectAsync(options);
+                await MachineConnection.Client.ConnectAsync(options);
             }
             catch
             {
@@ -315,8 +293,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             // Finally, write the response message back out for the HMI.
             PublishMessage(
-                _machineConnection.Client,
-                _machineConnection.PubTopic,
+                MachineConnection.Client,
+                MachineConnection.PubTopic,
                 JsonConvert.SerializeObject(returnMessage));
         }
 
@@ -333,7 +311,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 : Dispatcher.CurrentDispatcher;
             dispatcher.Invoke(() =>
             {
-                MachineMessageCollection.Add(message);
+                MachineConnection.MachineMessageCollection.Add(message);
                 LatestMachineMessage = message;
 
                 MqttPub pub = message.tags.set1.MqttPub;

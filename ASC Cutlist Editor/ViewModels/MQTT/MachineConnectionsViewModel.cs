@@ -101,11 +101,11 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// </summary>
         /// <param name="topic">The topic this payload came through on.</param>
         /// <param name="payload">The first message from the machine.</param>
-        public void AddTab(string topic, string payload)
+        public void AddTab(string topic)
         {
             // Create a new model for listening to this topic.
             MachineMessageViewModel model =
-                new MachineMessageViewModel(topic, _sqlConnection, payload);
+                new MachineMessageViewModel(topic, _sqlConnection);
 
             // Run on UI thread.
             // Select the correct dispatcher: if Application.Current is null,
@@ -155,7 +155,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     Debug.WriteLine($"NEW TOPIC SPOTTED: {topic}");
                     _knownTopics.Add(topic);
                     string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-                    AddTab(topic, payload);
+                    AddTab(topic);
 
                     Debug.WriteLine("### ADDING TOPIC " + topic + " ###");
                 }

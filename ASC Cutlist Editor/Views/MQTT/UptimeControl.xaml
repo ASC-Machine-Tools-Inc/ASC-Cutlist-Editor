@@ -21,7 +21,8 @@
             </Grid.ColumnDefinitions>
 
             <DataGrid
-                ItemsSource="{Binding MachineMessageCollection}"
+                ItemsSource="{Binding
+                MachineConnection.MachineMessageCollection}"
                 AutoGenerateColumns="False"
                 IsReadOnly="True"
                 GridLinesVisibility="Horizontal"
@@ -73,7 +74,7 @@
                 </WrapPanel>
 
                 <TextBlock
-                    Grid.Row="1" Grid.ColumnSpan="2"
+                    Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                     FontSize="20" FontWeight="ExtraBlack"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"

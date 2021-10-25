@@ -1,4 +1,5 @@
 ﻿using System;
+using AscCutlistEditor.Frameworks;
 
 namespace AscCutlistEditor.Models.MQTT
 {
@@ -134,7 +135,7 @@ namespace AscCutlistEditor.Models.MQTT
         public Set3 set3 { get; set; }
     }
 
-    public class MachineMessage
+    public class MachineMessage : ObservableObject
     {
         public string connected { get; set; }
         public Tags tags { get; set; }

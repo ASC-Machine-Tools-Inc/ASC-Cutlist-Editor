@@ -1,13 +1,14 @@
 ﻿using AscCutlistEditor.ViewModels.MQTT;
 using MQTTnet.Client;
 using System.Collections.ObjectModel;
+using AscCutlistEditor.Frameworks;
 
 namespace AscCutlistEditor.Models.MQTT
 {
     /// <summary>
     /// Model for a single machine connection.
     /// </summary>
-    public class MachineConnection
+    public class MachineConnection : ObservableObject
     {
         public IMqttClient Client;
 
@@ -21,19 +22,29 @@ namespace AscCutlistEditor.Models.MQTT
         /// </summary>
         public string PubTopic { get; set; }
 
-        public SqlConnectionViewModel SqlConnection;
+        /// <summary>
+        /// The topic to display for the tab.
+        /// </summary>
+        public string DisplayTopic { get; set; }
 
-        public ObservableCollection<MachineMessage> MachineMessageCollection;
+        /// <summary>
+        /// List of received messages.
+        /// </summary>
+        public ObservableCollection<MachineMessage> MachineMessageCollection { get; set; }
+
+        public SqlConnectionViewModel SqlConnection;
 
         public MachineConnection(
             IMqttClient client,
             string subTopic,
             string pubTopic,
+            string displayTopic,
             SqlConnectionViewModel sqlConnection)
         {
             Client = client;
             SubTopic = subTopic;
             PubTopic = pubTopic;
+            DisplayTopic = displayTopic;
             SqlConnection = sqlConnection;
             MachineMessageCollection = new ObservableCollection<MachineMessage>();
         }
