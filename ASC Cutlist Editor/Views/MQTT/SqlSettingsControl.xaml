@@ -8,7 +8,8 @@
         xmlns:ui="http://schemas.modernwpf.com/2019"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
         mc:Ignorable="d"
-        Title="Sql Connection Settings" Height="550" Width="800">
+        Title="Sql Connection Settings" Height="550" Width="800"
+        Closing="SqlSettings_Closed">
     <Window.Resources>
         <mqtt:UserSqlSettings x:Key="settings" />
     </Window.Resources>
@@ -495,25 +496,28 @@
         BorderBrush="Gray"
         BorderThickness="0 1 0 0">
             <DockPanel
-            Dock="Bottom"
-            HorizontalAlignment="Right">
+                Dock="Bottom"
+                LastChildFill="False">
                 <Button
                     Command="{Binding TestSqlConnectionCommand}"
                     Content="Test Connection"
-                    Margin="5 10">
-                </Button>
-
-                <Button
-                Click="ResetSqlSettings"
-                Content="Reset Settings to Default"
-                Margin="5 10">
+                    DockPanel.Dock="Left"
+                    Margin="10">
                 </Button>
 
                 <!-- Settings automatically save, but this helps reassure users. -->
                 <Button
-                Content="Save and Close"
-                IsCancel="True"
-                Margin="10">
+                    Content="Save and Close"
+                    IsCancel="True"
+                    DockPanel.Dock="Right"
+                    Margin="10">
+                </Button>
+
+                <Button
+                    Click="ResetSqlSettings"
+                    Content="Reset Settings to Default"
+                    DockPanel.Dock="Right"
+                    Margin="5 10">
                 </Button>
             </DockPanel>
         </Border>

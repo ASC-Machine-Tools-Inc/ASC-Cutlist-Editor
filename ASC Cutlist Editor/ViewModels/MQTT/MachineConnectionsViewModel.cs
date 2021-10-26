@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using AscCutlistEditor.Models.MQTT;
+using MQTTnet.Client.Connecting;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {
@@ -44,6 +45,13 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// The topic to publish our message responses to.
         /// </summary>
         public static string PubTopic = "alphasub";
+
+        /// <summary>
+        /// Collection that tracks the visibility of the connection status.
+        /// Visibility order: start listening, no connections, connections (1+)
+        /// </summary>
+        public ObservableCollection<bool> ConnectionVisibility { get; set; } =
+            new ObservableCollection<bool>(new[] { true, false, false });
 
         public MachineConnectionsViewModel(
             SqlConnectionViewModel connModel)
@@ -143,6 +151,10 @@ namespace AscCutlistEditor.ViewModels.MQTT
             // Response to send on receiving a message.
             Listener.UseApplicationMessageReceivedHandler(e =>
             {
+                // Toggle connection tabs visibility.
+                ConnectionVisibility[1] = false;
+                ConnectionVisibility[2] = true;
+
                 // Create a new tab if we haven't seen this topic before.
                 string topic = e.ApplicationMessage.Topic.Substring(SubTopic.Length);
                 if (!_knownTopics.Contains(topic))
@@ -159,6 +171,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
             try
             {
                 await Listener.ConnectAsync(options);
+                ConnectionVisibility[0] = false;
+                ConnectionVisibility[1] = true;
             }
             catch
             {

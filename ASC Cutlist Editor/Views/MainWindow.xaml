@@ -12,7 +12,8 @@
         mc:Ignorable="d"
         Title="ASC Cutlist Editor" Height="450" Width="800"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
-        ui:WindowHelper.UseModernWindowStyle="True">
+        ui:WindowHelper.UseModernWindowStyle="True"
+        Closing="MainWindow_Closed">
     <Grid>
         <TabControl>
             <TabItem Header="Cutlists">
@@ -84,7 +85,35 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Machines">
-                <mqtt:MachineListControl />
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Menu>
+                        <!-- SQL Server connection settings. -->
+                        <MenuItem Header="_Settings"
+                                  Click="OpenSqlSettings">
+                        </MenuItem>
+
+                        <MenuItem Header="_View">
+                            <MenuItem Header="Refresh Connection Tabs"
+                                      Command="{Binding RefreshConnectionTabsCommand}" />
+                        </MenuItem>
+
+                        <!-- Remove for release -->
+                        <MenuItem Header="_Dev Tools">
+                            <MenuItem Header="Add _Mock Connection"
+                                      Command="{Binding AddMockConnectionCommand }" />
+                        </MenuItem>
+                    </Menu>
+
+                    <Border BorderBrush="Gray"
+                            BorderThickness="0 0 0 1"></Border>
+
+                    <mqtt:MachineListControl Grid.Row="1" />
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>

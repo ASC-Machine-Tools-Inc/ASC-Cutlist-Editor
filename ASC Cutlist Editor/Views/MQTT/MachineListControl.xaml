@@ -9,41 +9,41 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <!-- Buttons for testing mock connections -->
-        <WrapPanel>
-            <Button
-                Command="{Binding AddMockConnectionCommand}"
-                Content="Add Mock Connection"
-                Margin="5" />
-        </WrapPanel>
-
-        <!-- SQL Server connection settings. -->
+        <!-- Show before connecting -->
         <WrapPanel
-            Grid.Row="1">
+            Visibility="{Binding
+            MachineConnectionsViewModel.ConnectionVisibility[0],
+            Converter={StaticResource BooleanToVisibilityConverter}}"
+            HorizontalAlignment="Center" VerticalAlignment="Center">
+
+            <!-- TODO: add verification before connecting -->
+            <TextBlock Text="{Binding
+                SqlConnectionViewModel.SettingsRequiredMessage}"
+                       Foreground="Red" />
+
             <Button
-                Click="OpenSqlSettings"
-                Content="Open Sql Settings"
-                Margin="5" />
-            <Button
+                IsEnabled="False"
                 Command="{Binding StartListeningForConnectionsCommand}"
                 Content="Start Listening For Connections"
                 Margin="5" />
-            <Button
-                Command="{Binding RefreshConnectionTabsCommand}"
-                Content="Clear Connection Tabs"
-                Margin="5" />
         </WrapPanel>
 
+        <!-- Show after connecting but no connections yet -->
+        <StackPanel
+            Visibility="{Binding
+            MachineConnectionsViewModel.ConnectionVisibility[1],
+            Converter={StaticResource BooleanToVisibilityConverter}}"
+            HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="No connections." />
+        </StackPanel>
+
+        <!-- Show when connected -->
         <TabControl
-            Grid.Row="2"
             ItemsSource="{Binding
-            MachineConnectionsViewModel.MachineConnections}">
+            MachineConnectionsViewModel.MachineConnections}"
+            Visibility="{Binding
+            MachineConnectionsViewModel.ConnectionVisibility[2],
+            Converter={StaticResource BooleanToVisibilityConverter}}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding

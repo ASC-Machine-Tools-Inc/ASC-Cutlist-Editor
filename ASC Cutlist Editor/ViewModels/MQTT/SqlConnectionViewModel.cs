@@ -17,9 +17,31 @@ namespace AscCutlistEditor.ViewModels.MQTT
     /// </summary>
     public class SqlConnectionViewModel : ObservableObject
     {
+        /// <summary>
+        /// Connection string builder to build from user's input.
+        /// </summary>
         public static SqlConnectionStringBuilder Builder { get; set; }
 
+        /// <summary>
+        /// Application settings for user SQL connection.
+        /// </summary>
         public ISettings UserSqlSettings { get; set; }
+
+        /// <summary>
+        /// Message to display for which settings are required to start
+        /// listening for connections.
+        /// </summary>
+        public string SettingsRequiredMessage
+        {
+            get => _settingsRequiredMessage;
+            set
+            {
+                _settingsRequiredMessage = value;
+                RaisePropertyChangedEvent("SettingsRequiredMessage");
+            }
+        }
+
+        private string _settingsRequiredMessage;
 
         private readonly IDialogService _dialog;
 
@@ -29,6 +51,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
         {
             UserSqlSettings = settings ?? new UserSqlSettings();
             _dialog = dialog ?? new Dialog();
+
+            UpdateSettingsRequiredMessage();
         }
 
         public async Task<bool> TestConnection(
@@ -156,6 +180,48 @@ namespace AscCutlistEditor.ViewModels.MQTT
             };
 
             return true;
+        }
+
+        /// <summary>
+        /// Update the message that tells the user which settings they need to
+        /// enter before listening for connections.
+        /// </summary>
+        public void UpdateSettingsRequiredMessage()
+        {
+            //ISettings settings = UserSqlSettings;
+            string message = "";
+
+            // Set error message for invalid connection.
+            /*
+            if (UserSqlSettings.UseConnectionString &&
+                settings.ConnectionString == "")
+            {
+                message += "- Connection string is required. \n" +
+                           "Please enter a valid connection string or " +
+                           "switch to individual fields.\n";
+            }
+            else */
+            {
+                string[] fields = { "DataSource", "DatabaseName", "Username", "Password" };
+                foreach (string field in fields)
+                {
+                    string reqField = (string)Settings.Default[field];
+                    if (string.IsNullOrEmpty(reqField))
+                    {
+                        message += $"- {field} is required.\n";
+                    }
+                }
+
+                if (message.Length > 0)
+                {
+                    message += "Please fill out all the connection fields or " +
+                               "switch to a connection string.\n";
+                }
+            }
+
+            // Set error message for missing table/column names.
+            Debug.WriteLine(message);
+            SettingsRequiredMessage = message;
         }
     }
 }
