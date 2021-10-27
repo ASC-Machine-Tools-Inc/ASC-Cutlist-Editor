@@ -9,6 +9,9 @@ namespace AscCutlistEditorTests.Common
     {
         public class MockSettings : ISettings
         {
+            public string ConnectionString { get; set; }
+
+            public bool UseConnectionString { get; set; }
             public string DataSource { get; set; }
             public string DatabaseName { get; set; }
             public string Username { get; set; }
