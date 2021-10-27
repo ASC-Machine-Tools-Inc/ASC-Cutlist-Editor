@@ -188,24 +188,25 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// </summary>
         public void UpdateSettingsRequiredMessage()
         {
-            //ISettings settings = UserSqlSettings;
+            ISettings settings = UserSqlSettings;
             string message = "";
 
             // Set error message for invalid connection.
-            /*
-            if (UserSqlSettings.UseConnectionString &&
+            if (settings.UseConnectionString &&
                 settings.ConnectionString == "")
             {
                 message += "- Connection string is required. \n" +
                            "Please enter a valid connection string or " +
                            "switch to individual fields.\n";
             }
-            else */
+            else
             {
                 string[] fields = { "DataSource", "DatabaseName", "Username", "Password" };
                 foreach (string field in fields)
                 {
-                    string reqField = (string)Settings.Default[field];
+                    string reqField = (string)settings.GetType()
+                        .GetProperty(field)
+                        ?.GetValue(settings, null);
                     if (string.IsNullOrEmpty(reqField))
                     {
                         message += $"- {field} is required.\n";

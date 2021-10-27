@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Windows;
 using AscCutlistEditor.Models.MQTT;
+using AscCutlistEditor.Properties;
 using AscCutlistEditor.ViewModels;
+using AscCutlistEditor.ViewModels.MQTT;
 
 namespace AscCutlistEditor.Views.MQTT
 {

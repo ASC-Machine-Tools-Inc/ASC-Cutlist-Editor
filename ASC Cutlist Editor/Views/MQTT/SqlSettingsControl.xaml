@@ -40,11 +40,10 @@
                             Margin="0 10" />
 
                         <RadioButton
-                            GroupName="ConnectionChoice"
                             Content="Individual Fields"
                             IsChecked="{Binding SqlConnectionViewModel
                                 .UserSqlSettings.UseConnectionString,
-                            Converter={StaticResource BoolInverterConverter}}" />
+                            Converter={StaticResource InverseBoolRadioConverter}}" />
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition></RowDefinition>
@@ -90,16 +89,20 @@
                         </Grid>
 
                         <RadioButton
-                            GroupName="ConnectionChoice"
                             Content="Connection String"
                             IsChecked="{Binding SqlConnectionViewModel
-                                .UserSqlSettings.UseConnectionString}" />
+                                .UserSqlSettings.UseConnectionString,
+                            Converter={StaticResource BoolRadioConverter}}" />
 
                         <TextBox
                             Text="{Binding SqlConnectionViewModel
                             .UserSqlSettings.ConnectionString}"
                             ui:ControlHelper.Header="Connection String:"
                             Margin="10" />
+                        <TextBlock Text="{Binding
+                            SqlConnectionViewModel
+                            .UserSqlSettings
+                            .UseConnectionString}"></TextBlock>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

@@ -15,7 +15,8 @@
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
-            <common:BoolInverterConverter x:Key="BoolInverterConverter" />
+            <common:BoolRadioConverter x:Key="BoolRadioConverter" />
+            <common:BoolRadioConverter x:Key="InverseBoolRadioConverter" Inverse="True" />
 
             <!-- Other app resources here -->
 
