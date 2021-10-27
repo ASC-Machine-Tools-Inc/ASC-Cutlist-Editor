@@ -522,6 +522,12 @@
                     DockPanel.Dock="Right"
                     Margin="5 10">
                 </Button>
+
+                <Button
+                    Click="DebugReset"
+                    Content="DEBUG ONLY: RESET TO TESTING FIELDS"
+                    DockPanel.Dock="Right"
+                    Margin="5 10"></Button>
             </DockPanel>
         </Border>
     </Grid>

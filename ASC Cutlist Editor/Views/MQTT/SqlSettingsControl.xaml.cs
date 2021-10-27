@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Windows;
 using AscCutlistEditor.Models.MQTT;
-using AscCutlistEditor.Properties;
 using AscCutlistEditor.ViewModels;
-using AscCutlistEditor.ViewModels.MQTT;
 
 namespace AscCutlistEditor.Views.MQTT
 {
@@ -37,6 +35,28 @@ namespace AscCutlistEditor.Views.MQTT
                 Close();
 
                 UserSqlSettings.Reset();
+
+                SqlSettingsControl settings = new SqlSettingsControl
+                {
+                    // Grab the data context of MainWindow so we can access our settings.
+                    DataContext = Application.Current.MainWindow?.DataContext
+                };
+                settings.ShowDialog();
+            }
+        }
+
+        private void DebugReset(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult dialogResult = MessageBox.Show(
+                "DEBUG PURPOSES ONLY - RESET TO TEST SETTINGS. ARE YOU SURE?",
+                "Reset settings",
+                MessageBoxButton.OKCancel,
+                MessageBoxImage.Warning);
+            if (dialogResult == MessageBoxResult.OK)
+            {
+                Close();
+
+                DebugHelpers.DebugHelpers.DebugReset();
 
                 SqlSettingsControl settings = new SqlSettingsControl
                 {

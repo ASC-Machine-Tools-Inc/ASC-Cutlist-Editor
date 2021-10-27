@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Properties;
+using Microsoft.VisualBasic;
 
 namespace AscCutlistEditor.Models.MQTT
 {
