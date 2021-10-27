@@ -166,24 +166,24 @@
                                 <Label
                             Grid.Row="1"
                             Grid.Column="2"
-                            Content="Length Used:" />
+                            Content="Material:" />
                                 <TextBox
                             Grid.Row="1"
                             Grid.Column="3"
                             Text="{Binding Source={StaticResource settings},
-                            Path=CoilLengthUsedName}"
+                            Path=CoilMaterialName}"
                             Margin="10" />
 
                                 <Label
-                            Grid.Row="1"
-                            Grid.Column="4"
-                            Content="Material:" />
+                                    Grid.Row="1"
+                                    Grid.Column="4"
+                                    Content="Description:" />
                                 <TextBox
-                            Grid.Row="1"
-                            Grid.Column="5"
-                            Text="{Binding Source={StaticResource settings},
-                            Path=CoilMaterialName}"
-                            Margin="10" />
+                                    Grid.Row="1"
+                                    Grid.Column="5"
+                                    Text="{Binding Source={StaticResource settings},
+                            Path=CoilDescriptionName}"
+                                    Margin="10" />
 
                                 <Label
                             Grid.Row="2"
@@ -197,15 +197,15 @@
                             Margin="10" />
 
                                 <Label
-                            Grid.Row="2"
-                            Grid.Column="2"
-                            Content="Description:" />
+                              Grid.Row="2"
+                              Grid.Column="2"
+                              Content="Length Used:" />
                                 <TextBox
-                            Grid.Row="2"
-                            Grid.Column="3"
-                            Text="{Binding Source={StaticResource settings},
-                            Path=CoilDescriptionName}"
-                            Margin="10" />
+                                Grid.Row="2"
+                                Grid.Column="3"
+                                Text="{Binding Source={StaticResource settings},
+                        Path=CoilLengthUsedName}"
+                                Margin="10" />
 
                                 <Label
                             Grid.Row="2"

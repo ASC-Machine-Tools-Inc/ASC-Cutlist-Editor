@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models.MQTT;
 using AscCutlistEditor.Properties;
@@ -192,12 +193,14 @@ namespace AscCutlistEditor.ViewModels.MQTT
             string message = "";
 
             // Set error message for invalid connection.
-            if (settings.UseConnectionString &&
-                settings.ConnectionString == "")
+            if (settings.UseConnectionString)
             {
-                message += "- Connection string is required. \n" +
-                           "Please enter a valid connection string or " +
-                           "switch to individual fields.\n";
+                if (string.IsNullOrEmpty(settings.ConnectionString))
+                {
+                    message += "- Connection string is required. \n" +
+                               "Please enter a valid connection string or " +
+                               "switch to individual fields.\n";
+                }
             }
             else
             {
@@ -215,14 +218,70 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
                 if (message.Length > 0)
                 {
-                    message += "Please fill out all the connection fields or " +
-                               "switch to a connection string.\n";
+                    message = "Please fill out all the connection fields or " +
+                              "switch to a connection string.\n" + message;
                 }
             }
+
+            Dictionary<string, string> tableFields = new Dictionary<string, string>
+            {
+                { "CoilTableName", "Coil Table" },
+                { "CoilNumberName", "Coil Number" },
+                { "CoilMaterialName", "Coil Material" },
+                { "CoilDescriptionName", "Coil Description" },
+                { "CoilLengthUsedName", "Coil Length Used" },
+                { "CoilStartLengthName", "Coil Starting Length" },
+                { "CoilDateName", "Coil Date" },
+                { "OrderTableName", "Order Table" },
+                { "OrderNumName", "Order Number" },
+                { "OrderMaterialName", "Order Material" },
+                { "OrderQuantityName", "Order Quantity" },
+                { "OrderPartNumName", "Order Part Number" },
+                { "OrderMachineNumName", "Order Machine Number" },
+                { "OrderItemIdName", "Order Item Id" },
+                { "OrderLengthName", "Order Length" },
+                { "OrderBundleName", "Order Bundle" },
+                { "BundleTableName", "Bundle Table" },
+                { "BundleOrderNumName", "Bundle Order Number" },
+                { "BundleColumns", "Bundle Columns" },
+                { "UsageTableName", "Usage Table" },
+                { "UsageOrderNumName", "Usage Order Number"},
+                { "UsageMaterialName", "Usage Material" },
+                { "UsageItemIdName", "Usage Item Id" },
+                { "UsageLengthName", "Usage Length" },
+                { "UsageDateName", "Usage Date"}
+            };
+
+            message += UpdateSettingsHelper(tableFields);
 
             // Set error message for missing table/column names.
             Debug.WriteLine(message);
             SettingsRequiredMessage = message;
+        }
+
+        // Add missing required table and field names.
+        private string UpdateSettingsHelper(Dictionary<string, string> fields)
+        {
+            ISettings settings = UserSqlSettings;
+            string message = "";
+
+            foreach (KeyValuePair<string, string> pair in fields)
+            {
+                string reqField = (string)settings.GetType()
+                    .GetProperty(pair.Key)
+                    ?.GetValue(settings, null);
+                if (string.IsNullOrEmpty(reqField))
+                {
+                    message += $"- {pair.Value} is required.\n";
+                }
+            }
+
+            if (message.Length > 0)
+            {
+                message = "Required table/column fields: \n" + message;
+            }
+
+            return message;
         }
     }
 }
