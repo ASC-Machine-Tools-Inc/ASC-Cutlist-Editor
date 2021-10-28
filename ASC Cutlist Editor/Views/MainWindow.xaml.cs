@@ -19,11 +19,6 @@ namespace AscCutlistEditor.Views
             DataContext = new MainViewModel();
         }
 
-        private void MainWindow_Closed(object sender, EventArgs e)
-        {
-            UserSqlSettings.Save();
-        }
-
         private void OpenSqlSettings(object sender, RoutedEventArgs e)
         {
             SqlSettingsControl settings = new SqlSettingsControl
@@ -32,6 +27,11 @@ namespace AscCutlistEditor.Views
                 DataContext = Application.Current.MainWindow?.DataContext
             };
             settings.ShowDialog();
+        }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            UserSqlSettings.Save();
         }
     }
 }

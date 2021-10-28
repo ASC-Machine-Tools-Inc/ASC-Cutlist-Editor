@@ -10,7 +10,6 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,11 +31,21 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// <summary>
         /// Last machine message the client listener received.
         /// </summary>
-        public MachineMessage LatestMachineMessage { get; set; }
+        public MachineMessage LatestMachineMessage
+        {
+            get => _latestMachineMessage;
+            set
+            {
+                _latestMachineMessage = value;
+                RaisePropertyChangedEvent("LatestMachineMessage");
+            }
+        }
 
         public PlotModel UptimePlot { get; set; }
 
         public PlotModel DowntimeStatsPlot { get; set; }
+
+        private MachineMessage _latestMachineMessage;
 
         private LineSeries _uptimeSeries;
         private BarSeries _downtimeStatsSeries;
@@ -45,7 +54,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
         public MachineMessageViewModel(
             string topic,
-            SqlConnectionViewModel connModel)
+            SqlConnectionViewModel connModel,
+            MachineMessage message = null)
         {
             var mqttFactory = new MqttFactory();
             IMqttClient client = mqttFactory.CreateMqttClient();
@@ -65,8 +75,9 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             _sqlConn = connModel;
 
-            StartClient();
-            CreateUptimeModel();
+            CreateUptimeModel();  // Create the plots for the UI.
+            StartClient();  // Listen for continued messages.
+            ProcessResponseMessage(message);  // Process first message (if exists).
         }
 
         /// <summary>

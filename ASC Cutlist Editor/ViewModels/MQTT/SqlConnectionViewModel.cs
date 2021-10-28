@@ -42,8 +42,21 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
         }
 
+        public bool CanConnect
+        {
+            get => _canConnect;
+            set
+            {
+                _canConnect = value;
+                RaisePropertyChangedEvent("CanConnect");
+            }
+        }
+
         private string _settingsRequiredMessage;
 
+        private bool _canConnect;
+
+        // Used for displaying message boxes.
         private readonly IDialogService _dialog;
 
         public SqlConnectionViewModel(
@@ -197,9 +210,9 @@ namespace AscCutlistEditor.ViewModels.MQTT
             {
                 if (string.IsNullOrEmpty(settings.ConnectionString))
                 {
-                    message += "- Connection string is required. \n" +
-                               "Please enter a valid connection string or " +
-                               "switch to individual fields.\n";
+                    message += "Please enter a valid connection string or " +
+                               "switch to individual fields.\n" +
+                               "- Connection string is required.\n";
                 }
             }
             else
@@ -254,8 +267,10 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             message += UpdateSettingsHelper(tableFields);
 
+            // Check to see if we can connect.
+            CanConnect = message.Length == 0;
+
             // Set error message for missing table/column names.
-            Debug.WriteLine(message);
             SettingsRequiredMessage = message;
         }
 

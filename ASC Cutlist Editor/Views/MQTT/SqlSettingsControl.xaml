@@ -99,10 +99,6 @@
                             .UserSqlSettings.ConnectionString}"
                             ui:ControlHelper.Header="Connection String:"
                             Margin="10" />
-                        <TextBlock Text="{Binding
-                            SqlConnectionViewModel
-                            .UserSqlSettings
-                            .UseConnectionString}"></TextBlock>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

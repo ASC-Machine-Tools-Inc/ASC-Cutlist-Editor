@@ -16,6 +16,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using AscCutlistEditor.Models.MQTT;
 using MQTTnet.Client.Connecting;
+using Newtonsoft.Json;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {
@@ -103,12 +104,12 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// Add a new TabItem to track the KPI data for that connection.
         /// </summary>
         /// <param name="topic">The topic this payload came through on.</param>
-        /// <param name="payload">The first message from the machine.</param>
-        public void AddTab(string topic)
+        /// <param name="message">The first message from the machine.</param>
+        public void AddTab(string topic, MachineMessage message = null)
         {
             // Create a new model for listening to this topic.
             MachineMessageViewModel model =
-                new MachineMessageViewModel(topic, _sqlConnection);
+                new MachineMessageViewModel(topic, _sqlConnection, message);
 
             // Run on UI thread.
             // Select the correct dispatcher: if Application.Current is null,
@@ -161,10 +162,13 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 {
                     Debug.WriteLine($"NEW TOPIC SPOTTED: {topic}");
                     _knownTopics.Add(topic);
-                    string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-                    AddTab(topic);
 
-                    Debug.WriteLine("### ADDING TOPIC " + topic + " ###");
+                    // Grab payload and pass along to machine message model.
+                    string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+                    MachineMessage machineMessage =
+                        JsonConvert.DeserializeObject<MachineMessage>(payload);
+
+                    AddTab(topic, machineMessage);
                 }
             });
 
