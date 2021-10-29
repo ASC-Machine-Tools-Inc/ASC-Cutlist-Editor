@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
              xmlns:viewModels="clr-namespace:AscCutlistEditor.ViewModels"
              xmlns:mqtt="clr-namespace:AscCutlistEditor.Views.MQTT"
              d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
@@ -47,7 +48,14 @@
             MachineConnectionsViewModel.ConnectionVisibility[1],
             Converter={StaticResource BooleanToVisibilityConverter}}"
             HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="No connections." />
+                <TextBlock Text="No machine connections found yet."
+                           Margin="5" HorizontalAlignment="Center" />
+                <TextBlock Text="Scanning for connections..."
+                           Margin="5" HorizontalAlignment="Center" />
+                <ui:ProgressBar
+                    Width="200"
+                    IsIndeterminate="True"
+                    Margin="10"></ui:ProgressBar>
             </StackPanel>
 
             <!-- Show when connected -->
@@ -56,7 +64,8 @@
             MachineConnectionsViewModel.MachineConnections}"
             Visibility="{Binding
             MachineConnectionsViewModel.ConnectionVisibility[2],
-            Converter={StaticResource BooleanToVisibilityConverter}}">
+            Converter={StaticResource BooleanToVisibilityConverter}}"
+            SelectedIndex="0">
                 <TabControl.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding
