@@ -18,11 +18,16 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
         public async Task MachineConnectionsViewModelTest()
         {
             // Arrange
+            // Set up sql model.
+            Mocks.MockSettings settings = new Mocks.MockSettings();
+            settings.InitializeWithDefaults();
+
             SqlConnectionViewModel sqlModel = new SqlConnectionViewModel(
-                new Mocks.MockSettings(),
+                settings,
                 new Mocks.MockDialog());
             sqlModel.UpdateConnectionString(Strings.ConnectionString);
 
+            // Set up machine connections listener.
             MachineConnectionsViewModel connsModel =
                 new MachineConnectionsViewModel(sqlModel)
                 {
@@ -30,61 +35,16 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
                 };
             MachineConnectionsViewModel.SubTopic = "testing";
             MachineConnectionsViewModel.PubTopic = "testing";
-
             await connsModel.Start(false);
 
-            // TODO: write helper method and add fields
-            // TODO: test response message?
-            MachineMessage message = new MachineMessage
-            {
-                connected = "true",
-                tags = new Tags
-                {
-                    set1 = new Set1
-                    {
-                        MachineStatistics = new MachineStatistics
-                        {
-                            UserPrime = 0,
-                            UserScrap = 0,
-                            UserUsage = 0
-                        },
-                        MqttPub = new MqttPub
-                        {
-                            CoilDatReq = "",
-                            CoilStoreReq = "",
-                            CoilUsageDat = "",
-                            CoilUsageSend = "",
-                            EmergencyStopped = "",
-                            JobNumber = "test",
-                            LineRunning = "FALSE",
-                            OrderDatReq = "",
-                            OrderNo = "",
-                            ScanCoilID = ""
-                        },
-                        PlantData = new PlantData
-                        {
-                            COIL = new COIL
-                            {
-                                COIL_CALCS = new COILCALCS
-                                {
-                                    ActiveData = new ActiveData()
-                                },
-                                DESCRIPTION = "",
-                                LOG_COMMENT = ""
-                            },
-                            KPI = new KPI(),
-                            WORKORDER = new WORKORDER()
-                        }
-                    }
-                },
-                timestamp = DateTime.Now
-            };
+            MachineMessage pubMessage = GetPubMessage();
+            MachineMessage subMessage = GetSubMessage();
 
             // Act
             MachineMessageViewModel.PublishMessage(
                 connsModel.Listener,
                 "testing/test_topic",
-                JsonConvert.SerializeObject(message));
+                JsonConvert.SerializeObject(pubMessage));
 
             // Wait for connsModel to detect test_topic & respond accordingly.
             int waitTime = 1000;
@@ -106,7 +66,63 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
             // Assert
             Assert.AreEqual(connsModel.MachineConnections.Count, 1);
 
-            // Check sent message.
+            //Assert.AreEqual(
+            //    JsonConvert.SerializeObject(response),
+            //    JsonConvert.SerializeObject(subMessage));
+        }
+
+        private MachineMessage GetPubMessage()
+        {
+            return new MachineMessage
+            {
+                connected = "true",
+                tags = new Tags
+                {
+                    set1 = new Set1
+                    {
+                        MachineStatistics = new MachineStatistics
+                        {
+                            UserPrime = 0,
+                            UserScrap = 0,
+                            UserUsage = 0
+                        },
+                        MqttPub = new MqttPub
+                        {
+                            CoilDatReq = "TRUE",
+                            CoilStoreReq = "TRUE",
+                            CoilUsageDat = "",
+                            CoilUsageSend = "",
+                            EmergencyStopped = "LINE IS ACTIVE",
+                            JobNumber = "JN28174",
+                            LineRunning = "ELINE STOPPED",
+                            OrderDatReq = "TRUE",
+                            OrderNo = "10152",
+                            ScanCoilID = "H2215"
+                        },
+                        PlantData = new PlantData
+                        {
+                            COIL = new COIL
+                            {
+                                COIL_CALCS = new COILCALCS
+                                {
+                                    ActiveData = new ActiveData()
+                                },
+                                DESCRIPTION = "",
+                                LOG_COMMENT = ""
+                            },
+                            KPI = new KPI(),
+                            WORKORDER = new WORKORDER()
+                        }
+                    },
+                    set3 = new Set3()
+                },
+                timestamp = DateTime.Now
+            };
+        }
+
+        private MachineMessage GetSubMessage()
+        {
+            return new MachineMessage();
         }
     }
 }
