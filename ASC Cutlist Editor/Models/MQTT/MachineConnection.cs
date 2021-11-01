@@ -28,9 +28,14 @@ namespace AscCutlistEditor.Models.MQTT
         public string DisplayTopic { get; set; }
 
         /// <summary>
+        /// List of sent messages.
+        /// </summary>
+        public ObservableCollection<MachineMessage> MachineMessagePubCollection { get; set; }
+
+        /// <summary>
         /// List of received messages.
         /// </summary>
-        public ObservableCollection<MachineMessage> MachineMessageCollection { get; set; }
+        public ObservableCollection<MachineMessage> MachineMessageSubCollection { get; set; }
 
         public SqlConnectionViewModel SqlConnection;
 
@@ -46,7 +51,8 @@ namespace AscCutlistEditor.Models.MQTT
             PubTopic = pubTopic;
             DisplayTopic = displayTopic;
             SqlConnection = sqlConnection;
-            MachineMessageCollection = new ObservableCollection<MachineMessage>();
+            MachineMessagePubCollection = new ObservableCollection<MachineMessage>();
+            MachineMessageSubCollection = new ObservableCollection<MachineMessage>();
         }
     }
 }

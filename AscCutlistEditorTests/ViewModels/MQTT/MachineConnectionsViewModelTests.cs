@@ -1,11 +1,19 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using AscCutlistEditor.Models.MQTT;
+using AscCutlistEditor.ViewModels.MQTT;
+using AscCutlistEditorTests.Common;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 
 namespace AscCutlistEditorTests.ViewModels.MQTT
 {
     [TestClass]
     public class MachineConnectionsViewModelTests
     {
-        /* TODO: update MachineConnections to be more MVVM-friendly
         [TestMethod]
         public async Task MachineConnectionsViewModelTest()
         {
@@ -20,8 +28,13 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
                 {
                     ListenerTopic = "testing/+"
                 };
+            MachineConnectionsViewModel.SubTopic = "testing";
+            MachineConnectionsViewModel.PubTopic = "testing";
+
             await connsModel.Start(false);
 
+            // TODO: write helper method and add fields
+            // TODO: test response message?
             MachineMessage message = new MachineMessage
             {
                 connected = "true",
@@ -29,50 +42,71 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
                 {
                     set1 = new Set1
                     {
-                        MqttPub = new MqttPub()
+                        MachineStatistics = new MachineStatistics
+                        {
+                            UserPrime = 0,
+                            UserScrap = 0,
+                            UserUsage = 0
+                        },
+                        MqttPub = new MqttPub
+                        {
+                            CoilDatReq = "",
+                            CoilStoreReq = "",
+                            CoilUsageDat = "",
+                            CoilUsageSend = "",
+                            EmergencyStopped = "",
+                            JobNumber = "test",
+                            LineRunning = "FALSE",
+                            OrderDatReq = "",
+                            OrderNo = "",
+                            ScanCoilID = ""
+                        },
+                        PlantData = new PlantData
+                        {
+                            COIL = new COIL
+                            {
+                                COIL_CALCS = new COILCALCS
+                                {
+                                    ActiveData = new ActiveData()
+                                },
+                                DESCRIPTION = "",
+                                LOG_COMMENT = ""
+                            },
+                            KPI = new KPI(),
+                            WORKORDER = new WORKORDER()
+                        }
                     }
                 },
                 timestamp = DateTime.Now
             };
 
             // Act
-            // Testing adding a tab when a message is received is finicky due
-            // to delays, so we'll pretend like we heard one and add it
-            // manually instead.
-            // Create an STA thread to run UI logic.
-            Thread staThread = new Thread(async () =>
-            {
-                await connsModel.AddTab(
-                    "testing/test_topic",
-                    JsonConvert.SerializeObject(message));
-            });
-            staThread.SetApartmentState(ApartmentState.STA);
-            staThread.Start();
-            staThread.Join();
+            MachineMessageViewModel.PublishMessage(
+                connsModel.Listener,
+                "testing/test_topic",
+                JsonConvert.SerializeObject(message));
 
-            MachineMessageViewModel messageModel = (MachineMessageViewModel)
-                connsModel.MachineConnectionTabs[0].DataContext;
+            // Wait for connsModel to detect test_topic & respond accordingly.
+            int waitTime = 1000;
+            const int timeIncrement = 10;
+            while (connsModel.MachineConnections.Count == 0)
+            {
+                if (waitTime <= 0)
+                {
+                    Assert.Fail();  // Kill if no successful response in time.
+                }
+
+                waitTime -= timeIncrement;
+                await Task.Delay(timeIncrement);
+            }
+
+            MachineMessageViewModel msgModel = connsModel.MachineConnections.First();
+            MachineMessage response = msgModel.MachineConnection.MachineMessageSubCollection.First();
 
             // Assert
-            Assert.AreEqual(messageModel.MachineMessageCollection.Count, 1);
-        }
+            Assert.AreEqual(connsModel.MachineConnections.Count, 1);
 
-        [TestMethod]
-        public void StartTest()
-        {
-            throw new NotImplementedException();
+            // Check sent message.
         }
-
-        [TestMethod]
-        public void AddTabTest()
-        {
-            throw new NotImplementedException();
-        }
-
-        [TestMethod]
-        public void RefreshTest()
-        {
-            throw new NotImplementedException();
-        } */
     }
 }

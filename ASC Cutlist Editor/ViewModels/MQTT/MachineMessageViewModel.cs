@@ -289,11 +289,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 int rowsAdded = await handlers.CoilUsageSendFlagHandler(
                     message,
                     returnMessage);
-                // TODO: remove if check? For debugging
-                if (rowsAdded > 0)
-                {
-                    Debug.WriteLine($"Rows added from coil usage: {rowsAdded}");
-                }
             }
             catch (Exception ex)
             {
@@ -307,6 +302,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 MachineConnection.Client,
                 MachineConnection.PubTopic,
                 JsonConvert.SerializeObject(returnMessage));
+            MachineConnection.MachineMessagePubCollection.Add(returnMessage);
         }
 
         /// <summary>
@@ -322,7 +318,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 : Dispatcher.CurrentDispatcher;
             dispatcher.Invoke(() =>
             {
-                MachineConnection.MachineMessageCollection.Add(message);
+                MachineConnection.MachineMessageSubCollection.Add(message);
                 LatestMachineMessage = message;
 
                 MqttPub pub = message.tags.set1.MqttPub;
