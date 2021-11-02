@@ -109,7 +109,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             });
 
             // Response to send on receiving a message.
-            MachineConnection.Client.UseApplicationMessageReceivedHandler(e =>
+            MachineConnection.Client.UseApplicationMessageReceivedHandler(async e =>
             {
                 string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 
@@ -120,7 +120,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
                         JsonConvert.DeserializeObject<MachineMessage>(payload);
 
                     // Bryan's code for handling messages and their flags.
-                    ProcessResponseMessage(machineMessage);
+                    int rowsAdded = await ProcessResponseMessage(machineMessage);
+                    if (rowsAdded > 0) { Debug.WriteLine("Rows added: " + rowsAdded); }
                 }
                 catch (JsonReaderException)
                 {
@@ -241,17 +242,22 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// Handle returning the response message and performing any tasks
         /// based off the flags set in the machine's message.
         /// </summary>
-        private async void ProcessResponseMessage(MachineMessage message)
+        /// <returns>
+        /// The number of rows added for usage.
+        /// </returns>
+        private async Task<int> ProcessResponseMessage(MachineMessage message)
         {
-            if (message == null)
-            {
-                return;
-            }
+            int rowsAdded = 0;
 
             // To avoid confusion - the pub here refers to the machine's
             // published message, and sub refers to the response the machine
             // expects. The client publishes the return message to PubTopic.
-            MqttPub pub = message.tags.set1.MqttPub;
+            MqttPub pub = message.tags?.set1?.MqttPub;
+            if (pub == null)
+            {
+                return rowsAdded;
+            }
+
             MachineMessage returnMessage = new MachineMessage
             {
                 tags = new Tags
@@ -266,7 +272,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             // Check that a job number was included in the message.
             if (string.IsNullOrEmpty(pub.JobNumber))
             {
-                return;
+                return rowsAdded;
             }
 
             // Update the UI.
@@ -286,15 +292,15 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 await handlers.CoilStoreReqFlagHandler(message, returnMessage);
 
                 // Handle the coil usage sending requested flag (write to database).
-                int rowsAdded = await handlers.CoilUsageSendFlagHandler(
-                    message,
-                    returnMessage);
+                rowsAdded = await handlers.CoilUsageSendFlagHandler(message, returnMessage);
             }
             catch (Exception ex)
             {
                 // Query error. Close the connection.
                 // TODO: set status to sql failed
+
                 Debug.WriteLine("Query error." + ex);
+                throw;
             }
 
             // Finally, write the response message back out for the HMI.
@@ -303,6 +309,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 MachineConnection.PubTopic,
                 JsonConvert.SerializeObject(returnMessage));
             MachineConnection.MachineMessagePubCollection.Add(returnMessage);
+            return rowsAdded;
         }
 
         /// <summary>

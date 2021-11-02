@@ -1,9 +1,12 @@
-﻿using AscCutlistEditor.ViewModels.MQTT;
+﻿using System.Collections.Generic;
+using AscCutlistEditor.ViewModels.MQTT;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.Models.MQTT;
 
 // ReSharper disable All
 
@@ -49,8 +52,6 @@ namespace AscCutlistEditor.Utility.MQTT
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
-            cmd.CommandType = CommandType.Text;
-
             // Filter parameters.
             cmd.Parameters.AddWithValue("@coilID", "%" + coilId + "%");
 
@@ -91,8 +92,6 @@ namespace AscCutlistEditor.Utility.MQTT
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
-            cmd.CommandType = CommandType.Text;
-
             return await SelectHelper(conn, cmd);
         }
 
@@ -128,8 +127,6 @@ namespace AscCutlistEditor.Utility.MQTT
                 $"GROUP BY {orderno}, {material}";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
-
-            cmd.CommandType = CommandType.Text;
 
             // Filter parameters.
             cmd.Parameters.AddWithValue("@orderNum", "%" + orderNum + "%");
@@ -175,8 +172,6 @@ namespace AscCutlistEditor.Utility.MQTT
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
-            cmd.CommandType = CommandType.Text;
-
             // Filter parameters.
             cmd.Parameters.AddWithValue("@machineID", "%" + machineId + "%");
 
@@ -215,8 +210,6 @@ namespace AscCutlistEditor.Utility.MQTT
                 $"WHERE {machinenum} LIKE @machineId AND {orderno} LIKE @orderNum";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
-
-            cmd.CommandType = CommandType.Text;
 
             // Filter parameters.
             cmd.Parameters.AddWithValue("@machineID", "%" + machineId + "%");
@@ -257,8 +250,6 @@ namespace AscCutlistEditor.Utility.MQTT
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
-            cmd.CommandType = CommandType.Text;
-
             // Filter parameters.
             cmd.Parameters.AddWithValue("@orderNum", "%" + orderNum + "%");
 
@@ -289,8 +280,13 @@ namespace AscCutlistEditor.Utility.MQTT
         /// </summary>
         /// <param name="usageData">The data to add to amsproduct.</param>
         /// <returns>The number of rows added to amsproduct.</returns>
-        public async Task<int> SetUsageData(DataTable usageData)
+        public async Task<int> SetUsageData(List<CoilUsage> usageData)
         {
+            if (usageData.Count == 0)
+            {
+                return 0;
+            }
+
             await using SqlConnection conn =
                 new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
 
@@ -312,20 +308,13 @@ namespace AscCutlistEditor.Utility.MQTT
                 "VALUES ";
 
             // Append the fields to add from our DataTable to our SqlCommand text.
-            foreach (DataRow row in usageData.Rows)
+            foreach (CoilUsage coil in usageData)
             {
-                string orderNum = row[0].ToString();
-                string material = row[2].ToString();
-                string itemId = row[3].ToString();
-                string totalLength = row[4].ToString();
-                string addDate = row[8].ToString();
-
-                queryStr += $"('{orderNum}', '{material}', '{itemId}', " +
-                            $"'{totalLength}', '{addDate}')";
+                queryStr += $"('{coil.orderno}', '{coil.CoilMatl}', " +
+                            $"'{coil.ItemID}', '{coil.Length}', '{coil.Time}')";
             }
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
-            cmd.CommandType = CommandType.Text;
 
             conn.Open();
             return await cmd.ExecuteNonQueryAsync();

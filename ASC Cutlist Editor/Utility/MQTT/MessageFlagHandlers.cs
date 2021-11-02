@@ -232,7 +232,7 @@ namespace AscCutlistEditor.Utility.MQTT
 
             List<List<string>> coilUsageFields = pub.CoilUsageDat
                 // Split the usage data into rows.
-                .Split("|")
+                .Split("|", StringSplitOptions.RemoveEmptyEntries)
                 // Split those rows into a list of fields.
                 .Select(usageRows =>
                     new List<string>(usageRows.Split(",")))
@@ -243,34 +243,35 @@ namespace AscCutlistEditor.Utility.MQTT
                 // with the total length for those groupings.
                 .GroupBy(
                     usageRow =>
-                        new { coilId = usageRow[1], itemId = usageRow[3] },
+                        (coilId: usageRow[1], itemId: usageRow[3]),
                     (key, fields) =>
                     {
-                        // Convert fields to list to prevent multiple enumeration.
-                        var enumerable = fields.ToList();
+                        List<List<string>> enumerable = fields.ToList();
+
+                        // Grab the first group of fields for order & material.
+                        List<string> firstFields = enumerable[0];
+
+                        // Sum the length of all the groups to get the total
+                        // length for this coil and item id grouping.
+                        decimal totalLength = enumerable.Sum(x =>
+                            Convert.ToDecimal(x[4]));
+
                         return new CoilUsage
                         {
-                            orderno = enumerable.ElementAt(0).ToString(),
+                            orderno = firstFields[0],
                             CoilId = key.coilId,
-                            CoilMatl = enumerable.ElementAt(2).ToString(),
+                            CoilMatl = firstFields[0],
                             ItemID = key.itemId,
-                            Length = enumerable.ElementAt(4).Sum(Convert.ToDecimal),
+                            Length = totalLength,
                             Time = DateTime.Now
                         };
                     })
                 .ToList();
 
-            // Add our rows to the DataTable for updating the database.
-            DataTable usageData = new DataTable();
-            foreach (CoilUsage usageRow in coilUsageList)
-            {
-                usageData.Rows.Add(usageRow);
-            }
-
             sub.CoilUsageRecvAck = "TRUE";
 
             // Update the database.
-            return await _queries.SetUsageData(usageData);
+            return await _queries.SetUsageData(coilUsageList);
         }
     }
 }

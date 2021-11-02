@@ -24,7 +24,7 @@
 
             <DataGrid
                 ItemsSource="{Binding
-                MachineConnection.MachineMessageCollection}"
+                MachineConnection.MachineMessageSubCollection}"
                 AutoGenerateColumns="False"
                 IsReadOnly="True"
                 GridLinesVisibility="Horizontal"
