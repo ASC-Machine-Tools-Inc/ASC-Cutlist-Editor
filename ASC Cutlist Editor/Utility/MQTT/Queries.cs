@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.Models.MQTT;
 using AscCutlistEditor.ViewModels.MQTT;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Windows.Documents;
-using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.Models.MQTT;
 
 // ReSharper disable All
 

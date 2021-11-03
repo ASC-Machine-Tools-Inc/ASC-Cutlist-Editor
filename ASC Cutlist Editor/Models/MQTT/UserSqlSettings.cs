@@ -1,8 +1,6 @@
-﻿using System.Configuration;
-using System.Data.SqlClient;
-using AscCutlistEditor.Frameworks;
+﻿using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Properties;
-using Microsoft.VisualBasic;
+using System.Configuration;
 
 namespace AscCutlistEditor.Models.MQTT
 {

@@ -1,5 +1,5 @@
-﻿using System;
-using AscCutlistEditor.Frameworks;
+﻿using AscCutlistEditor.Frameworks;
+using System;
 
 namespace AscCutlistEditor.Models.MQTT
 {

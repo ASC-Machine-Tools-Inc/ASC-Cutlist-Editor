@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using AscCutlistEditor.Frameworks;
+﻿using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models.MQTT;
-using AscCutlistEditor.Properties;
-using System.Configuration;
+using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;

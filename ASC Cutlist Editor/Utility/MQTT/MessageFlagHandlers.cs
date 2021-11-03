@@ -1,11 +1,10 @@
 ﻿using AscCutlistEditor.Models.MQTT;
+using AscCutlistEditor.ViewModels.MQTT;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using AscCutlistEditor.ViewModels.MQTT;
 
 namespace AscCutlistEditor.Utility.MQTT
 {

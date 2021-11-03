@@ -1,5 +1,4 @@
 ﻿using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.Views.MQTT;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
@@ -12,10 +11,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Threading;
 using AscCutlistEditor.Models.MQTT;
-using MQTTnet.Client.Connecting;
 using Newtonsoft.Json;
 
 namespace AscCutlistEditor.ViewModels.MQTT
@@ -104,12 +101,11 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// Add a new TabItem to track the KPI data for that connection.
         /// </summary>
         /// <param name="topic">The topic this payload came through on.</param>
-        /// <param name="message">The first message from the machine.</param>
-        public void AddTab(string topic, MachineMessage message = null)
+        public void AddTab(string topic)
         {
             // Create a new model for listening to this topic.
             MachineMessageViewModel model =
-                new MachineMessageViewModel(topic, _sqlConnection, message);
+                new MachineMessageViewModel(topic, _sqlConnection);
 
             // Run on UI thread.
             // Select the correct dispatcher: if Application.Current is null,
@@ -131,6 +127,12 @@ namespace AscCutlistEditor.ViewModels.MQTT
         {
             _knownTopics = new HashSet<string>();
             MachineConnections = new ObservableCollection<MachineMessageViewModel>();
+
+            // Update UI.
+            Debug.WriteLine("Refreshing topics...");
+            RaisePropertyChangedEvent("MachineConnections");
+            ConnectionVisibility[1] = true;
+            ConnectionVisibility[2] = false;
         }
 
         private async Task StartListener()
@@ -168,7 +170,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     MachineMessage machineMessage =
                         JsonConvert.DeserializeObject<MachineMessage>(payload);
 
-                    AddTab(topic, machineMessage);
+                    AddTab(topic);
                 }
             });
 

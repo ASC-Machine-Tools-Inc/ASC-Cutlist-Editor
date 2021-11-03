@@ -54,8 +54,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
         public MachineMessageViewModel(
             string topic,
-            SqlConnectionViewModel connModel,
-            MachineMessage message = null)
+            SqlConnectionViewModel connModel)
         {
             var mqttFactory = new MqttFactory();
             IMqttClient client = mqttFactory.CreateMqttClient();
@@ -77,7 +76,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             CreateUptimeModel();  // Create the plots for the UI.
             StartClient();  // Listen for continued messages.
-            ProcessResponseMessage(message);  // Process first message (if exists).
         }
 
         /// <summary>

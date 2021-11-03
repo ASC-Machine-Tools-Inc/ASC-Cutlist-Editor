@@ -1,7 +1,7 @@
-﻿using AscCutlistEditor.ViewModels.MQTT;
+﻿using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.ViewModels.MQTT;
 using MQTTnet.Client;
 using System.Collections.ObjectModel;
-using AscCutlistEditor.Frameworks;
 
 namespace AscCutlistEditor.Models.MQTT
 {
