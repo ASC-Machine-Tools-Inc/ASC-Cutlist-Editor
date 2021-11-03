@@ -45,7 +45,7 @@ namespace AscCutlistEditor.Models.MQTT
             // Initialize timer for sending mock messages.
             MessageTimer = new DispatcherTimer
             {
-                Interval = new TimeSpan(0, 0, 10)
+                Interval = new TimeSpan(0, 0, 1)
             };
             MessageTimer.Tick += MockMessageTimerTick;
             MessageTimer.Start();
