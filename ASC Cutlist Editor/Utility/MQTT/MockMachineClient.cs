@@ -1,11 +1,12 @@
-﻿using AscCutlistEditor.ViewModels.MQTT;
-using MQTTnet.Client;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Threading;
+using AscCutlistEditor.Models.MQTT;
+using AscCutlistEditor.ViewModels.MQTT;
+using MQTTnet.Client;
+using Newtonsoft.Json;
 
-namespace AscCutlistEditor.Models.MQTT
+namespace AscCutlistEditor.Utility.MQTT
 {
     internal class MockMachineClient
     {

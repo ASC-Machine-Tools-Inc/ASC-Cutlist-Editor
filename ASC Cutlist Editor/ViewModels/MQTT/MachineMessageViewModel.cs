@@ -117,7 +117,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     MachineMessage machineMessage =
                         JsonConvert.DeserializeObject<MachineMessage>(payload);
 
-                    // Bryan's code for handling messages and their flags.
                     int rowsAdded = await ProcessResponseMessage(machineMessage);
                     if (rowsAdded > 0) { Debug.WriteLine("Rows added: " + rowsAdded); }
                 }

@@ -52,6 +52,15 @@ namespace AscCutlistEditor.Utility.MQTT
             else if (orderDataRequested == "FALSE")
             {
                 // Otherwise, respond with the current job numbers.
+
+                // TODO: handle optional arguments, like material, delivery date
+
+                // 1. Check if pub.WhateverTagNameWillBe has contents
+                // 2. If so, parse it out of whatever format it's in to get the coil material and days into the future
+                // 2a. If there's a material, pass to GetOrders to filter for that material
+                // 2b. If there's a number for days, filter from today to that many days ahead in sql
+                // 2c. If not, just return the top 100 orders. Still need to readd this
+
                 DataTable orderNumTable = await _queries
                     .GetOrdersByMachineNum(pub.JobNumber);
 
