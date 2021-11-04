@@ -6,12 +6,18 @@
         xmlns:viewModels="clr-namespace:AscCutlistEditor.ViewModels"
         xmlns:mqtt="clr-namespace:AscCutlistEditor.Models.MQTT"
         xmlns:ui="http://schemas.modernwpf.com/2019"
+        ui:WindowHelper.UseModernWindowStyle="True"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
         mc:Ignorable="d"
         Title="Sql Connection Settings" Height="550" Width="800"
         Closing="SqlSettings_Closed">
     <Window.Resources>
         <mqtt:UserSqlSettings x:Key="settings" />
+        <Style TargetType="{x:Type Label}">
+            <!-- Fixes dark mode for labels -->
+            <Setter Property="Foreground"
+                    Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -140,6 +146,8 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Label
+
+                                    Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
                         Content="Coil Table:" />
                                 <TextBox
                         Grid.Column="1"

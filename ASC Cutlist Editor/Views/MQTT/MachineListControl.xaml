@@ -14,7 +14,7 @@
 
             <!-- Show before connecting -->
             <Border
-                Padding="20" Background="WhiteSmoke"
+                Padding="20"
                 BorderBrush="DimGray" BorderThickness="2"
                 CornerRadius="3 8 3 8"
                 HorizontalAlignment="Center" VerticalAlignment="Center"

@@ -43,12 +43,6 @@
                         GridLinesVisibility="Horizontal"
                         HeadersVisibility="Column"
                         HorizontalAlignment="Stretch">
-                        <!-- Disable selection -->
-                        <DataGrid.RowStyle>
-                            <Style TargetType="DataGridRow">
-                                <Setter Property="IsHitTestVisible" Value="False" />
-                            </Style>
-                        </DataGrid.RowStyle>
                         <DataGrid.Columns>
                             <DataGridTextColumn
                                 Header="Timestamp"
