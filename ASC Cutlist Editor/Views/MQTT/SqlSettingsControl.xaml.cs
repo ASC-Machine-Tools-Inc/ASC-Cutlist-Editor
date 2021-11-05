@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using AscCutlistEditor.Models.MQTT;
+using AscCutlistEditor.ViewModels;
 
 namespace AscCutlistEditor.Views.MQTT
 {
@@ -10,6 +13,58 @@ namespace AscCutlistEditor.Views.MQTT
         public SqlSettingsControl()
         {
             InitializeComponent();
+        }
+
+        // Update settings message on close.
+        private void SqlSettings_Closed(object sender, EventArgs e)
+        {
+            MainViewModel model = DataContext as MainViewModel;
+            model?.SqlConnectionViewModel.UpdateSettingsRequiredMessage();
+        }
+
+        // Close and reopen the settings so the reset changes apply.
+        private void ResetSqlSettings(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult dialogResult = MessageBox.Show(
+                "Your current settings will be cleared.",
+                "Reset settings",
+                MessageBoxButton.OKCancel,
+                MessageBoxImage.Warning);
+            if (dialogResult == MessageBoxResult.OK)
+            {
+                Close();
+
+                UserSqlSettings.Reset();
+
+                SqlSettingsControl settings = new SqlSettingsControl
+                {
+                    // Grab the data context of MainWindow so we can access our settings.
+                    DataContext = Application.Current.MainWindow?.DataContext
+                };
+                settings.ShowDialog();
+            }
+        }
+
+        private void DebugReset(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult dialogResult = MessageBox.Show(
+                "DEBUG PURPOSES ONLY - RESET TO TEST SETTINGS. ARE YOU SURE?",
+                "Reset settings",
+                MessageBoxButton.OKCancel,
+                MessageBoxImage.Warning);
+            if (dialogResult == MessageBoxResult.OK)
+            {
+                Close();
+
+                DebugHelpers.DebugHelpers.DebugReset();
+
+                SqlSettingsControl settings = new SqlSettingsControl
+                {
+                    // Grab the data context of MainWindow so we can access our settings.
+                    DataContext = Application.Current.MainWindow?.DataContext
+                };
+                settings.ShowDialog();
+            }
         }
     }
 }

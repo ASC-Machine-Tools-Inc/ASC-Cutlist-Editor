@@ -1,4 +1,5 @@
-﻿using AscCutlistEditor.ViewModels.MQTT;
+﻿using AscCutlistEditor.Frameworks;
+using AscCutlistEditor.ViewModels.MQTT;
 using MQTTnet.Client;
 using System.Collections.ObjectModel;
 
@@ -7,35 +8,51 @@ namespace AscCutlistEditor.Models.MQTT
     /// <summary>
     /// Model for a single machine connection.
     /// </summary>
-    internal class MachineConnection
+    public class MachineConnection : ObservableObject
     {
         public IMqttClient Client;
 
         /// <summary>
         /// The topic to listen for messages from.
         /// </summary>
-        public string SubTopic;
+        public string SubTopic { get; set; }
 
         /// <summary>
         /// The topic to publish response messages to.
         /// </summary>
-        public string PubTopic;
+        public string PubTopic { get; set; }
+
+        /// <summary>
+        /// The topic to display for the tab.
+        /// </summary>
+        public string DisplayTopic { get; set; }
+
+        /// <summary>
+        /// List of sent messages.
+        /// </summary>
+        public ObservableCollection<MachineMessage> MachineMessagePubCollection { get; set; }
+
+        /// <summary>
+        /// List of received messages.
+        /// </summary>
+        public ObservableCollection<MachineMessage> MachineMessageSubCollection { get; set; }
 
         public SqlConnectionViewModel SqlConnection;
-
-        public ObservableCollection<MachineMessage> MachineMessageCollection;
 
         public MachineConnection(
             IMqttClient client,
             string subTopic,
             string pubTopic,
+            string displayTopic,
             SqlConnectionViewModel sqlConnection)
         {
             Client = client;
             SubTopic = subTopic;
             PubTopic = pubTopic;
+            DisplayTopic = displayTopic;
             SqlConnection = sqlConnection;
-            MachineMessageCollection = new ObservableCollection<MachineMessage>();
+            MachineMessagePubCollection = new ObservableCollection<MachineMessage>();
+            MachineMessageSubCollection = new ObservableCollection<MachineMessage>();
         }
     }
 }

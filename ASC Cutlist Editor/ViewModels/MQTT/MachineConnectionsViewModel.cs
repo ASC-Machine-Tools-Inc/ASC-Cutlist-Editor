@@ -1,10 +1,8 @@
 ﻿using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.Views.MQTT;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using MQTTnet.Server;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -13,8 +11,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Threading;
+using AscCutlistEditor.Models.MQTT;
+using Newtonsoft.Json;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {
@@ -29,7 +28,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
         internal string ListenerTopic;
 
         private HashSet<string> _knownTopics;
-        private ObservableCollection<TabItem> _machineConnectionTabs;
 
         private readonly SqlConnectionViewModel _sqlConnection;
 
@@ -46,6 +44,13 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// </summary>
         public static string PubTopic = "alphasub";
 
+        /// <summary>
+        /// Collection that tracks the visibility of the connection status.
+        /// Visibility order: start listening, no connections, connections (1+)
+        /// </summary>
+        public ObservableCollection<bool> ConnectionVisibility { get; set; } =
+            new ObservableCollection<bool>(new[] { true, false, false });
+
         public MachineConnectionsViewModel(
             SqlConnectionViewModel connModel)
         {
@@ -55,19 +60,15 @@ namespace AscCutlistEditor.ViewModels.MQTT
             ListenerTopic = SubTopic + "/+/+";
 
             _knownTopics = new HashSet<string>();
-            _machineConnectionTabs = new ObservableCollection<TabItem>();
+            MachineConnections = new ObservableCollection<MachineMessageViewModel>();
 
             _sqlConnection = connModel;
         }
 
-        public ObservableCollection<TabItem> MachineConnectionTabs
+        public ObservableCollection<MachineMessageViewModel> MachineConnections
         {
-            get => _machineConnectionTabs;
-            set
-            {
-                _machineConnectionTabs = value;
-                RaisePropertyChangedEvent("MachineConnectionTabs");
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -100,26 +101,21 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// Add a new TabItem to track the KPI data for that connection.
         /// </summary>
         /// <param name="topic">The topic this payload came through on.</param>
-        /// <param name="payload">The first message from the machine.</param>
-        public async Task AddTab(string topic, string payload)
+        public void AddTab(string topic)
         {
             // Create a new model for listening to this topic.
             MachineMessageViewModel model =
-                new MachineMessageViewModel(topic, _sqlConnection, payload);
-            await model.StartClient();
+                new MachineMessageViewModel(topic, _sqlConnection);
 
-            // UI thread workaround for async.
+            // Run on UI thread.
+            // Select the correct dispatcher: if Application.Current is null,
+            // we're running unit tests and should use CurrentDispatcher instead.
             Dispatcher dispatcher = Application.Current != null ?
                 Application.Current.Dispatcher :
                 Dispatcher.CurrentDispatcher;
             dispatcher.Invoke(() =>
             {
-                MachineConnectionTabs.Add(new TabItem
-                {
-                    Header = topic.Replace("/", ""),
-                    Content = new UptimeControl(),
-                    DataContext = model
-                });
+                MachineConnections.Add(model);
             });
         }
 
@@ -130,7 +126,13 @@ namespace AscCutlistEditor.ViewModels.MQTT
         public void Refresh()
         {
             _knownTopics = new HashSet<string>();
-            MachineConnectionTabs = new ObservableCollection<TabItem>();
+            MachineConnections = new ObservableCollection<MachineMessageViewModel>();
+
+            // Update UI.
+            Debug.WriteLine("Refreshing topics...");
+            RaisePropertyChangedEvent("MachineConnections");
+            ConnectionVisibility[1] = true;
+            ConnectionVisibility[2] = false;
         }
 
         private async Task StartListener()
@@ -150,24 +152,33 @@ namespace AscCutlistEditor.ViewModels.MQTT
             });
 
             // Response to send on receiving a message.
-            Listener.UseApplicationMessageReceivedHandler(async e =>
+            Listener.UseApplicationMessageReceivedHandler(e =>
             {
+                // Toggle connection tabs visibility.
+                ConnectionVisibility[1] = false;
+                ConnectionVisibility[2] = true;
+
                 // Create a new tab if we haven't seen this topic before.
                 string topic = e.ApplicationMessage.Topic.Substring(SubTopic.Length);
                 if (!_knownTopics.Contains(topic))
                 {
                     Debug.WriteLine($"NEW TOPIC SPOTTED: {topic}");
                     _knownTopics.Add(topic);
-                    string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-                    await AddTab(topic, payload);
 
-                    Debug.WriteLine("### ADDING TOPIC " + topic + " ###");
+                    // Grab payload and pass along to machine message model.
+                    string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+                    MachineMessage machineMessage =
+                        JsonConvert.DeserializeObject<MachineMessage>(payload);
+
+                    AddTab(topic);
                 }
             });
 
             try
             {
                 await Listener.ConnectAsync(options);
+                ConnectionVisibility[0] = false;
+                ConnectionVisibility[1] = true;
             }
             catch
             {

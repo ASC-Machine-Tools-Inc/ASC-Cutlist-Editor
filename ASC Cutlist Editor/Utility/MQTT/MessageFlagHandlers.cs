@@ -1,4 +1,5 @@
 ﻿using AscCutlistEditor.Models.MQTT;
+using AscCutlistEditor.ViewModels.MQTT;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,11 +11,18 @@ namespace AscCutlistEditor.Utility.MQTT
     // Collection of handlers to deal with the set flags in machine messages.
     internal class MessageFlagHandlers
     {
+        private readonly Queries _queries;
+
+        public MessageFlagHandlers(SqlConnectionViewModel sqlConn)
+        {
+            _queries = new Queries(sqlConn.UserSqlSettings);
+        }
+
         /// <summary>
         /// Handle updating the display and returning order data depending on
         /// the set flags from the received machine message.
         /// </summary>
-        internal static async Task OrderDatReqFlagHandler(
+        internal async Task OrderDatReqFlagHandler(
             MachineMessage message,
             MachineMessage returnMessage)
         {
@@ -22,45 +30,52 @@ namespace AscCutlistEditor.Utility.MQTT
             MqttSub sub = returnMessage.tags.set2.MqttSub;
 
             string orderDataRequested = pub.OrderDatReq;
-            switch (orderDataRequested)
+            if (orderDataRequested == "TRUE" && pub.OrderNo != null)
             {
-                case "TRUE" when !string.IsNullOrEmpty(pub.OrderNo):
-                    {
-                        // Respond with the order and bundle data.
-                        DataTable fullOrderTable = await Queries.GetOrdersByIdAndMachine(
-                            pub.OrderNo,
-                            pub.JobNumber);
-                        sub.OrderDatRecv = Queries.DataTableToString(fullOrderTable);
+                // Respond with the order and bundle data.
+                DataTable fullOrderTable = await _queries.GetOrdersByIdAndMachine(
+                    pub.OrderNo,
+                    pub.JobNumber);
+                sub.OrderDatRecv = _queries.DataTableToString(fullOrderTable);
 
-                        DataTable bundlesTable = await Queries.GetBundle(pub.OrderNo);
-                        sub.BundleDatRecv = Queries.DataTableToString(bundlesTable);
-                        sub.OrderDatAck = "TRUE";
-                        sub.OrderNo = pub.OrderNo;
-                        break;
-                    }
-                case "TRUE":
-                    // If data was requested but no order number was included,
-                    // set the flag to clear the button.
-                    sub.OrderDatAck = "TRUE";
-                    break;
-
-                case "FALSE":
-                    {
-                        // Otherwise, respond with the current job numbers.
-                        DataTable orderNumTable = await Queries.GetOrdersByMachineNum(pub.JobNumber);
-
-                        sub.MqttString = Queries.DataTableToString(orderNumTable);
-                        sub.MqttDest = pub.JobNumber;
-                        break;
-                    }
+                DataTable bundlesTable = await _queries.GetBundle(pub.OrderNo);
+                sub.BundleDatRecv = _queries.DataTableToString(bundlesTable);
+                sub.OrderDatAck = "TRUE";
+                sub.OrderNo = pub.OrderNo;
             }
+            else if (orderDataRequested == "TRUE")
+            {
+                // If data was requested but no order number was included,
+                // set the flag to clear the button.
+                sub.OrderDatAck = "TRUE";
+            }
+            else if (orderDataRequested == "FALSE")
+            {
+                // Otherwise, respond with the current job numbers.
+
+                // TODO: handle optional arguments, like material, delivery date
+
+                // 1. Check if pub.WhateverTagNameWillBe has contents
+                // 2. If so, parse it out of whatever format it's in to get the coil material and days into the future
+                // 2a. If there's a material, pass to GetOrders to filter for that material
+                // 2b. If there's a number for days, filter from today to that many days ahead in sql
+                // 2c. If not, just return the top 100 orders. Still need to readd this
+
+                DataTable orderNumTable = await _queries
+                    .GetOrdersByMachineNum(pub.JobNumber);
+
+                sub.MqttString = _queries.DataTableToString(orderNumTable);
+            }
+
+            // Set the destination as a workaround so the data always gets written.
+            sub.MqttDest = pub.JobNumber;
         }
 
         /// <summary>
         /// Handle updating the display and returning coil data depending on
         /// the set flags from the received machine message.
         /// </summary>
-        internal static async Task CoilDatReqFlagHandler(
+        internal async Task CoilDatReqFlagHandler(
             MachineMessage message,
             MachineMessage returnMessage)
         {
@@ -72,13 +87,13 @@ namespace AscCutlistEditor.Utility.MQTT
             {
                 // Coil data requested, check for parameters.
                 var coilDataMessages = new List<string>();
-                if (!string.IsNullOrEmpty(pub.ScanCoilID) &&
-                    !string.IsNullOrEmpty(pub.OrderNo) &&
-                    !pub.OrderNo.Equals("NoOrderSelected"))
+                if (pub.ScanCoilID != "" &&
+                    pub.OrderNo != null &&
+                    pub.OrderNo != "NoOrderSelected")
                 {
                     // Valid parameters, grab the coil data.
-                    DataTable coilData = await Queries.GetCoilData(pub.ScanCoilID);
-                    DataTable orderData = await Queries.GetOrdersById(pub.OrderNo);
+                    DataTable coilData = await _queries.GetCoilData(pub.ScanCoilID);
+                    DataTable orderData = await _queries.GetOrdersById(pub.OrderNo);
 
                     if (coilData.Rows.Count == 0)
                     {
@@ -146,7 +161,8 @@ namespace AscCutlistEditor.Utility.MQTT
                                              "inventory data invalid!");
                     }
 
-                    if (string.IsNullOrEmpty(pub.OrderNo))
+                    if (string.IsNullOrEmpty(pub.OrderNo) ||
+                        pub.OrderNo == "NoOrderSelected")
                     {
                         coilDataMessages.Add("No order number " +
                                              "selected! Select order " +
@@ -183,7 +199,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// <summary>
         /// Handle updating the display when the HMI requests the list of coils.
         /// </summary>
-        internal static async Task CoilStoreReqFlagHandler(
+        internal async Task CoilStoreReqFlagHandler(
             MachineMessage message,
             MachineMessage returnMessage)
         {
@@ -196,10 +212,10 @@ namespace AscCutlistEditor.Utility.MQTT
                 return;
             }
 
-            DataTable coils = await Queries.GetNonDepletedCoils();
-            int count = coils.Rows.Count - 1;
+            DataTable coils = await _queries.GetNonDepletedCoils();
+            int count = coils.Rows.Count;
 
-            sub.CoilStoreRecv = count + "|" + Queries.DataTableToString(coils);
+            sub.CoilStoreRecv = count + "|" + _queries.DataTableToString(coils);
             sub.CoilStoreAck = "TRUE";
         }
 
@@ -208,7 +224,7 @@ namespace AscCutlistEditor.Utility.MQTT
         /// from the machine.
         /// </summary>
         /// <returns>The number of rows added to the database.</returns>
-        internal static async Task<int> CoilUsageSendFlagHandler(
+        internal async Task<int> CoilUsageSendFlagHandler(
             MachineMessage message,
             MachineMessage returnMessage)
         {
@@ -217,14 +233,14 @@ namespace AscCutlistEditor.Utility.MQTT
 
             // Check if we have coil usage data requesting to be added.
             if (pub.CoilUsageSend != "TRUE" ||
-                string.IsNullOrEmpty(pub.CoilUsageDat))
+                pub.CoilUsageDat == null)
             {
                 return 0;
             }
 
             List<List<string>> coilUsageFields = pub.CoilUsageDat
                 // Split the usage data into rows.
-                .Split("|")
+                .Split("|", StringSplitOptions.RemoveEmptyEntries)
                 // Split those rows into a list of fields.
                 .Select(usageRows =>
                     new List<string>(usageRows.Split(",")))
@@ -235,34 +251,35 @@ namespace AscCutlistEditor.Utility.MQTT
                 // with the total length for those groupings.
                 .GroupBy(
                     usageRow =>
-                        new { coilId = usageRow[1], itemId = usageRow[3] },
+                        (coilId: usageRow[1], itemId: usageRow[3]),
                     (key, fields) =>
                     {
-                        // Convert fields to list to prevent multiple enumeration.
-                        var enumerable = fields.ToList();
+                        List<List<string>> enumerable = fields.ToList();
+
+                        // Grab the first group of fields for order & material.
+                        List<string> firstFields = enumerable[0];
+
+                        // Sum the length of all the groups to get the total
+                        // length for this coil and item id grouping.
+                        decimal totalLength = enumerable.Sum(x =>
+                            Convert.ToDecimal(x[4]));
+
                         return new CoilUsage
                         {
-                            orderno = enumerable.ElementAt(0).ToString(),
+                            orderno = firstFields[0],
                             CoilId = key.coilId,
-                            CoilMatl = enumerable.ElementAt(2).ToString(),
+                            CoilMatl = firstFields[0],
                             ItemID = key.itemId,
-                            Length = enumerable.ElementAt(4).Sum(Convert.ToDecimal),
+                            Length = totalLength,
                             Time = DateTime.Now
                         };
                     })
                 .ToList();
 
-            // Add our rows to the DataTable for updating the database.
-            DataTable usageData = new DataTable();
-            foreach (CoilUsage usageRow in coilUsageList)
-            {
-                usageData.Rows.Add(usageRow);
-            }
-
             sub.CoilUsageRecvAck = "TRUE";
 
             // Update the database.
-            return await Queries.SetUsageData(usageData);
+            return await _queries.SetUsageData(coilUsageList);
         }
     }
 }

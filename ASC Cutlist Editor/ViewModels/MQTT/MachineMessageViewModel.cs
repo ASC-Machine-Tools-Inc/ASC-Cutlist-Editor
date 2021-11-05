@@ -1,4 +1,5 @@
-﻿using AscCutlistEditor.Frameworks;
+﻿using System;
+using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models.MQTT;
 using AscCutlistEditor.Utility.MQTT;
 using MQTTnet;
@@ -9,7 +10,6 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,30 +21,16 @@ namespace AscCutlistEditor.ViewModels.MQTT
     /// <summary>
     /// Handles the data for a single machine connection.
     /// </summary>
-    internal class MachineMessageViewModel : ObservableObject
+    public class MachineMessageViewModel : ObservableObject
     {
-        // Model for storing the mqtt connection data.
-        private readonly MachineConnection _machineConnection;
+        /// <summary>
+        /// Model for storing the mqtt connection data.
+        /// </summary>
+        public MachineConnection MachineConnection { get; set; }
 
-        private LineSeries _uptimeSeries;
-        private BarSeries _downtimeStatsSeries;
-
-        private MachineMessage _latestMachineMessage;
-
-        public PlotModel UptimePlot { get; set; }
-
-        public PlotModel DowntimeStatsPlot { get; set; }
-
-        public ObservableCollection<MachineMessage> MachineMessageCollection
-        {
-            get => _machineConnection.MachineMessageCollection;
-            set
-            {
-                _machineConnection.MachineMessageCollection = value;
-                RaisePropertyChangedEvent("MachineMessageCollection");
-            }
-        }
-
+        /// <summary>
+        /// Last machine message the client listener received.
+        /// </summary>
         public MachineMessage LatestMachineMessage
         {
             get => _latestMachineMessage;
@@ -55,45 +41,52 @@ namespace AscCutlistEditor.ViewModels.MQTT
             }
         }
 
+        public PlotModel UptimePlot { get; set; }
+
+        public PlotModel DowntimeStatsPlot { get; set; }
+
+        private MachineMessage _latestMachineMessage;
+
+        private LineSeries _uptimeSeries;
+        private BarSeries _downtimeStatsSeries;
+
+        private SqlConnectionViewModel _sqlConn;
+
         public MachineMessageViewModel(
             string topic,
-            SqlConnectionViewModel connModel,
-            string payload = null)
+            SqlConnectionViewModel connModel)
         {
             var mqttFactory = new MqttFactory();
             IMqttClient client = mqttFactory.CreateMqttClient();
             string subTopic = MachineConnectionsViewModel.SubTopic + topic;
             string pubTopic = MachineConnectionsViewModel.PubTopic + topic;
 
-            _machineConnection = new MachineConnection(
+            // Strip slashes to just display the subscribed topic.
+            string displayTopic = topic.Replace("/", "");
+
+            MachineConnection = new MachineConnection(
                 client,
                 subTopic,
                 pubTopic,
+                displayTopic,
                 connModel
             );
 
-            CreateUptimeModel();
+            _sqlConn = connModel;
 
-            // If we have a payload, process it.
-            if (!string.IsNullOrEmpty(payload))
-            {
-                try
-                {
-                    // Attempt payload conversion and logging.
-                    MachineMessage machineMessage =
-                        JsonConvert.DeserializeObject<MachineMessage>(payload);
-
-                    // Bryan's code for handling messages and their flags.
-                    ProcessResponseMessage(machineMessage);
-                }
-                catch (JsonReaderException)
-                {
-                    Debug.WriteLine("Error: invalid JSON value.");
-                }
-            }
+            CreateUptimeModel();  // Create the plots for the UI.
+            StartClient();  // Listen for continued messages.
         }
 
-        public async Task StartClient()
+        /// <summary>
+        /// Fire & forget for initializing client.
+        /// </summary>
+        public async void StartClient()
+        {
+            await StartClientAsync();
+        }
+
+        private async Task StartClientAsync()
         {
             // Create MQTT client.
             var options = new MqttClientOptionsBuilder()
@@ -103,20 +96,18 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 .Build();
 
             // Response to send on connection.
-            _machineConnection.Client.UseConnectedHandler(async e =>
+            MachineConnection.Client.UseConnectedHandler(async e =>
             {
-                Debug.WriteLine("### SUBSCRIBED TO " + _machineConnection.SubTopic + " ###");
-
                 PublishMessage(
-                    _machineConnection.Client,
+                    MachineConnection.Client,
                     "self/success",
                     "Connection successful!");
 
-                await _machineConnection.Client.SubscribeAsync(_machineConnection.SubTopic);
+                await MachineConnection.Client.SubscribeAsync(MachineConnection.SubTopic);
             });
 
             // Response to send on receiving a message.
-            _machineConnection.Client.UseApplicationMessageReceivedHandler(e =>
+            MachineConnection.Client.UseApplicationMessageReceivedHandler(async e =>
             {
                 string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 
@@ -126,8 +117,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     MachineMessage machineMessage =
                         JsonConvert.DeserializeObject<MachineMessage>(payload);
 
-                    // Bryan's code for handling messages and their flags.
-                    ProcessResponseMessage(machineMessage);
+                    int rowsAdded = await ProcessResponseMessage(machineMessage);
+                    if (rowsAdded > 0) { Debug.WriteLine("Rows added: " + rowsAdded); }
                 }
                 catch (JsonReaderException)
                 {
@@ -137,7 +128,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
             try
             {
-                await _machineConnection.Client.ConnectAsync(options);
+                await MachineConnection.Client.ConnectAsync(options);
             }
             catch
             {
@@ -248,17 +239,22 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// Handle returning the response message and performing any tasks
         /// based off the flags set in the machine's message.
         /// </summary>
-        private async void ProcessResponseMessage(MachineMessage message)
+        /// <returns>
+        /// The number of rows added for usage.
+        /// </returns>
+        private async Task<int> ProcessResponseMessage(MachineMessage message)
         {
-            if (message == null)
-            {
-                return;
-            }
+            int rowsAdded = 0;
 
             // To avoid confusion - the pub here refers to the machine's
             // published message, and sub refers to the response the machine
             // expects. The client publishes the return message to PubTopic.
-            MqttPub pub = message.tags.set1.MqttPub;
+            MqttPub pub = message.tags?.set1?.MqttPub;
+            if (pub == null)
+            {
+                return rowsAdded;
+            }
+
             MachineMessage returnMessage = new MachineMessage
             {
                 tags = new Tags
@@ -273,36 +269,44 @@ namespace AscCutlistEditor.ViewModels.MQTT
             // Check that a job number was included in the message.
             if (string.IsNullOrEmpty(pub.JobNumber))
             {
-                return;
+                return rowsAdded;
             }
 
             // Update the UI.
             UpdateMachineTab(message);
 
-            // Handle the order data requested flag (getting the orders and bundles).
-            await MessageFlagHandlers.OrderDatReqFlagHandler(message, returnMessage);
+            MessageFlagHandlers handlers = new MessageFlagHandlers(_sqlConn);
 
-            // Handle the coil data requested flag (running a specific coil and order).
-            await MessageFlagHandlers.CoilDatReqFlagHandler(message, returnMessage);
-
-            // Handle the coil list requested flag (all non-depleted coils).
-            await MessageFlagHandlers.CoilStoreReqFlagHandler(message, returnMessage);
-
-            // Handle the coil usage sending requested flag (write to database).
-            int rowsAdded = await MessageFlagHandlers.CoilUsageSendFlagHandler(
-                message,
-                returnMessage);
-            // TODO: remove if check? For debugging
-            if (rowsAdded > 0)
+            try
             {
-                Debug.WriteLine($"Rows added from coil usage: {rowsAdded}");
+                // Handle the order data requested flag (getting the orders and bundles).
+                await handlers.OrderDatReqFlagHandler(message, returnMessage);
+
+                // Handle the coil data requested flag (running a specific coil and order).
+                await handlers.CoilDatReqFlagHandler(message, returnMessage);
+
+                // Handle the coil list requested flag (all non-depleted coils).
+                await handlers.CoilStoreReqFlagHandler(message, returnMessage);
+
+                // Handle the coil usage sending requested flag (write to database).
+                rowsAdded = await handlers.CoilUsageSendFlagHandler(message, returnMessage);
+            }
+            catch (Exception ex)
+            {
+                // Query error. Close the connection.
+                // TODO: set status to sql failed
+
+                Debug.WriteLine("Query error." + ex);
+                throw;
             }
 
             // Finally, write the response message back out for the HMI.
             PublishMessage(
-                _machineConnection.Client,
-                _machineConnection.PubTopic,
+                MachineConnection.Client,
+                MachineConnection.PubTopic,
                 JsonConvert.SerializeObject(returnMessage));
+            MachineConnection.MachineMessagePubCollection.Add(returnMessage);
+            return rowsAdded;
         }
 
         /// <summary>
@@ -318,7 +322,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 : Dispatcher.CurrentDispatcher;
             dispatcher.Invoke(() =>
             {
-                MachineMessageCollection.Add(message);
+                MachineConnection.MachineMessageSubCollection.Add(message);
                 LatestMachineMessage = message;
 
                 MqttPub pub = message.tags.set1.MqttPub;

@@ -70,5 +70,330 @@ namespace AscCutlistEditor.Properties {
                 this["Password"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CoilTableName {
+            get {
+                return ((string)(this["CoilTableName"]));
+            }
+            set {
+                this["CoilTableName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("startlength")]
+        public string CoilStartLengthName {
+            get {
+                return ((string)(this["CoilStartLengthName"]));
+            }
+            set {
+                this["CoilStartLengthName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("lengthused")]
+        public string CoilLengthUsedName {
+            get {
+                return ((string)(this["CoilLengthUsedName"]));
+            }
+            set {
+                this["CoilLengthUsedName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("material")]
+        public string CoilMaterialName {
+            get {
+                return ((string)(this["CoilMaterialName"]));
+            }
+            set {
+                this["CoilMaterialName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("coilnumber")]
+        public string CoilNumberName {
+            get {
+                return ((string)(this["CoilNumberName"]));
+            }
+            set {
+                this["CoilNumberName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("description")]
+        public string CoilDescriptionName {
+            get {
+                return ((string)(this["CoilDescriptionName"]));
+            }
+            set {
+                this["CoilDescriptionName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("dateout")]
+        public string CoilDateName {
+            get {
+                return ((string)(this["CoilDateName"]));
+            }
+            set {
+                this["CoilDateName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OrderTableName {
+            get {
+                return ((string)(this["OrderTableName"]));
+            }
+            set {
+                this["OrderTableName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("orderno")]
+        public string OrderNumName {
+            get {
+                return ((string)(this["OrderNumName"]));
+            }
+            set {
+                this["OrderNumName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("material")]
+        public string OrderMaterialName {
+            get {
+                return ((string)(this["OrderMaterialName"]));
+            }
+            set {
+                this["OrderMaterialName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("quantity")]
+        public string OrderQuantityName {
+            get {
+                return ((string)(this["OrderQuantityName"]));
+            }
+            set {
+                this["OrderQuantityName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("partno")]
+        public string OrderPartNumName {
+            get {
+                return ((string)(this["OrderPartNumName"]));
+            }
+            set {
+                this["OrderPartNumName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("machinenum")]
+        public string OrderMachineNumName {
+            get {
+                return ((string)(this["OrderMachineNumName"]));
+            }
+            set {
+                this["OrderMachineNumName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("item_id")]
+        public string OrderItemIdName {
+            get {
+                return ((string)(this["OrderItemIdName"]));
+            }
+            set {
+                this["OrderItemIdName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("length")]
+        public string OrderLengthName {
+            get {
+                return ((string)(this["OrderLengthName"]));
+            }
+            set {
+                this["OrderLengthName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("bundle")]
+        public string OrderBundleName {
+            get {
+                return ((string)(this["OrderBundleName"]));
+            }
+            set {
+                this["OrderBundleName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string BundleTableName {
+            get {
+                return ((string)(this["BundleTableName"]));
+            }
+            set {
+                this["BundleTableName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("orderno")]
+        public string BundleOrderNumName {
+            get {
+                return ((string)(this["BundleOrderNumName"]));
+            }
+            set {
+                this["BundleOrderNumName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("material, prodcode, user1, user2, user3, user4, custname, custaddr1, custaddr2, c" +
+            "ustcity, custstate, custzip")]
+        public string BundleColumns {
+            get {
+                return ((string)(this["BundleColumns"]));
+            }
+            set {
+                this["BundleColumns"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string UsageTableName {
+            get {
+                return ((string)(this["UsageTableName"]));
+            }
+            set {
+                this["UsageTableName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("orderno")]
+        public string UsageOrderNumName {
+            get {
+                return ((string)(this["UsageOrderNumName"]));
+            }
+            set {
+                this["UsageOrderNumName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("material")]
+        public string UsageMaterialName {
+            get {
+                return ((string)(this["UsageMaterialName"]));
+            }
+            set {
+                this["UsageMaterialName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("itemid")]
+        public string UsageItemIdName {
+            get {
+                return ((string)(this["UsageItemIdName"]));
+            }
+            set {
+                this["UsageItemIdName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("totallength")]
+        public string UsageLengthName {
+            get {
+                return ((string)(this["UsageLengthName"]));
+            }
+            set {
+                this["UsageLengthName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("adddate")]
+        public string UsageDateName {
+            get {
+                return ((string)(this["UsageDateName"]));
+            }
+            set {
+                this["UsageDateName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ConnectionString {
+            get {
+                return ((string)(this["ConnectionString"]));
+            }
+            set {
+                this["ConnectionString"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseConnectionString {
+            get {
+                return ((bool)(this["UseConnectionString"]));
+            }
+            set {
+                this["UseConnectionString"] = value;
+            }
+        }
     }
 }

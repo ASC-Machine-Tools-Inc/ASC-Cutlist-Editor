@@ -2,6 +2,8 @@
 using AscCutlistEditor.ViewModels.MQTT;
 using System;
 using System.Windows;
+using AscCutlistEditor.Models.MQTT;
+using AscCutlistEditor.Views.MQTT;
 
 namespace AscCutlistEditor.Views
 {
@@ -17,9 +19,19 @@ namespace AscCutlistEditor.Views
             DataContext = new MainViewModel();
         }
 
-        private static void MainWindow_Closed(object sender, EventArgs e)
+        private void OpenSqlSettings(object sender, RoutedEventArgs e)
         {
-            SqlConnectionViewModel.Save();
+            SqlSettingsControl settings = new SqlSettingsControl
+            {
+                // Grab the data context of MainWindow so we can access our settings.
+                DataContext = Application.Current.MainWindow?.DataContext
+            };
+            settings.ShowDialog();
+        }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            UserSqlSettings.Save();
         }
     }
 }
