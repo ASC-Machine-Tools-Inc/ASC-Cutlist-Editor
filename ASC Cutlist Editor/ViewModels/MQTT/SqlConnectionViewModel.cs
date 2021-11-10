@@ -68,7 +68,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
         public async Task<bool> TestConnection(
             bool updateConnectionString = true,
-            bool toggleCursor = true)
+            bool toggleCursor = true,
+            bool showDialog = false)
         {
             // Check that we can create a connection string if requested.
             if (updateConnectionString && !UpdateConnectionString())
@@ -88,21 +89,28 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 await conn.OpenAsync();
 
                 // Show if connection successful.
-                _dialog.ShowMessageBox(
-                    "Connection successful!",
-                    "ASC Cutlist Editor",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                if (showDialog)
+                {
+                    _dialog.ShowMessageBox(
+                        "Connection successful!",
+                        "ASC Cutlist Editor",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
 
                 return true;
             }
             catch (SqlException)
             {
-                _dialog.ShowMessageBox(
-                    "Error connecting to the server.",
-                    "ASC Cutlist Editor",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                if (showDialog)
+                {
+                    _dialog.ShowMessageBox(
+                        "Error connecting to the server.",
+                        "ASC Cutlist Editor",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+
                 return false;
             }
             finally

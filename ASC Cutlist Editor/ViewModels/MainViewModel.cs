@@ -75,7 +75,7 @@ namespace AscCutlistEditor.ViewModels
         /// Start listening for new connections under the chosen topic.
         /// </summary>
         public ICommand StartListeningForConnectionsCommand =>
-            new DelegateCommand(async () => await MachineConnectionsViewModel.Start());
+            new DelegateCommand(() => MachineConnectionsViewModel.Start());
 
         /// <summary>
         /// Resets the list of connections (does not stop connection listener!)
@@ -94,7 +94,7 @@ namespace AscCutlistEditor.ViewModels
         /// </summary>
         public ICommand TestSqlConnectionCommand =>
             new DelegateCommand(async () =>
-                await SqlConnectionViewModel.TestConnection());
+                await SqlConnectionViewModel.TestConnection(showDialog: true));
 
         private void ToggleView(int index)
         {

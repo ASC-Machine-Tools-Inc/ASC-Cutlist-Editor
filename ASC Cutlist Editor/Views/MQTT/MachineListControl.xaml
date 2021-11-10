@@ -7,6 +7,8 @@
              xmlns:viewModels="clr-namespace:AscCutlistEditor.ViewModels"
              xmlns:mqtt="clr-namespace:AscCutlistEditor.Views.MQTT"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:machineConnection="clr-namespace:AscCutlistEditor.Views.MQTT.MachineConnection"
+             xmlns:wpfAutoGrid="clr-namespace:WpfAutoGrid;assembly=WpfAutoGrid"
              d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -59,31 +61,65 @@
                     Margin="10"></ui:ProgressBar>
             </StackPanel>
 
-            <!-- Show when connected -->
-            <!--<TabControl
-            ItemsSource="{Binding
-            MachineConnectionsViewModel.MachineConnections}"
-            Visibility="{Binding
-            MachineConnectionsViewModel.ConnectionVisibility[2],
-            Converter={StaticResource BooleanToVisibilityConverter}}"
-            SelectedIndex="0">
-                <TabControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding
-                        MachineConnection.DisplayTopic}" />
-                    </DataTemplate>
-                </TabControl.ItemTemplate>
-                <TabControl.ContentTemplate>
-                    <DataTemplate>
-                        <mqtt:UptimeControl></mqtt:UptimeControl>
-                    </DataTemplate>
-                </TabControl.ContentTemplate>
-            </TabControl>-->
-
-            <ListBox
+            <!-- Show machine connections. -->
+            <!--<DataGrid
                 ItemsSource="{Binding
             MachineConnectionsViewModel.MachineConnections}"
                 Visibility="{Binding
+            MachineConnectionsViewModel.ConnectionVisibility[2],
+            Converter={StaticResource BooleanToVisibilityConverter}}"
+                AutoGenerateColumns="False"
+                IsReadOnly="True"
+                GridLinesVisibility="All"
+                HorizontalAlignment="Stretch">
+
+                <DataGrid.RowHeaderStyle>
+                    <Style TargetType="DataGridRowHeader">
+                        <Setter Property="Content"
+                                Value="{Binding Path=MachineConnection.DisplayTopic}" />
+                        <Setter Property="Margin" Value="5"></Setter>
+                    </Style>
+                </DataGrid.RowHeaderStyle>
+
+                -->
+            <!--<DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Background"
+                                Value="DarkGray"></Setter>
+                    </Style>
+                </DataGrid.CellStyle>-->
+            <!--
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Total GOOD"
+                                        Binding="{Binding
+                        LatestMachineMessage.tags.set1.MachineStatistics.UserPrime}" />
+                    <DataGridTextColumn Header="Net SCRAP"
+                                        Binding="{Binding
+                        LatestMachineMessage.tags.set1.MachineStatistics.UserScrap}" />
+                </DataGrid.Columns>
+
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <TextBlock>Yeah</TextBlock>
+                        -->
+            <!--<Expander>
+                            <Expander.Header>
+                                <machineConnection:HeaderControl />
+                            </Expander.Header>
+                            <Expander.Content>
+                                <machineConnection:ExpandedInfoControl />
+                            </Expander.Content>
+                        </Expander>-->
+            <!--
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+            </DataGrid>-->
+
+            <ListBox
+                    ItemsSource="{Binding
+            MachineConnectionsViewModel.MachineConnections}"
+                    Visibility="{Binding
             MachineConnectionsViewModel.ConnectionVisibility[2],
             Converter={StaticResource BooleanToVisibilityConverter}}">
                 <ListBox.Template>
@@ -92,7 +128,7 @@
                     </ControlTemplate>
                 </ListBox.Template>
 
-                <!-- Stretch items to fill full width. -->
+                <!--Stretch items to fill full width.-->
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -102,17 +138,20 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <!-- Expand our machine connections by clicking on them. -->
+                        <!--Expand our machine connections by clicking on them.-->
                         <Expander>
                             <Expander.Header>
-                                <TextBlock Text="{Binding
-                                    MachineConnection.DisplayTopic}"></TextBlock>
+                                <machineConnection:HeaderControl />
                             </Expander.Header>
-                            <mqtt:MachineConnectionControl />
+                            <Expander.Content>
+                                <machineConnection:ExpandedInfoControl />
+                            </Expander.Content>
                         </Expander>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+
+            <!-- Listview instead for headers? -->
         </Grid>
     </ScrollViewer>
 </UserControl>

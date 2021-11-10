@@ -107,8 +107,17 @@ namespace AscCutlistEditor.Utility.MQTT
                                 ShiftChangePct = 4.15,
                                 BreakPct = 10.77,
                                 UptimePct = uptimePercentage,
-                                DowntimePct = downtimePercentage
+                                DowntimePct = downtimePercentage,
+                                PrimeFootagePct = 96.82,
+                                ScrapFootagePct = 3.16,
+                                TotalHours = 824.5
                             }
+                        },
+                        MachineStatistics = new MachineStatistics
+                        {
+                            UserPrime = 412.34,
+                            UserScrap = 13.45,
+                            UserUsage = 425.79
                         }
                     }
                 },
