@@ -161,7 +161,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             // Create the plot models.
             var uptimePlot = new PlotModel
             {
-                Title = "Status Over Time",
+                Title = "Status Over Time"
             };
             var downtimeStatsPlot = new PlotModel
             {
@@ -185,7 +185,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             uptimePlot.Axes.Add(new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
-                StringFormat = "h:mm:ss",
+                StringFormat = "h:mm:ss"
             });
             // Y axis with labels for current line status.
             uptimePlot.Axes.Add(new CategoryAxis

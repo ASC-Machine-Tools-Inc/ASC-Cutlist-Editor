@@ -81,7 +81,7 @@ namespace AscCutlistEditor.ViewModels.Cutlists
                         break;
                     }
 
-                    length = Math.Round(LengthParser.ParseString(reader.GetString(2)), 2);
+                    length = Math.Round(Helpers.ParseString(reader.GetString(2)), 2);
                     cutlist = new Cutlist
                     {
                         ID = int.Parse(reader.GetString(0)),

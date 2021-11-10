@@ -6,6 +6,7 @@
              xmlns:ui="http://schemas.modernwpf.com/2019"
              xmlns:viewModels="clr-namespace:AscCutlistEditor.ViewModels"
              xmlns:mqtt="clr-namespace:AscCutlistEditor.Views.MQTT"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
              d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -59,7 +60,7 @@
             </StackPanel>
 
             <!-- Show when connected -->
-            <TabControl
+            <!--<TabControl
             ItemsSource="{Binding
             MachineConnectionsViewModel.MachineConnections}"
             Visibility="{Binding
@@ -77,7 +78,41 @@
                         <mqtt:UptimeControl></mqtt:UptimeControl>
                     </DataTemplate>
                 </TabControl.ContentTemplate>
-            </TabControl>
+            </TabControl>-->
+
+            <ListBox
+                ItemsSource="{Binding
+            MachineConnectionsViewModel.MachineConnections}"
+                Visibility="{Binding
+            MachineConnectionsViewModel.ConnectionVisibility[2],
+            Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ListBox.Template>
+                    <ControlTemplate TargetType="{x:Type ListBox}">
+                        <ItemsPresenter />
+                    </ControlTemplate>
+                </ListBox.Template>
+
+                <!-- Stretch items to fill full width. -->
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <!-- Expand our machine connections by clicking on them. -->
+                        <Expander>
+                            <Expander.Header>
+                                <TextBlock Text="{Binding
+                                    MachineConnection.DisplayTopic}"></TextBlock>
+                            </Expander.Header>
+                            <mqtt:MachineConnectionControl />
+                        </Expander>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Grid>
     </ScrollViewer>
 </UserControl>

@@ -125,14 +125,16 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// </summary>
         public void Refresh()
         {
-            _knownTopics = new HashSet<string>();
-            MachineConnections = new ObservableCollection<MachineMessageViewModel>();
+            if (MachineConnections.Count > 0)
+            {
+                _knownTopics = new HashSet<string>();
+                MachineConnections = new ObservableCollection<MachineMessageViewModel>();
 
-            // Update UI.
-            Debug.WriteLine("Refreshing topics...");
-            RaisePropertyChangedEvent("MachineConnections");
-            ConnectionVisibility[1] = true;
-            ConnectionVisibility[2] = false;
+                // Update UI.
+                RaisePropertyChangedEvent("MachineConnections");
+                ConnectionVisibility[1] = true;
+                ConnectionVisibility[2] = false;
+            }
         }
 
         private async Task StartListener()
@@ -164,11 +166,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 {
                     Debug.WriteLine($"NEW TOPIC SPOTTED: {topic}");
                     _knownTopics.Add(topic);
-
-                    // Grab payload and pass along to machine message model.
-                    string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-                    MachineMessage machineMessage =
-                        JsonConvert.DeserializeObject<MachineMessage>(payload);
 
                     AddTab(topic);
                 }

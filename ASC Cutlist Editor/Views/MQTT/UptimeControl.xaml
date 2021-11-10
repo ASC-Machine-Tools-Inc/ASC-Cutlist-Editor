@@ -6,25 +6,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mqtt="clr-namespace:AscCutlistEditor.ViewModels.MQTT"
+             xmlns:wpfAutoGrid="clr-namespace:WpfAutoGrid;assembly=WpfAutoGrid"
              d:DataContext="{d:DesignInstance Type=mqtt:MachineMessageViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid MaxHeight="{Binding ActualHeight,
-        ElementName=Uptime}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" MinHeight="32" />
-            <RowDefinition Height="5" />
-            <RowDefinition Height="*" MinHeight="32" />
-            <RowDefinition Height="5" />
-            <RowDefinition Height="*" MinHeight="32" />
-        </Grid.RowDefinitions>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
+    <wpfAutoGrid:AutoGrid MaxHeight="{Binding ActualHeight,
+        ElementName=Uptime}"
+                          Rows="*,5,*,5,*"
+                          Columns="*">
+        <wpfAutoGrid:AutoGrid Rows="*" ColumnCount="2" ColumnWidth="*">
             <DockPanel>
                 <TextBlock Text="Received Machine Messages"
                            Background="DimGray"
@@ -61,7 +51,7 @@
                 </Border>
             </DockPanel>
 
-            <DockPanel Grid.Column="1">
+            <DockPanel>
                 <TextBlock Text="Overall Uptime/Downtime"
                            Background="DimGray"
                            Foreground="White"
@@ -71,17 +61,8 @@
                            Padding="5"
                            DockPanel.Dock="Top" />
                 <Border BorderBrush="DimGray" BorderThickness="1 2">
-                    <Grid Margin="25 10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="*"></RowDefinition>
-                            <RowDefinition Height="*"></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
+                    <wpfAutoGrid:AutoGrid Margin="25 10"
+                                          Rows="Auto,*,*" Columns="Auto,*">
                         <WrapPanel
                     Grid.ColumnSpan="2"
                     Margin="10"
@@ -96,39 +77,39 @@
                         </WrapPanel>
 
                         <TextBlock
-                    Grid.Row="1" Grid.Column="0"
                     DockPanel.Dock="Left"
-                    Text="{Binding LatestMachineMessage.tags.set1.PlantData.KPI.UptimePct,
+                    Text="{Binding LatestMachineMessage
+                            .tags.set1.PlantData.KPI.UptimePct,
                     StringFormat={}{0:0.00'%'}}"
                     VerticalAlignment="Center"
                     Margin="0 0 10 0" />
                         <ProgressBar
-                    Grid.Row="1" Grid.Column="1"
                     MinHeight="50" MinWidth="100"
                     Foreground="Green"
-                    Value="{Binding LatestMachineMessage.tags.set1.PlantData.KPI.UptimePct}">
+                    Value="{Binding LatestMachineMessage
+                            .tags.set1.PlantData.KPI.UptimePct}">
                         </ProgressBar>
 
                         <TextBlock
-                    Grid.Row="2" Grid.Column="0"
-                    Text="{Binding LatestMachineMessage.tags.set1.PlantData.KPI.DowntimePct,
+                    Text="{Binding LatestMachineMessage
+                            .tags.set1.PlantData.KPI.DowntimePct,
                     StringFormat={}{0:0.00'%'}}"
                     VerticalAlignment="Center"
                     Margin="0 0 10 0" />
                         <ProgressBar
-                    Grid.Row="2" Grid.Column="1"
                     MinHeight="50" MinWidth="100"
                     Foreground="Red"
-                    Value="{Binding LatestMachineMessage.tags.set1.PlantData.KPI.DowntimePct}">
+                    Value="{Binding LatestMachineMessage
+                            .tags.set1.PlantData.KPI.DowntimePct}">
                         </ProgressBar>
-                    </Grid>
+                    </wpfAutoGrid:AutoGrid>
                 </Border>
             </DockPanel>
-        </Grid>
+        </wpfAutoGrid:AutoGrid>
 
-        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" />
+        <GridSplitter HorizontalAlignment="Stretch" />
 
-        <DockPanel Grid.Row="2">
+        <DockPanel>
             <TextBlock Text="Status Charts"
                        Background="DimGray"
                        Foreground="White"
@@ -138,26 +119,21 @@
                        Padding="5"
                        DockPanel.Dock="Top" />
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <wpfAutoGrid:AutoGrid Rows="*" Columns="*,*">
 
                 <oxy:PlotView
                     Margin="5"
                     Model="{Binding UptimePlot}" />
 
                 <oxy:PlotView
-                    Grid.Column="1"
                     Margin="5"
                     Model="{Binding DowntimeStatsPlot}" />
-            </Grid>
+            </wpfAutoGrid:AutoGrid>
         </DockPanel>
 
-        <GridSplitter Grid.Row="3" HorizontalAlignment="Stretch" />
+        <GridSplitter HorizontalAlignment="Stretch" />
 
-        <DockPanel Grid.Row="4">
+        <DockPanel>
             <TextBlock Text="Manual Response Tables"
                        Background="DimGray"
                        Foreground="White"
@@ -166,10 +142,9 @@
                        TextAlignment="Center"
                        Padding="5"
                        DockPanel.Dock="Top" />
-
             <Grid>
                 <TextBlock Text="Testing"></TextBlock>
             </Grid>
         </DockPanel>
-    </Grid>
+    </wpfAutoGrid:AutoGrid>
 </UserControl>
