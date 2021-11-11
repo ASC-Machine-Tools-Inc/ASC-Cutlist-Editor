@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Threading;
 using AscCutlistEditor.Models.MQTT;
 using AscCutlistEditor.ViewModels.MQTT;
+using ModernWpf.Controls;
 using MQTTnet.Client;
 using Newtonsoft.Json;
 

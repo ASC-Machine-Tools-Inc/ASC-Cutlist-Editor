@@ -8,9 +8,8 @@ namespace AscCutlistEditor.Frameworks
     public interface IDialogService
     {
         void ShowMessageBox(
-            string messageBoxText,
-            string caption,
-            MessageBoxButton button,
-            MessageBoxImage image);
+            string title,
+            string contents,
+            string cancelText);
     }
 }

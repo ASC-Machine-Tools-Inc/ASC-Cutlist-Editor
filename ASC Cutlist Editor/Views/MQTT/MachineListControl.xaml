@@ -62,61 +62,7 @@
             </StackPanel>
 
             <!-- Show machine connections. -->
-            <!--<DataGrid
-                ItemsSource="{Binding
-            MachineConnectionsViewModel.MachineConnections}"
-                Visibility="{Binding
-            MachineConnectionsViewModel.ConnectionVisibility[2],
-            Converter={StaticResource BooleanToVisibilityConverter}}"
-                AutoGenerateColumns="False"
-                IsReadOnly="True"
-                GridLinesVisibility="All"
-                HorizontalAlignment="Stretch">
-
-                <DataGrid.RowHeaderStyle>
-                    <Style TargetType="DataGridRowHeader">
-                        <Setter Property="Content"
-                                Value="{Binding Path=MachineConnection.DisplayTopic}" />
-                        <Setter Property="Margin" Value="5"></Setter>
-                    </Style>
-                </DataGrid.RowHeaderStyle>
-
-                -->
-            <!--<DataGrid.CellStyle>
-                    <Style TargetType="DataGridCell">
-                        <Setter Property="Background"
-                                Value="DarkGray"></Setter>
-                    </Style>
-                </DataGrid.CellStyle>-->
-            <!--
-
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Total GOOD"
-                                        Binding="{Binding
-                        LatestMachineMessage.tags.set1.MachineStatistics.UserPrime}" />
-                    <DataGridTextColumn Header="Net SCRAP"
-                                        Binding="{Binding
-                        LatestMachineMessage.tags.set1.MachineStatistics.UserScrap}" />
-                </DataGrid.Columns>
-
-                <DataGrid.RowDetailsTemplate>
-                    <DataTemplate>
-                        <TextBlock>Yeah</TextBlock>
-                        -->
-            <!--<Expander>
-                            <Expander.Header>
-                                <machineConnection:HeaderControl />
-                            </Expander.Header>
-                            <Expander.Content>
-                                <machineConnection:ExpandedInfoControl />
-                            </Expander.Content>
-                        </Expander>-->
-            <!--
-                    </DataTemplate>
-                </DataGrid.RowDetailsTemplate>
-            </DataGrid>-->
-
-            <ListBox
+            <!--<ListBox
                     ItemsSource="{Binding
             MachineConnectionsViewModel.MachineConnections}"
                     Visibility="{Binding
@@ -128,7 +74,9 @@
                     </ControlTemplate>
                 </ListBox.Template>
 
-                <!--Stretch items to fill full width.-->
+                -->
+            <!--Stretch items to fill full width.-->
+            <!--
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -138,7 +86,9 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <!--Expand our machine connections by clicking on them.-->
+                        -->
+            <!--Expand our machine connections by clicking on them.-->
+            <!--
                         <Expander>
                             <Expander.Header>
                                 <machineConnection:HeaderControl />
@@ -149,9 +99,104 @@
                         </Expander>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
-            </ListBox>
+            </ListBox>-->
 
             <!-- Listview instead for headers? -->
+            <ListView
+                ItemsSource="{Binding
+            MachineConnectionsViewModel.MachineConnections}"
+                Visibility="{Binding
+            MachineConnectionsViewModel.ConnectionVisibility[2],
+            Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="BorderBrush" Value="Gray"></Setter>
+                        <Setter Property="BorderThickness" Value="1" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.View>
+                    <GridView>
+                        <GridView.Columns>
+                            <GridViewColumn>
+                                <GridViewColumn.Header>
+                                    <TextBlock Text="Machine" />
+                                </GridViewColumn.Header>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding
+                                            MachineConnection.DisplayTopic}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn>
+                                <GridViewColumn.Header>
+                                    <TextBlock Text="Total GOOD" />
+                                </GridViewColumn.Header>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding
+                                            LatestMachineMessage.tags.set1.MachineStatistics.UserPrime}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView.Columns>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+            <Grid>
+                <Grid.Resources>
+                    <Style x:Key="MyItemContainerStyle" TargetType="{x:Type ListViewItem}">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                    </Style>
+                </Grid.Resources>
+
+                <ListView
+        ItemContainerStyle="{DynamicResource MyItemContainerStyle}"
+        ItemsSource="{x:Static Fonts.SystemFontFamilies}"
+        x:Name="myListView"
+        Width="Auto">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="#FF000000" BorderThickness="1,1,0,0" Margin="-6,-2,-6,-2">
+                                            <StackPanel Margin="6,2,6,2">
+                                                <TextBlock Text="{Binding Source}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Line Spacing">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="#FF000000" BorderThickness="1,1,0,0" Margin="-6,-2,-6,-2">
+                                            <StackPanel Margin="6,2,6,2">
+                                                <TextBlock Text="{Binding LineSpacing}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Sample">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="#FF000000" BorderThickness="1,1,1,0" Margin="-6,-2,-6,-2">
+                                            <StackPanel Margin="6,2,6,2">
+                                                <TextBlock FontFamily="{Binding}" FontSize="20"
+                                       Text="ABCDEFGabcdefg" />
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
         </Grid>
     </ScrollViewer>
 </UserControl>

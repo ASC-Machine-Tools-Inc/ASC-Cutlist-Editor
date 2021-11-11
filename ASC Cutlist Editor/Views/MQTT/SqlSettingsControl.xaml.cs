@@ -2,6 +2,7 @@
 using System.Windows;
 using AscCutlistEditor.Models.MQTT;
 using AscCutlistEditor.ViewModels;
+using ModernWpf.Controls;
 
 namespace AscCutlistEditor.Views.MQTT
 {
@@ -23,14 +24,19 @@ namespace AscCutlistEditor.Views.MQTT
         }
 
         // Close and reopen the settings so the reset changes apply.
-        private void ResetSqlSettings(object sender, RoutedEventArgs e)
+        private async void ResetSqlSettings(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult dialogResult = MessageBox.Show(
-                "Your current settings will be cleared.",
-                "Reset settings",
-                MessageBoxButton.OKCancel,
-                MessageBoxImage.Warning);
-            if (dialogResult == MessageBoxResult.OK)
+            ContentDialog dialog = new ContentDialog
+            {
+                Title = "Reset your settings?",
+                Content = "Your current connection settings and table names will " +
+                          "be cleared, and your column names will be reset. Are " +
+                          "you sure?",
+                PrimaryButtonText = "Reset",
+                CloseButtonText = "Cancel"
+            };
+
+            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
             {
                 Close();
 
@@ -45,14 +51,18 @@ namespace AscCutlistEditor.Views.MQTT
             }
         }
 
-        private void DebugReset(object sender, RoutedEventArgs e)
+        private async void DebugReset(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult dialogResult = MessageBox.Show(
-                "DEBUG PURPOSES ONLY - RESET TO TEST SETTINGS. ARE YOU SURE?",
-                "Reset settings",
-                MessageBoxButton.OKCancel,
-                MessageBoxImage.Warning);
-            if (dialogResult == MessageBoxResult.OK)
+            ContentDialog dialog = new ContentDialog
+            {
+                Title = "Reset settings",
+                Content = "DEBUG PURPOSES ONLY - RESET TO TEST SETTINGS. ARE YOU SURE?",
+                PrimaryButtonText = "Reset",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary
+            };
+
+            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
             {
                 Close();
 
