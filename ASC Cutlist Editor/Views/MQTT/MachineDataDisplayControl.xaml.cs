@@ -11,14 +11,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace AscCutlistEditor.Views.MQTT.MachineConnection
+namespace AscCutlistEditor.Views.MQTT
 {
     /// <summary>
-    /// Interaction logic for ExpandedInfoControl.xaml
+    /// Interaction logic for MachineDataDisplayControl.xaml
     /// </summary>
-    public partial class ExpandedInfoControl : UserControl
+    public partial class MachineDataDisplayControl : UserControl
     {
-        public ExpandedInfoControl()
+        public MachineDataDisplayControl()
         {
             InitializeComponent();
         }

@@ -6,13 +6,10 @@
              xmlns:ui="http://schemas.modernwpf.com/2019"
              xmlns:viewModels="clr-namespace:AscCutlistEditor.ViewModels"
              xmlns:mqtt="clr-namespace:AscCutlistEditor.Views.MQTT"
-             xmlns:system="clr-namespace:System;assembly=System.Runtime"
-             xmlns:machineConnection="clr-namespace:AscCutlistEditor.Views.MQTT.MachineConnection"
-             xmlns:wpfAutoGrid="clr-namespace:WpfAutoGrid;assembly=WpfAutoGrid"
              d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
-    <ScrollViewer>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible">
         <Grid>
 
             <!-- Show before connecting -->
@@ -62,141 +59,38 @@
             </StackPanel>
 
             <!-- Show machine connections. -->
-            <!--<ListBox
-                    ItemsSource="{Binding
-            MachineConnectionsViewModel.MachineConnections}"
-                    Visibility="{Binding
-            MachineConnectionsViewModel.ConnectionVisibility[2],
-            Converter={StaticResource BooleanToVisibilityConverter}}">
-                <ListBox.Template>
-                    <ControlTemplate TargetType="{x:Type ListBox}">
-                        <ItemsPresenter />
-                    </ControlTemplate>
-                </ListBox.Template>
-
-                -->
-            <!--Stretch items to fill full width.-->
-            <!--
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalAlignment" Value="Stretch" />
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListBox.ItemContainerStyle>
-
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        -->
-            <!--Expand our machine connections by clicking on them.-->
-            <!--
-                        <Expander>
-                            <Expander.Header>
-                                <machineConnection:HeaderControl />
-                            </Expander.Header>
-                            <Expander.Content>
-                                <machineConnection:ExpandedInfoControl />
-                            </Expander.Content>
-                        </Expander>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>-->
-
-            <!-- Listview instead for headers? -->
-            <ListView
-                ItemsSource="{Binding
-            MachineConnectionsViewModel.MachineConnections}"
+            <StackPanel
+                Grid.IsSharedSizeScope="True"
                 Visibility="{Binding
             MachineConnectionsViewModel.ConnectionVisibility[2],
             Converter={StaticResource BooleanToVisibilityConverter}}">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}">
-                        <Setter Property="BorderBrush" Value="Gray"></Setter>
-                        <Setter Property="BorderThickness" Value="1" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.View>
-                    <GridView>
-                        <GridView.Columns>
-                            <GridViewColumn>
-                                <GridViewColumn.Header>
-                                    <TextBlock Text="Machine" />
-                                </GridViewColumn.Header>
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding
-                                            MachineConnection.DisplayTopic}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn>
-                                <GridViewColumn.Header>
-                                    <TextBlock Text="Total GOOD" />
-                                </GridViewColumn.Header>
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding
-                                            LatestMachineMessage.tags.set1.MachineStatistics.UserPrime}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView.Columns>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="A" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="B" />
+                    </Grid.ColumnDefinitions>
 
-            <Grid>
-                <Grid.Resources>
-                    <Style x:Key="MyItemContainerStyle" TargetType="{x:Type ListViewItem}">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                    </Style>
-                </Grid.Resources>
+                    <TextBlock Grid.Column="0" Text="Machine"
+                               Margin="5" HorizontalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Text="Total GOOD"
+                               Margin="5" HorizontalAlignment="Center" />
+                </Grid>
 
-                <ListView
-        ItemContainerStyle="{DynamicResource MyItemContainerStyle}"
-        ItemsSource="{x:Static Fonts.SystemFontFamilies}"
-        x:Name="myListView"
-        Width="Auto">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Name">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Border BorderBrush="#FF000000" BorderThickness="1,1,0,0" Margin="-6,-2,-6,-2">
-                                            <StackPanel Margin="6,2,6,2">
-                                                <TextBlock Text="{Binding Source}" />
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Line Spacing">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Border BorderBrush="#FF000000" BorderThickness="1,1,0,0" Margin="-6,-2,-6,-2">
-                                            <StackPanel Margin="6,2,6,2">
-                                                <TextBlock Text="{Binding LineSpacing}" />
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Sample">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Border BorderBrush="#FF000000" BorderThickness="1,1,1,0" Margin="-6,-2,-6,-2">
-                                            <StackPanel Margin="6,2,6,2">
-                                                <TextBlock FontFamily="{Binding}" FontSize="20"
-                                       Text="ABCDEFGabcdefg" />
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-            </Grid>
+                <ItemsControl
+                ItemsSource="{Binding
+            MachineConnectionsViewModel.MachineConnections}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <mqtt:MachineDataDisplayControl />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </Grid>
     </ScrollViewer>
 </UserControl>
