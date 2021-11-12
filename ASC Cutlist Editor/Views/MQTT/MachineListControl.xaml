@@ -69,6 +69,8 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" SharedSizeGroup="A" />
                         <ColumnDefinition Width="Auto" SharedSizeGroup="B" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="C" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="D" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
@@ -76,7 +78,11 @@
                                Margin="5" HorizontalAlignment="Center" />
                     <TextBlock Grid.Column="1" Text="Total GOOD"
                                Margin="5" HorizontalAlignment="Center" />
-                    <TextBlock Grid.Column="2" Text="Total Time"
+                    <TextBlock Grid.Column="2" Text="Net SCRAP"
+                               Margin="5" HorizontalAlignment="Center" />
+                    <TextBlock Grid.Column="3" Text="Total Time"
+                               Margin="5" />
+                    <TextBlock Grid.Column="4" Text="Open Detailed View"
                                Margin="5" />
                 </Grid>
 

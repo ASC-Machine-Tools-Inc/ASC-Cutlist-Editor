@@ -13,6 +13,8 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" SharedSizeGroup="A" />
                 <ColumnDefinition Width="Auto" SharedSizeGroup="B" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="C" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="D" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
@@ -44,6 +46,33 @@
                 Grid.Column="2"
                 Background="LightGray"
                 BorderBrush="Gray"
+                BorderThickness="0 0 2 0"
+                Padding="10">
+                <StackPanel>
+                    <WrapPanel>
+                        <TextBlock Text="{Binding
+                LatestMachineMessage.tags.set1.PlantData.KPI.ScrapFootagePct}"
+                                   FontSize="16" />
+                        <TextBlock Text=" %"
+                                   Foreground="Gray"
+                                   VerticalAlignment="Bottom" />
+                    </WrapPanel>
+                    <WrapPanel>
+                        <TextBlock Text="{Binding
+                LatestMachineMessage.tags.set1.MachineStatistics.UserScrap}"
+                                   FontSize="16" />
+                        <TextBlock Text=" FT"
+                                   Foreground="Gray"
+                                   VerticalAlignment="Bottom" />
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+
+            <Border
+                Grid.Column="3"
+                Background="LightGray"
+                BorderBrush="Gray"
+                BorderThickness="0 0 2 0"
                 Padding="10">
                 <WrapPanel>
                     <TextBlock Text="{Binding
@@ -54,6 +83,12 @@
                                VerticalAlignment="Bottom" />
                 </WrapPanel>
             </Border>
+
+            <Button Grid.Column="4"
+                    Click="ButtonTest"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="Info" Margin="5"></TextBlock>
+            </Button>
         </Grid>
     </Border>
 </UserControl>
