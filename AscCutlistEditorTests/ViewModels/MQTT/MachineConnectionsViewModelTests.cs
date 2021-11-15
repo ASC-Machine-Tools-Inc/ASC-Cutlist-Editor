@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AscCutlistEditor.Models.MQTT;
-using AscCutlistEditor.Models.MQTT.MachineMessage;
 using AscCutlistEditor.ViewModels.MQTT;
 using AscCutlistEditor.ViewModels.MQTT.MachineMessage;
 using AscCutlistEditorTests.Common;

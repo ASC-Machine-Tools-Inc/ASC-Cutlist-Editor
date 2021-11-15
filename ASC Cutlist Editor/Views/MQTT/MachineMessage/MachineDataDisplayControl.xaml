@@ -3,6 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:oxy="http://oxyplot.org/wpf"
+             xmlns:machinemessage="clr-namespace:AscCutlistEditor.ViewModels.MQTT.MachineMessage"
+             xmlns:wpfAutoGrid="clr-namespace:WpfAutoGrid;assembly=WpfAutoGrid"
+             d:DataContext="{d:DesignInstance Type=machinemessage:MachineMessageViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Border
@@ -74,14 +78,40 @@
                 BorderBrush="Gray"
                 BorderThickness="0 0 2 0"
                 Padding="10">
-                <WrapPanel>
-                    <TextBlock Text="{Binding
+                <StackPanel>
+                    <WrapPanel>
+                        <TextBlock
+                            Text="{Binding
                 LatestMachineMessage.tags.set1.PlantData.KPI.TotalHours}"
-                               FontSize="16" />
-                    <TextBlock Text=" HRS"
-                               Foreground="Gray"
-                               VerticalAlignment="Bottom" />
-                </WrapPanel>
+                            FontSize="16" />
+                        <TextBlock
+                            Text=" HRS"
+                            Foreground="Gray"
+                            VerticalAlignment="Bottom" />
+                    </WrapPanel>
+                    <WrapPanel>
+                        <TextBlock
+                            Text="Uptime: "
+                            Foreground="Gray" />
+                        <TextBlock
+                            Margin="0 0 10 0"
+                            Text="{Binding
+                            LatestMachineMessage.tags.set1.PlantData.KPI.UptimePct,
+                            StringFormat={}{0:0.00'%'}}" />
+                        <TextBlock
+                            Text="Downtime: "
+                            Foreground="Gray" />
+                        <TextBlock
+                            Text="{Binding
+                            LatestMachineMessage.tags.set1.PlantData.KPI.DowntimePct,
+                            StringFormat={}{0:0.00'%'}}" />
+                    </WrapPanel>
+                    <wpfAutoGrid:AutoGrid>
+                        <oxy:PlotView
+                            MinHeight="25"
+                            Model="{Binding Plots.TimeBarPlot}" />
+                    </wpfAutoGrid:AutoGrid>
+                </StackPanel>
             </Border>
 
             <Button Grid.Column="4"

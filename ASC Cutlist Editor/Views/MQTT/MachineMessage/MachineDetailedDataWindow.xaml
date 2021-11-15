@@ -121,11 +121,11 @@
 
                 <oxy:PlotView
                     Margin="5"
-                    Model="{Binding DetailedUptimePlot}" />
+                    Model="{Binding Plots.DetailedUptimePlot}" />
 
                 <oxy:PlotView
                     Margin="5"
-                    Model="{Binding DetailedDowntimePlot}" />
+                    Model="{Binding Plots.DetailedDowntimePlot}" />
             </wpfAutoGrid:AutoGrid>
         </DockPanel>
 

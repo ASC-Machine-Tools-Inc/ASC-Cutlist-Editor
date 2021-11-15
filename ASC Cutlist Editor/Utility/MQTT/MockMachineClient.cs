@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows.Threading;
 using AscCutlistEditor.Models.MQTT;
-using AscCutlistEditor.Models.MQTT.MachineMessage;
 using AscCutlistEditor.ViewModels.MQTT;
 using AscCutlistEditor.ViewModels.MQTT.MachineMessage;
 using ModernWpf.Controls;

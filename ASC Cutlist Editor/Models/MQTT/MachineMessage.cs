@@ -1,9 +1,42 @@
 ﻿using System;
 using AscCutlistEditor.Frameworks;
 
-namespace AscCutlistEditor.Models.MQTT.MachineMessage
+namespace AscCutlistEditor.Models.MQTT
 {
-    // A bunch for models for the JSON data coming through MQTT from the machines.
+    // A bunch of models for the JSON data coming through MQTT from the machines.
+    public class MachineMessage : ObservableObject
+    {
+        public string connected { get; set; }
+        public Tags tags { get; set; }
+        public DateTime timestamp { get; set; }
+    }
+
+    public class Tags
+    {
+        public Set1 set1 { get; set; }
+
+        public Set2 set2 { get; set; }
+
+        public Set3 set3 { get; set; }
+    }
+
+    public class Set1
+    {
+        public MachineStatistics MachineStatistics { get; set; }
+        public MqttPub MqttPub { get; set; }
+        public PlantData PlantData { get; set; }
+    }
+
+    public class Set2
+    {
+        public MqttSub MqttSub { get; set; }
+    }
+
+    public class Set3
+    {
+        public MqttPub MqttPub { get; set; }
+    }
+
     public class MachineStatistics
     {
         public double UserPrime { get; set; }
@@ -107,39 +140,6 @@ namespace AscCutlistEditor.Models.MQTT.MachineMessage
         public COIL COIL { get; set; }
         public KPI KPI { get; set; }
         public WORKORDER WORKORDER { get; set; }
-    }
-
-    public class Set1
-    {
-        public MachineStatistics MachineStatistics { get; set; }
-        public MqttPub MqttPub { get; set; }
-        public PlantData PlantData { get; set; }
-    }
-
-    public class Set2
-    {
-        public MqttSub MqttSub { get; set; }
-    }
-
-    public class Set3
-    {
-        public MqttPub MqttPub { get; set; }
-    }
-
-    public class Tags
-    {
-        public Set1 set1 { get; set; }
-
-        public Set2 set2 { get; set; }
-
-        public Set3 set3 { get; set; }
-    }
-
-    public class MachineMessage : ObservableObject
-    {
-        public string connected { get; set; }
-        public Tags tags { get; set; }
-        public DateTime timestamp { get; set; }
     }
 
     /// <summary>

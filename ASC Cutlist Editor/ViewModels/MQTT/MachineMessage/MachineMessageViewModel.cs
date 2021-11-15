@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Threading;
 using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models.MQTT;
-using AscCutlistEditor.Models.MQTT.MachineMessage;
 using AscCutlistEditor.Utility.MQTT;
 using MQTTnet;
 using MQTTnet.Client;
@@ -31,9 +30,14 @@ namespace AscCutlistEditor.ViewModels.MQTT.MachineMessage
         public MachineConnection MachineConnection { get; set; }
 
         /// <summary>
+        /// Represents the various plots to display for this connection.
+        /// </summary>
+        public MachineMessagePlotsViewModel Plots { get; set; }
+
+        /// <summary>
         /// Last machine message the client listener received.
         /// </summary>
-        public Models.MQTT.MachineMessage.MachineMessage LatestMachineMessage
+        public Models.MQTT.MachineMessage LatestMachineMessage
         {
             get => _latestMachineMessage;
             set
@@ -43,14 +47,7 @@ namespace AscCutlistEditor.ViewModels.MQTT.MachineMessage
             }
         }
 
-        public PlotModel DetailedUptimePlot { get; set; }
-
-        public PlotModel DetailedDowntimePlot { get; set; }
-
-        private LineSeries _uptimeSeries;
-        private BarSeries _downtimeStatsSeries;
-
-        private Models.MQTT.MachineMessage.MachineMessage _latestMachineMessage;
+        private Models.MQTT.MachineMessage _latestMachineMessage;
 
         private SqlConnectionViewModel _sqlConn;
 
@@ -76,7 +73,9 @@ namespace AscCutlistEditor.ViewModels.MQTT.MachineMessage
 
             _sqlConn = connModel;
 
-            CreateUptimeModel();  // Create the plots for the UI.
+            // Create the plots for the UI.
+            Plots = new MachineMessagePlotsViewModel();
+
             StartClient();  // Listen for continued messages.
         }
 
@@ -116,8 +115,8 @@ namespace AscCutlistEditor.ViewModels.MQTT.MachineMessage
                 try
                 {
                     // Attempt payload conversion and logging.
-                    Models.MQTT.MachineMessage.MachineMessage machineMessage =
-                        JsonConvert.DeserializeObject<Models.MQTT.MachineMessage.MachineMessage>(payload);
+                    Models.MQTT.MachineMessage machineMessage =
+                        JsonConvert.DeserializeObject<Models.MQTT.MachineMessage>(payload);
 
                     int rowsAdded = await ProcessResponseMessage(machineMessage);
                     if (rowsAdded > 0) { Debug.WriteLine("Rows added: " + rowsAdded); }
@@ -156,95 +155,13 @@ namespace AscCutlistEditor.ViewModels.MQTT.MachineMessage
         }
 
         /// <summary>
-        /// Create the OxyPlot graphs for our view.
-        /// </summary>
-        private void CreateUptimeModel()
-        {
-            // Create the plot models.
-            var uptimePlot = new PlotModel
-            {
-                Title = "Status Over Time"
-            };
-            var downtimeStatsPlot = new PlotModel
-            {
-                Title = "Downtime Statistics"
-            };
-
-            // Create the line series.
-            var currentSeries = new LineSeries
-            {
-                Title = "Current Status",
-                MarkerType = MarkerType.Square
-            };
-            var downtimeStatsSeries = new BarSeries
-            {
-                ItemsSource = new List<BarItem>(7),
-                LabelFormatString = "{0:.00}%"
-            };
-
-            // Add the series to the plot models.
-            uptimePlot.Series.Add(currentSeries);
-            uptimePlot.Axes.Add(new DateTimeAxis
-            {
-                Position = AxisPosition.Bottom,
-                StringFormat = "h:mm:ss"
-            });
-            // Y axis with labels for current line status.
-            uptimePlot.Axes.Add(new CategoryAxis
-            {
-                Position = AxisPosition.Left,
-                // A little buffer room is added to make sure "Running" is
-                // shown on the y-axis for the maximum.
-                Maximum = 1.05,
-                Minimum = 0,
-                IsTickCentered = true,
-                IsZoomEnabled = false,
-                IsPanEnabled = false,
-                Labels = { "Stopped", "Running" }
-            });
-
-            downtimeStatsPlot.Series.Add(downtimeStatsSeries);
-            downtimeStatsPlot.Axes.Add(new LinearAxis
-            {
-                Position = AxisPosition.Bottom,
-                Maximum = 105,
-                Minimum = 0,
-                IsZoomEnabled = false,
-                IsPanEnabled = false
-            });
-            downtimeStatsPlot.Axes.Add(new CategoryAxis
-            {
-                Position = AxisPosition.Left,
-                IsTickCentered = true,
-                IsZoomEnabled = false,
-                IsPanEnabled = false,
-                ItemsSource = new[]
-                {
-                    "Material Change",
-                    "Bundle Unloading",
-                    "Maintenance",
-                    "Emergency",
-                    "Idle",
-                    "Shift Change",
-                    "Break"
-                }
-            });
-
-            _uptimeSeries = currentSeries;
-            _downtimeStatsSeries = downtimeStatsSeries;
-
-            DetailedUptimePlot = uptimePlot;
-            DetailedDowntimePlot = downtimeStatsPlot;
-        }
-
-        /// <summary>
         /// Handle returning the response message and performing any tasks
         /// based off the flags set in the machine's message.
         /// </summary>
         /// <returns>
         /// The number of rows added for usage.
         /// </returns>
-        private async Task<int> ProcessResponseMessage(Models.MQTT.MachineMessage.MachineMessage message)
+        private async Task<int> ProcessResponseMessage(Models.MQTT.MachineMessage message)
         {
             int rowsAdded = 0;
 
@@ -257,7 +174,7 @@ namespace AscCutlistEditor.ViewModels.MQTT.MachineMessage
                 return rowsAdded;
             }
 
-            Models.MQTT.MachineMessage.MachineMessage returnMessage = new Models.MQTT.MachineMessage.MachineMessage
+            Models.MQTT.MachineMessage returnMessage = new Models.MQTT.MachineMessage
             {
                 tags = new Tags
                 {
@@ -314,7 +231,7 @@ namespace AscCutlistEditor.ViewModels.MQTT.MachineMessage
         /// <summary>
         /// Update the UI for the corresponding machine from its message data.
         /// </summary>
-        internal void UpdateMachineTab(Models.MQTT.MachineMessage.MachineMessage message)
+        internal void UpdateMachineTab(Models.MQTT.MachineMessage message)
         {
             // Run on UI thread.
             // Select the correct dispatcher: if Application.Current is null,
@@ -327,43 +244,8 @@ namespace AscCutlistEditor.ViewModels.MQTT.MachineMessage
                 MachineConnection.MachineMessageSubCollection.Add(message);
                 LatestMachineMessage = message;
 
-                MqttPub pub = message.tags.set1.MqttPub;
-                KPI kpi = message.tags.set1.PlantData.KPI;
-
-                // Add new data point for line status.
-                //_uptimeSeries.Points.Add(
-                //    new DataPoint(
-                //        DateTimeAxis.ToDouble(message.timestamp),
-                //        pub.LineRunning.Equals("LINE RUNNING") ? 1 : 0));
-                ((LineSeries)DetailedUptimePlot.Series.First()).Points.Add(
-                    new DataPoint(
-                        DateTimeAxis.ToDouble(message.timestamp),
-                        pub.LineRunning.Equals("LINE RUNNING") ? 1 : 0));
-                DetailedUptimePlot.InvalidatePlot(true);
-
-                // Recalculate percentage for downtime bars.
-                //_downtimeStatsSeries.ItemsSource = new List<BarItem>
-                //{
-                //    new BarItem { Value = kpi.CoilChangePct },
-                //    new BarItem { Value = kpi.BundlePct },
-                //    new BarItem { Value = kpi.MaintPct },
-                //    new BarItem { Value = kpi.EmergencyPct },
-                //    new BarItem { Value = kpi.IdlePct },
-                //    new BarItem { Value = kpi.ShiftChangePct },
-                //    new BarItem { Value = kpi.BreakPct }
-                //};
-
-                ((BarSeries)DetailedDowntimePlot.Series.First()).ItemsSource = new List<BarItem>
-                {
-                    new BarItem { Value = kpi.CoilChangePct },
-                    new BarItem { Value = kpi.BundlePct },
-                    new BarItem { Value = kpi.MaintPct },
-                    new BarItem { Value = kpi.EmergencyPct },
-                    new BarItem { Value = kpi.IdlePct },
-                    new BarItem { Value = kpi.ShiftChangePct },
-                    new BarItem { Value = kpi.BreakPct }
-                };
-                DetailedDowntimePlot.InvalidatePlot(true);
+                // Add new message data to plots.
+                Plots.UpdatePlots(message);
             });
         }
     }
