@@ -14,6 +14,10 @@
         BorderThickness="2"
         CornerRadius="2">
         <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" SharedSizeGroup="A" />
                 <ColumnDefinition Width="Auto" SharedSizeGroup="B" />
@@ -23,9 +27,10 @@
             </Grid.ColumnDefinitions>
 
             <Border
-            BorderBrush="Gray"
-            BorderThickness="0 0 2 0"
-            Padding="10">
+                Grid.RowSpan="2"
+                BorderBrush="Gray"
+                BorderThickness="0 0 2 0"
+                Padding="10">
                 <TextBlock Text="{Binding MachineConnection.DisplayTopic}"
                        HorizontalAlignment="Center" />
             </Border>
@@ -34,7 +39,7 @@
             Grid.Column="1"
             Background="LightGray"
             BorderBrush="Gray"
-            BorderThickness="0 0 2 0"
+            BorderThickness="0 0 2 2"
             Padding="10">
                 <WrapPanel>
                     <TextBlock Text="{Binding
@@ -50,7 +55,7 @@
                 Grid.Column="2"
                 Background="LightGray"
                 BorderBrush="Gray"
-                BorderThickness="0 0 2 0"
+                BorderThickness="0 0 2 2"
                 Padding="10">
                 <StackPanel>
                     <WrapPanel>
@@ -73,10 +78,17 @@
             </Border>
 
             <Border
+                Grid.Row="1"
+                Grid.Column="2"
+                BorderBrush="Gray"
+                BorderThickness="0 0 2 0">
+            </Border>
+
+            <Border
                 Grid.Column="3"
                 Background="LightGray"
                 BorderBrush="Gray"
-                BorderThickness="0 0 2 0"
+                BorderThickness="0 0 2 2"
                 Padding="10">
                 <StackPanel>
                     <WrapPanel>
@@ -106,18 +118,29 @@
                             LatestMachineMessage.tags.set1.PlantData.KPI.DowntimePct,
                             StringFormat={}{0:0.00'%'}}" />
                     </WrapPanel>
-                    <wpfAutoGrid:AutoGrid>
-                        <oxy:PlotView
-                            MinHeight="25"
-                            Model="{Binding Plots.TimeBarPlot}" />
-                    </wpfAutoGrid:AutoGrid>
                 </StackPanel>
             </Border>
 
-            <Button Grid.Column="4"
-                    Click="OpenDetails"
-                    HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="Info" Margin="5"></TextBlock>
+            <Border
+                Grid.Row="1"
+                Grid.Column="3"
+                BorderBrush="Gray"
+                BorderThickness="0 0 2 0"
+                Padding="10">
+                <wpfAutoGrid:AutoGrid>
+                    <oxy:PlotView
+                        MinHeight="25"
+                        Model="{Binding Plots.TimeBarPlot}" />
+                </wpfAutoGrid:AutoGrid>
+            </Border>
+
+            <Button
+                Grid.RowSpan="2"
+                Grid.Column="4"
+                Click="OpenDetails"
+                HorizontalAlignment="Center" VerticalAlignment="Center"
+                Margin="5">
+                <TextBlock Text="Info" />
             </Button>
         </Grid>
     </Border>

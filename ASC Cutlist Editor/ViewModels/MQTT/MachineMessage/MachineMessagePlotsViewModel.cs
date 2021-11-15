@@ -29,7 +29,6 @@ namespace AscCutlistEditor.ViewModels.MQTT.MachineMessage
         {
             TimeBarPlot = new PlotModel
             {
-                Background = OxyColors.LightGray,
                 PlotAreaBorderColor = OxyColors.Transparent,
                 PlotMargins = new OxyThickness(0),
                 Padding = new OxyThickness(0)
