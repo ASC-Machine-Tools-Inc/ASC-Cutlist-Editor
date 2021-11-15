@@ -1,5 +1,4 @@
-﻿using AscCutlistEditor.Common;
-using AscCutlistEditor.Frameworks;
+﻿using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
 using AscCutlistEditor.Utility;
 using ExcelDataReader;
@@ -7,6 +6,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
+using AscCutlistEditor.Models.Cutlists;
+using AscCutlistEditor.Utility.Helpers;
 
 namespace AscCutlistEditor.ViewModels.Cutlists
 {

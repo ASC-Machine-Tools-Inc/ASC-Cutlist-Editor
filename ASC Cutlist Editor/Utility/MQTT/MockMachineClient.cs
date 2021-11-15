@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Windows.Threading;
 using AscCutlistEditor.Models.MQTT;
+using AscCutlistEditor.Models.MQTT.MachineMessage;
 using AscCutlistEditor.ViewModels.MQTT;
+using AscCutlistEditor.ViewModels.MQTT.MachineMessage;
 using ModernWpf.Controls;
 using MQTTnet.Client;
 using Newtonsoft.Json;
@@ -92,7 +94,7 @@ namespace AscCutlistEditor.Utility.MQTT
                     {
                         MqttPub = new MqttPub
                         {
-                            JobNumber = $"JN_MOCK_AAAAAAAAAAAAAAAAAAAAAA{Id}",
+                            JobNumber = $"JN_MOCK_{Id}",
                             LineRunning = _lineStatus,
                             OrderDatReq = "FALSE"
                         },

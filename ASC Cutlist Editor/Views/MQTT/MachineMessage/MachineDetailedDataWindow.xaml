@@ -1,12 +1,12 @@
-﻿<Window x:Class="AscCutlistEditor.Views.MQTT.MachineDetailedDataWindow"
+﻿<Window x:Class="AscCutlistEditor.Views.MQTT.MachineMessage.MachineDetailedDataWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:wpfAutoGrid="clr-namespace:WpfAutoGrid;assembly=WpfAutoGrid"
         xmlns:oxy="http://oxyplot.org/wpf"
-        xmlns:mqtt="clr-namespace:AscCutlistEditor.ViewModels.MQTT"
-        d:DataContext="{d:DesignInstance Type=mqtt:MachineMessageViewModel}"
+        xmlns:machineMessage="clr-namespace:AscCutlistEditor.ViewModels.MQTT.MachineMessage"
+        d:DataContext="{d:DesignInstance Type=machineMessage:MachineMessageViewModel}"
         mc:Ignorable="d"
         Closing="Window_Closing"
         Title="Additional Machine Info"
@@ -121,11 +121,11 @@
 
                 <oxy:PlotView
                     Margin="5"
-                    Model="{Binding UptimePlot}" />
+                    Model="{Binding DetailedUptimePlot}" />
 
                 <oxy:PlotView
                     Margin="5"
-                    Model="{Binding DowntimeStatsPlot}" />
+                    Model="{Binding DetailedDowntimePlot}" />
             </wpfAutoGrid:AutoGrid>
         </DockPanel>
 

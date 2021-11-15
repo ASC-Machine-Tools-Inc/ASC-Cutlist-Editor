@@ -1,7 +1,7 @@
-﻿using AscCutlistEditor.Frameworks;
-using System;
+﻿using System;
+using AscCutlistEditor.Frameworks;
 
-namespace AscCutlistEditor.Models.MQTT
+namespace AscCutlistEditor.Models.MQTT.MachineMessage
 {
     // A bunch for models for the JSON data coming through MQTT from the machines.
     public class MachineStatistics

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Globalization;
-using AscCutlistEditor.Common;
+using AscCutlistEditor.Utility.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AscCutlistEditorTests.Common

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="AscCutlistEditor.Views.MQTT.MachineDataDisplayControl"
+﻿<UserControl x:Class="AscCutlistEditor.Views.MQTT.MachineMessage.MachineDataDisplayControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -85,7 +85,7 @@
             </Border>
 
             <Button Grid.Column="4"
-                    Click="ButtonTest"
+                    Click="OpenDetails"
                     HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="Info" Margin="5"></TextBlock>
             </Button>

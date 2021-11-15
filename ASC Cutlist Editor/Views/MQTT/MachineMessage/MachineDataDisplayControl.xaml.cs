@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using AscCutlistEditor.ViewModels.MQTT;
+﻿using System.Windows;
+using AscCutlistEditor.ViewModels.MQTT.MachineMessage;
 
-namespace AscCutlistEditor.Views.MQTT
+namespace AscCutlistEditor.Views.MQTT.MachineMessage
 {
     /// <summary>
     /// Interaction logic for MachineDataDisplayControl.xaml
@@ -29,7 +18,7 @@ namespace AscCutlistEditor.Views.MQTT
             DetailedData = new MachineDetailedDataWindow();
         }
 
-        public void ButtonTest(object sender, RoutedEventArgs e)
+        public void OpenDetails(object sender, RoutedEventArgs e)
         {
             // Toggle visibility instead of using Show to reuse our window,
             // preventing issues with multiple plotviews.

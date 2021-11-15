@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace AscCutlistEditor.Common
+namespace AscCutlistEditor.Utility.Helpers
 {
     public class BoolRadioConverter : IValueConverter
     {

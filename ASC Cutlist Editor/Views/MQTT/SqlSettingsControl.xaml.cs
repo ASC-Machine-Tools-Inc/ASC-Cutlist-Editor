@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using AscCutlistEditor.Models.MQTT;
+using AscCutlistEditor.Utility.DebugHelpers;
 using AscCutlistEditor.ViewModels;
 using ModernWpf.Controls;
 
@@ -66,7 +67,7 @@ namespace AscCutlistEditor.Views.MQTT
             {
                 Close();
 
-                DebugHelpers.DebugHelpers.DebugReset();
+                DebugHelpers.DebugReset();
 
                 SqlSettingsControl settings = new SqlSettingsControl
                 {

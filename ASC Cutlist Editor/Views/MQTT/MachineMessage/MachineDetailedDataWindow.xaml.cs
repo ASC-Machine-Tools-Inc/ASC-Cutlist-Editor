@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
-namespace AscCutlistEditor.Views.MQTT
+namespace AscCutlistEditor.Views.MQTT.MachineMessage
 {
     /// <summary>
     /// Interaction logic for MachineDetailedDataWindow.xaml
@@ -25,6 +15,8 @@ namespace AscCutlistEditor.Views.MQTT
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
+            // Toggle visibility instead of using Show to reuse our window,
+            // preventing issues with multiple plotviews.
             e.Cancel = true;
             Visibility = Visibility.Hidden;
         }

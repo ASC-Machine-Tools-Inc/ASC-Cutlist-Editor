@@ -32,6 +32,9 @@ namespace AscCutlistEditor.Views
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             UserSqlSettings.Save();
+
+            // Close all windows.
+            Application.Current.Shutdown();
         }
     }
 }

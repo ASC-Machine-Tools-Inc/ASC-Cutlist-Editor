@@ -1,7 +1,7 @@
-﻿using AscCutlistEditor.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using AscCutlistEditor.Utility;
+using AscCutlistEditor.Utility.Helpers;
 
 namespace AscCutlistEditorTests.Common
 {

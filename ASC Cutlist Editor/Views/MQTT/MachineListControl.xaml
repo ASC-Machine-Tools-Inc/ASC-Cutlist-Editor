@@ -6,6 +6,7 @@
              xmlns:ui="http://schemas.modernwpf.com/2019"
              xmlns:viewModels="clr-namespace:AscCutlistEditor.ViewModels"
              xmlns:mqtt="clr-namespace:AscCutlistEditor.Views.MQTT"
+             xmlns:machineMessage="clr-namespace:AscCutlistEditor.Views.MQTT.MachineMessage"
              d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -91,7 +92,7 @@
             MachineConnectionsViewModel.MachineConnections}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <mqtt:MachineDataDisplayControl />
+                            <machineMessage:MachineDataDisplayControl />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

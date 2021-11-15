@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using AscCutlistEditor.Models.MQTT;
+using AscCutlistEditor.ViewModels.MQTT.MachineMessage;
 using Newtonsoft.Json;
 
 namespace AscCutlistEditor.ViewModels.MQTT

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media;
 
-namespace AscCutlistEditor.Models
+namespace AscCutlistEditor.Models.Cutlists
 {
     public class Cutlist
     {

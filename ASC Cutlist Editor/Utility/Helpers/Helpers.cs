@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Windows.Media;
 
-namespace AscCutlistEditor.Utility
+namespace AscCutlistEditor.Utility.Helpers
 {
     public class Helpers
     {

@@ -30,12 +30,12 @@ namespace AscCutlistEditor.Models.MQTT
         /// <summary>
         /// List of sent messages.
         /// </summary>
-        public ObservableCollection<MachineMessage> MachineMessagePubCollection { get; set; }
+        public ObservableCollection<MachineMessage.MachineMessage> MachineMessagePubCollection { get; set; }
 
         /// <summary>
         /// List of received messages.
         /// </summary>
-        public ObservableCollection<MachineMessage> MachineMessageSubCollection { get; set; }
+        public ObservableCollection<MachineMessage.MachineMessage> MachineMessageSubCollection { get; set; }
 
         public SqlConnectionViewModel SqlConnection;
 
@@ -51,8 +51,8 @@ namespace AscCutlistEditor.Models.MQTT
             PubTopic = pubTopic;
             DisplayTopic = displayTopic;
             SqlConnection = sqlConnection;
-            MachineMessagePubCollection = new ObservableCollection<MachineMessage>();
-            MachineMessageSubCollection = new ObservableCollection<MachineMessage>();
+            MachineMessagePubCollection = new ObservableCollection<MachineMessage.MachineMessage>();
+            MachineMessageSubCollection = new ObservableCollection<MachineMessage.MachineMessage>();
         }
     }
 }
