@@ -133,6 +133,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
                 // Update UI.
                 RaisePropertyChangedEvent("MachineConnections");
+                ConnectionVisibility[0] = false;
                 ConnectionVisibility[1] = true;
                 ConnectionVisibility[2] = false;
             }
@@ -158,6 +159,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             Listener.UseApplicationMessageReceivedHandler(e =>
             {
                 // Toggle connection tabs visibility.
+                ConnectionVisibility[0] = false;
                 ConnectionVisibility[1] = false;
                 ConnectionVisibility[2] = true;
 
@@ -175,8 +177,12 @@ namespace AscCutlistEditor.ViewModels.MQTT
             try
             {
                 await Listener.ConnectAsync(options);
+
+                // Show waiting for connections after starting the listener,
+                // but not yet receiving any messages.
                 ConnectionVisibility[0] = false;
                 ConnectionVisibility[1] = true;
+                ConnectionVisibility[2] = false;
             }
             catch
             {
