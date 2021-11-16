@@ -122,13 +122,19 @@ namespace AscCutlistEditor.Utility.Helpers
                 }
             }
 
-            double uptimePercentage = _totalRunningMessages / _totalMessages * 100;
+            double uptime = (DateTime.Now - _startTime).TotalHours;
+
+            double uptimePercentage = _totalRunningMessages / _totalMessages;
+
+            double uptimeHours = uptime * uptimePercentage;
+            double downtimeHours = uptime - uptimeHours;
+
+            // Adjust for display.
+            uptimePercentage *= 100;
             double downtimePercentage = 100 - uptimePercentage;
 
             double primeFootagePercentage = _totalMaterial == 0 ? 0 : _totalGood / _totalMaterial * 100;
             double scrapFootagePercentage = 100 - primeFootagePercentage;
-
-            double uptime = (DateTime.Now - _startTime).TotalHours;
 
             MachineMessage message = new MachineMessage
             {
@@ -155,7 +161,9 @@ namespace AscCutlistEditor.Utility.Helpers
                                 ShiftChangePct = 4.15,
                                 BreakPct = 10.77,
                                 UptimePct = uptimePercentage,
+                                UptimeHrs = uptimeHours,
                                 DowntimePct = downtimePercentage,
+                                DowntimeHrs = downtimeHours,
                                 PrimeFootagePct = primeFootagePercentage,
                                 ScrapFootagePct = scrapFootagePercentage,
                                 TotalHours = uptime

@@ -18,6 +18,8 @@
             <helpers:BoolRadioConverter x:Key="BoolRadioConverter" />
             <helpers:BoolRadioConverter x:Key="InverseBoolRadioConverter" Inverse="True" />
 
+            <helpers:LineRunningColorConverter x:Key="LineRunningColorConverter" />
+
             <!-- Other app resources here -->
 
             <Style TargetType="{x:Type Label}">
