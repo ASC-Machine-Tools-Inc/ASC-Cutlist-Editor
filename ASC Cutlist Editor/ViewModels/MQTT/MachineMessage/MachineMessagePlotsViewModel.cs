@@ -38,7 +38,8 @@ namespace AscCutlistEditor.ViewModels.MQTT.MachineMessage
             TimeBarPlot.Axes.Add(new LinearAxis
             {
                 Position = AxisPosition.Bottom,
-                IsAxisVisible = false
+                IsAxisVisible = false,
+                Maximum = 100
             });
             TimeBarPlot.Axes.Add(new CategoryAxis
             {
@@ -49,14 +50,20 @@ namespace AscCutlistEditor.ViewModels.MQTT.MachineMessage
             var timeSeriesRunning = new BarSeries
             {
                 IsStacked = true,
-                FillColor = OxyColors.Black
+                FillColor = OxyColors.Black,
+                LabelPlacement = LabelPlacement.Inside,
+                LabelFormatString = "{0:.00}%",
+                TextColor = OxyColors.White
             };
             TimeBarPlot.Series.Add(timeSeriesRunning);
 
             var timeSeriesDown = new BarSeries
             {
                 IsStacked = true,
-                FillColor = OxyColors.Gray
+                FillColor = OxyColors.Gray,
+                LabelPlacement = LabelPlacement.Inside,
+                LabelFormatString = "{0:.00}%",
+                TextColor = OxyColors.White
             };
             TimeBarPlot.Series.Add(timeSeriesDown);
         }

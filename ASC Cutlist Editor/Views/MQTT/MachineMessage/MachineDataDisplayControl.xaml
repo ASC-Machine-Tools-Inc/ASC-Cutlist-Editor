@@ -6,14 +6,14 @@
              xmlns:oxy="http://oxyplot.org/wpf"
              xmlns:machinemessage="clr-namespace:AscCutlistEditor.ViewModels.MQTT.MachineMessage"
              xmlns:wpfAutoGrid="clr-namespace:WpfAutoGrid;assembly=WpfAutoGrid"
+             xmlns:controls="http://schemas.modernwpf.com/2019"
              d:DataContext="{d:DesignInstance Type=machinemessage:MachineMessageViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Border
         BorderBrush="Gray"
         BorderThickness="2"
-        CornerRadius="2"
-        MouseDown="OpenDetails">
+        CornerRadius="2">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" SharedSizeGroup="A" />
@@ -27,10 +27,18 @@
                 BorderBrush="Gray"
                 BorderThickness="0 0 2 0"
                 Padding="10">
-                <TextBlock
-                    Text="{Binding MachineConnection.DisplayTopic}"
-                    FontSize="18"
-                    HorizontalAlignment="Center" />
+                <StackPanel>
+                    <TextBlock
+                        Text="{Binding MachineConnection.DisplayTopic}"
+                        FontSize="18"
+                        HorizontalAlignment="Center"
+                        Margin="5" />
+                    <Button
+                        Content="Info"
+                        Click="OpenDetails"
+                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Margin="5" />
+                </StackPanel>
             </Border>
 
             <Border
@@ -101,11 +109,9 @@
             <Border
                 Grid.Column="4"
                 BorderBrush="Gray"
-                BorderThickness="0 0 2 0"
                 Padding="10">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
@@ -117,10 +123,10 @@
 
                     <WrapPanel Margin="5">
                         <TextBlock
-                            Text="Total: "
+                            Text="Total:"
                             Foreground="Gray" />
                         <TextBlock
-                            Margin="0 0 10 0"
+                            Margin="5 0"
                             Text="{Binding
                             LatestMachineMessage.tags.set1.PlantData.KPI.TotalHours,
                             StringFormat={}{0:0.00}}" />
@@ -133,10 +139,10 @@
                         Grid.Row="0" Grid.Column="1"
                         Margin="5">
                         <TextBlock
-                            Text="Uptime: "
+                            Text="Uptime:"
                             Foreground="Gray" />
                         <TextBlock
-                            Margin="0 0 10 0"
+                            Margin="5 0"
                             Text="{Binding
                             LatestMachineMessage.tags.set1.PlantData.KPI.UptimeHrs,
                             StringFormat={}{0:0.00}}" />
@@ -149,37 +155,36 @@
                         Grid.Row="0" Grid.Column="2"
                         Margin="5">
                         <TextBlock
-                            Text="Downtime: "
+                            Text="Downtime:"
                             Foreground="Gray" />
                         <TextBlock
+                            Margin="5 0"
                             Text="{Binding
                             LatestMachineMessage.tags.set1.PlantData.KPI.DowntimeHrs,
                             StringFormat={}{0:0.00}}" />
                         <TextBlock
-                            Text="  HRS"
+                            Text="HRS"
                             Foreground="Gray" />
+                    </WrapPanel>
+
+                    <WrapPanel
+                        Grid.Row="1" Grid.Column="0"
+                        Margin="5">
+                        <TextBlock
+                            Text="Shift Length:"
+                            Foreground="Gray"
+                            VerticalAlignment="Center" />
+                        <controls:NumberBox
+                            SpinButtonPlacementMode="Compact"
+                            Minimum="0"
+                            Maximum="24"
+                            Margin="5 0" />
                     </WrapPanel>
 
                     <oxy:PlotView
                         Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
                         MinHeight="25"
                         Model="{Binding Plots.TimeBarPlot}" />
-
-                    <TextBlock
-                        Grid.Row="2" Grid.Column="1"
-                        Text="{Binding
-                            LatestMachineMessage.tags.set1.PlantData.KPI.UptimePct,
-                            StringFormat={}{0:0.00'%'}}"
-                        HorizontalAlignment="Center" VerticalAlignment="Center"
-                        Margin="5" />
-
-                    <TextBlock
-                        Grid.Row="2" Grid.Column="2"
-                        Text="{Binding
-                            LatestMachineMessage.tags.set1.PlantData.KPI.DowntimePct,
-                            StringFormat={}{0:0.00'%'}}"
-                        HorizontalAlignment="Center" VerticalAlignment="Center"
-                        Margin="5" />
                 </Grid>
             </Border>
         </Grid>

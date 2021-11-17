@@ -38,8 +38,8 @@ namespace AscCutlistEditor.Utility.Helpers
 
             return lineStatus switch
             {
-                "LINE RUNNING" => Brushes.LightGreen,
-                "LINE STOPPED" => Brushes.LightCoral,
+                "LINE RUNNING" => Brushes.Green,
+                "LINE STOPPED" => Brushes.Red,
                 _ => Brushes.Transparent
             };
         }
