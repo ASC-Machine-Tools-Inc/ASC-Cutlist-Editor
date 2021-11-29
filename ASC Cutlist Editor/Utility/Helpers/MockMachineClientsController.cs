@@ -17,6 +17,7 @@ namespace AscCutlistEditor.Utility.Helpers
     {
         private readonly List<MockMachineClient> _clients;
         private readonly MachineConnectionsViewModel _machineConnectionsViewModel;
+        private int _currentId;
 
         public MockMachineClientsController(MachineConnectionsViewModel model)
         {
@@ -41,7 +42,7 @@ namespace AscCutlistEditor.Utility.Helpers
                     MachineConnectionsViewModel.Ip,
                     MachineConnectionsViewModel.Port)
                 .Build();
-            var clientId = _clients.Count;
+            var clientId = _currentId++;
             var client = new MqttFactory().CreateMqttClient();
             var topic = MachineConnectionsViewModel.SubTopic +
                         "/mockdata" + clientId + "/";
