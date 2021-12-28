@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using AscCutlistEditor.Models.General;
 
 namespace AscCutlistEditor.ViewModels.MQTT
 {
@@ -68,7 +69,8 @@ namespace AscCutlistEditor.ViewModels.MQTT
 
         public async Task<bool> TestConnection(
             bool updateConnectionString = true,
-            bool toggleCursor = true)
+            bool toggleCursor = true,
+            bool showDialog = false)
         {
             // Check that we can create a connection string if requested.
             if (updateConnectionString && !UpdateConnectionString())
@@ -88,21 +90,26 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 await conn.OpenAsync();
 
                 // Show if connection successful.
-                _dialog.ShowMessageBox(
-                    "Connection successful!",
-                    "ASC Cutlist Editor",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                if (showDialog)
+                {
+                    _dialog.ShowMessageBox(
+                        "",
+                        "Connection successful!",
+                        "Ok");
+                }
 
                 return true;
             }
             catch (SqlException)
             {
-                _dialog.ShowMessageBox(
-                    "Error connecting to the server.",
-                    "ASC Cutlist Editor",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                if (showDialog)
+                {
+                    _dialog.ShowMessageBox(
+                        "Error connecting to the server.",
+                        "Please check your connection and settings, and try again.",
+                        "Ok");
+                }
+
                 return false;
             }
             finally
@@ -142,10 +149,9 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 if (string.IsNullOrEmpty(savedConnectionString))
                 {
                     _dialog.ShowMessageBox(
-                        "Please enter a connection string.",
-                        "ASC Cutlist Editor",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                        "No connection string",
+                        "Please enter a valid connection string.",
+                        "Ok");
                     return false;
                 }
 
@@ -156,10 +162,9 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 catch (Exception)
                 {
                     _dialog.ShowMessageBox(
-                        "Invalid connection string.",
-                        "ASC Cutlist Editor",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                        "Invalid connection string",
+                        "Please enter a valid connection string.",
+                        "Ok");
                     return false;
                 }
 
@@ -175,10 +180,9 @@ namespace AscCutlistEditor.ViewModels.MQTT
                 username == null || password == null)
             {
                 _dialog.ShowMessageBox(
+                    "Missing connection fields",
                     "Please fill out all the fields.",
-                    "ASC Cutlist Editor",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                    "Ok");
                 return false;
             }
 

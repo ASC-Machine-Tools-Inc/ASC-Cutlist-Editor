@@ -253,6 +253,16 @@ namespace AscCutlistEditor.Models.MQTT
             }
         }
 
+        public string OrderScheduledDateName
+        {
+            get => (string)Settings.Default["OrderScheduledDateName"];
+            set
+            {
+                Settings.Default["OrderScheduledDateName"] = value;
+                RaisePropertyChangedEvent("OrderScheduledDateName");
+            }
+        }
+
         public string BundleTableName
         {
             get => (string)Settings.Default["BundleTableName"];

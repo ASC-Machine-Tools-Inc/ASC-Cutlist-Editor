@@ -395,5 +395,17 @@ namespace AscCutlistEditor.Properties {
                 this["UseConnectionString"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("schedate")]
+        public string OrderScheduledDateName {
+            get {
+                return ((string)(this["OrderScheduledDateName"]));
+            }
+            set {
+                this["OrderScheduledDateName"] = value;
+            }
+        }
     }
 }

@@ -6,10 +6,11 @@
              xmlns:ui="http://schemas.modernwpf.com/2019"
              xmlns:viewModels="clr-namespace:AscCutlistEditor.ViewModels"
              xmlns:mqtt="clr-namespace:AscCutlistEditor.Views.MQTT"
+             xmlns:machineMessage="clr-namespace:AscCutlistEditor.Views.MQTT.MachineMessage"
              d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
-    <ScrollViewer>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible">
         <Grid>
 
             <!-- Show before connecting -->
@@ -58,26 +59,45 @@
                     Margin="10"></ui:ProgressBar>
             </StackPanel>
 
-            <!-- Show when connected -->
-            <TabControl
-            ItemsSource="{Binding
-            MachineConnectionsViewModel.MachineConnections}"
-            Visibility="{Binding
+            <!-- Show machine connections. -->
+            <StackPanel
+                Grid.IsSharedSizeScope="True"
+                Visibility="{Binding
             MachineConnectionsViewModel.ConnectionVisibility[2],
             Converter={StaticResource BooleanToVisibilityConverter}}"
-            SelectedIndex="0">
-                <TabControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding
-                        MachineConnection.DisplayTopic}" />
-                    </DataTemplate>
-                </TabControl.ItemTemplate>
-                <TabControl.ContentTemplate>
-                    <DataTemplate>
-                        <mqtt:UptimeControl></mqtt:UptimeControl>
-                    </DataTemplate>
-                </TabControl.ContentTemplate>
-            </TabControl>
+                Margin="25">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="A" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="B" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="C" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="D" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="Machine"
+                               Margin="5" HorizontalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Text="Line Status"
+                               Margin="5" HorizontalAlignment="Center" />
+                    <TextBlock Grid.Column="2" Text="Total GOOD"
+                               Margin="5" HorizontalAlignment="Center" />
+                    <TextBlock Grid.Column="3" Text="Net SCRAP"
+                               Margin="5" HorizontalAlignment="Center" />
+                    <TextBlock Grid.Column="4" Text="Total Time"
+                               Margin="5" />
+                </Grid>
+
+                <ItemsControl
+                ItemsSource="{Binding
+            MachineConnectionsViewModel.MachineConnections}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <machineMessage:MachineDataDisplayControl
+                                Margin="0 0 0 10" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </Grid>
     </ScrollViewer>
 </UserControl>

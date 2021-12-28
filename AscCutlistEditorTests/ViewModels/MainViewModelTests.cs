@@ -7,6 +7,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using AscCutlistEditor.Models.Cutlists;
+using AscCutlistEditor.Models.Parts;
 
 namespace AscCutlistEditorTests.ViewModels
 {

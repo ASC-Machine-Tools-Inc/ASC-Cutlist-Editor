@@ -11,10 +11,13 @@ namespace AscCutlistEditor.Utility.MQTT
     // Collection of handlers to deal with the set flags in machine messages.
     internal class MessageFlagHandlers
     {
+        private readonly SqlConnectionViewModel _sqlConn;
+
         private readonly Queries _queries;
 
         public MessageFlagHandlers(SqlConnectionViewModel sqlConn)
         {
+            _sqlConn = sqlConn;
             _queries = new Queries(sqlConn.UserSqlSettings);
         }
 
@@ -53,8 +56,6 @@ namespace AscCutlistEditor.Utility.MQTT
             {
                 // Otherwise, respond with the current job numbers.
 
-                // TODO: handle optional arguments, like material, delivery date
-
                 // 1. Check if pub.WhateverTagNameWillBe has contents
                 // 2. If so, parse it out of whatever format it's in to get the coil material and days into the future
                 // 2a. If there's a material, pass to GetOrders to filter for that material
@@ -63,6 +64,9 @@ namespace AscCutlistEditor.Utility.MQTT
 
                 DataTable orderNumTable = await _queries
                     .GetOrdersByMachineNum(pub.JobNumber);
+
+                // Apply order data filters to orders.
+                orderNumTable = OrderDatFiltersFlagHandler(pub, orderNumTable);
 
                 sub.MqttString = _queries.DataTableToString(orderNumTable);
             }
@@ -280,6 +284,59 @@ namespace AscCutlistEditor.Utility.MQTT
 
             // Update the database.
             return await _queries.SetUsageData(coilUsageList);
+        }
+
+        /// <summary>
+        /// Apply the given order data filters to the order table.
+        /// </summary>
+        /// <returns>The order data table with the filters applied.</returns>
+        internal DataTable OrderDatFiltersFlagHandler(MqttPub pub, DataTable orderDat)
+        {
+            string[] filters = pub.OrderDatFilters.Split(",");
+            string scheduledDate = _sqlConn.UserSqlSettings.OrderScheduledDateName;
+
+            foreach (string filter in filters)
+            {
+                string[] filterPair = filter.Split(":");
+
+                // Convert orderDat to enumerable rows so we can perform LINQ
+                // operations on them.
+                var orders = orderDat.AsEnumerable();
+
+                switch (filterPair[0])
+                {
+                    case "OrderDate": // Get orders scheduled from today to given amount of days in future.
+                        int daysToAdd = int.Parse(filterPair[1]);
+
+                        orders = orders.Where(o =>
+                            o.Field<DateTime>(scheduledDate) >= DateTime.Now &&
+                            o.Field<DateTime>(scheduledDate) <= DateTime.Now.AddDays(daysToAdd));
+                        break;
+
+                    case "OrderLen": // Sort orders by length, short to long or long to short.
+                        orders = filterPair[1] == "SL" ?
+                            orders.OrderBy(o => o.Field<decimal>("orderlen")) : // Short to long.
+                            orders.OrderByDescending(o => o.Field<decimal>("orderlen")); // LS, long to short.
+                        break;
+
+                    case "CoilMatlID": // Return orders matching the given material ID.
+                        string material = _sqlConn.UserSqlSettings.OrderMaterialName;
+                        orders = orders.Where(o => o.Field<string>(material) == filterPair[1]);
+                        break;
+                }
+
+                if (orders.Any()) // Convert orders back to data table.
+                {
+                    orderDat = orders.CopyToDataTable();
+                }
+                else // Empty orders, clear the table instead.
+                {
+                    orderDat.Clear();
+                    break;
+                }
+            }
+
+            return orderDat;
         }
     }
 }

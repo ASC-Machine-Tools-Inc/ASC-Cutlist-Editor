@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using AscCutlistEditor.Models.MQTT;
+using AscCutlistEditor.ViewModels.MQTT.MachineMessage;
 using Newtonsoft.Json;
 
 namespace AscCutlistEditor.ViewModels.MQTT
@@ -125,14 +126,17 @@ namespace AscCutlistEditor.ViewModels.MQTT
         /// </summary>
         public void Refresh()
         {
-            _knownTopics = new HashSet<string>();
-            MachineConnections = new ObservableCollection<MachineMessageViewModel>();
+            if (MachineConnections.Count > 0)
+            {
+                _knownTopics = new HashSet<string>();
+                MachineConnections = new ObservableCollection<MachineMessageViewModel>();
 
-            // Update UI.
-            Debug.WriteLine("Refreshing topics...");
-            RaisePropertyChangedEvent("MachineConnections");
-            ConnectionVisibility[1] = true;
-            ConnectionVisibility[2] = false;
+                // Update UI.
+                RaisePropertyChangedEvent("MachineConnections");
+                ConnectionVisibility[0] = false;
+                ConnectionVisibility[1] = true;
+                ConnectionVisibility[2] = false;
+            }
         }
 
         private async Task StartListener()
@@ -155,6 +159,7 @@ namespace AscCutlistEditor.ViewModels.MQTT
             Listener.UseApplicationMessageReceivedHandler(e =>
             {
                 // Toggle connection tabs visibility.
+                ConnectionVisibility[0] = false;
                 ConnectionVisibility[1] = false;
                 ConnectionVisibility[2] = true;
 
@@ -165,11 +170,6 @@ namespace AscCutlistEditor.ViewModels.MQTT
                     Debug.WriteLine($"NEW TOPIC SPOTTED: {topic}");
                     _knownTopics.Add(topic);
 
-                    // Grab payload and pass along to machine message model.
-                    string payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-                    MachineMessage machineMessage =
-                        JsonConvert.DeserializeObject<MachineMessage>(payload);
-
                     AddTab(topic);
                 }
             });
@@ -177,8 +177,12 @@ namespace AscCutlistEditor.ViewModels.MQTT
             try
             {
                 await Listener.ConnectAsync(options);
+
+                // Show waiting for connections after starting the listener,
+                // but not yet receiving any messages.
                 ConnectionVisibility[0] = false;
                 ConnectionVisibility[1] = true;
+                ConnectionVisibility[2] = false;
             }
             catch
             {

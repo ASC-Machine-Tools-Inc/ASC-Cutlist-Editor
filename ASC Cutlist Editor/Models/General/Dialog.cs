@@ -1,17 +1,24 @@
-﻿using AscCutlistEditor.Frameworks;
-using System.Windows;
+﻿using System.Windows;
+using AscCutlistEditor.Frameworks;
+using ModernWpf.Controls;
 
-namespace AscCutlistEditor.Models.MQTT
+namespace AscCutlistEditor.Models.General
 {
     internal class Dialog : IDialogService
     {
-        public void ShowMessageBox(
-            string messageBoxText,
-            string caption,
-            MessageBoxButton button,
-            MessageBoxImage icon)
+        public async void ShowMessageBox(
+            string title,
+            string contents,
+            string cancelText)
         {
-            MessageBox.Show(messageBoxText, caption, button, icon);
+            ContentDialog dialog = new ContentDialog
+            {
+                Title = title,
+                Content = contents,
+                CloseButtonText = cancelText
+            };
+
+            await dialog.ShowAsync();
         }
     }
 }

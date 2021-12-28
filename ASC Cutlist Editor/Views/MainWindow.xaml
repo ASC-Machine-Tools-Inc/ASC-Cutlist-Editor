@@ -9,6 +9,7 @@
         xmlns:cutlists="clr-namespace:AscCutlistEditor.Views.Cutlists"
         xmlns:flatParts="clr-namespace:AscCutlistEditor.Views.FlatParts"
         xmlns:mqtt="clr-namespace:AscCutlistEditor.Views.MQTT"
+        xmlns:wpfAutoGrid="clr-namespace:WpfAutoGrid;assembly=WpfAutoGrid"
         mc:Ignorable="d"
         Title="ASC Cutlist Editor" Height="450" Width="800"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
@@ -85,13 +86,8 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Machines">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <Menu>
+                <wpfAutoGrid:AutoGrid Rows="Auto,Auto,*" Columns="*">
+                    <Menu VerticalAlignment="Top">
                         <!-- SQL Server connection settings. -->
                         <MenuItem Header="_Settings"
                                   Click="OpenSqlSettings">
@@ -109,11 +105,11 @@
                         </MenuItem>
                     </Menu>
 
-                    <Border Grid.Row="0" BorderBrush="Gray"
-                            BorderThickness="0 0 0 1"></Border>
+                    <Border BorderBrush="Gray"
+                    BorderThickness="0 0 0 1" />
 
-                    <mqtt:MachineListControl Grid.Row="1" />
-                </Grid>
+                    <mqtt:MachineListControl />
+                </wpfAutoGrid:AutoGrid>
             </TabItem>
         </TabControl>
     </Grid>

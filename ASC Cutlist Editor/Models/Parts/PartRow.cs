@@ -1,8 +1,8 @@
-﻿using AscCutlistEditor.Views.FlatParts;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
+using AscCutlistEditor.Views.FlatParts;
 
-namespace AscCutlistEditor.Models
+namespace AscCutlistEditor.Models.Parts
 {
     // Represents a row that we can place SingePartControls in and move around.
     public class PartRow

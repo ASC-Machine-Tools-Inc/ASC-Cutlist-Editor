@@ -1,24 +1,25 @@
-﻿using AscCutlistEditor.Models.MQTT;
-using AscCutlistEditor.ViewModels.MQTT;
-using MQTTnet;
-using MQTTnet.Client;
-using MQTTnet.Client.Options;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AscCutlistEditor.ViewModels.MQTT;
+using AscCutlistEditor.ViewModels.MQTT.MachineMessage;
+using MQTTnet;
+using MQTTnet.Client;
+using MQTTnet.Client.Options;
 
-namespace AscCutlistEditor.Utility.MQTT
+namespace AscCutlistEditor.Utility.Helpers
 {
     /// <summary>
     /// Sends mock data to alphapub for simulating machine information.
     /// </summary>
-    internal class MockMachineData
+    internal class MockMachineClientsController
     {
         private readonly List<MockMachineClient> _clients;
         private readonly MachineConnectionsViewModel _machineConnectionsViewModel;
+        private int _currentId;
 
-        public MockMachineData(MachineConnectionsViewModel model)
+        public MockMachineClientsController(MachineConnectionsViewModel model)
         {
             _clients = new List<MockMachineClient>();
             _machineConnectionsViewModel = model;
@@ -33,14 +34,6 @@ namespace AscCutlistEditor.Utility.MQTT
             }
         }
 
-        /// <summary>
-        /// Disconnect the last added mock client.
-        /// </summary>
-        public async void RemoveMockClient()
-        {
-            await StopClient(_clients[^1]);
-        }
-
         private async Task StartClient()
         {
             // Create a new MQTT client.
@@ -49,7 +42,7 @@ namespace AscCutlistEditor.Utility.MQTT
                     MachineConnectionsViewModel.Ip,
                     MachineConnectionsViewModel.Port)
                 .Build();
-            var clientId = _clients.Count();
+            var clientId = _currentId++;
             var client = new MqttFactory().CreateMqttClient();
             var topic = MachineConnectionsViewModel.SubTopic +
                         "/mockdata" + clientId + "/";

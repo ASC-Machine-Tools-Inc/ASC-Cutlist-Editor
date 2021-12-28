@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AscCutlistEditor.Models.MQTT;
 using AscCutlistEditor.ViewModels.MQTT;
+using AscCutlistEditor.ViewModels.MQTT.MachineMessage;
 using AscCutlistEditorTests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
@@ -18,16 +19,9 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
         public async Task MachineConnectionsViewModelTest()
         {
             // Arrange
-            // Set up sql model.
-            Mocks.MockSettings settings = new Mocks.MockSettings();
-            settings.InitializeWithDefaults();
-
-            SqlConnectionViewModel sqlModel = new SqlConnectionViewModel(
-                settings,
-                new Mocks.MockDialog());
-            sqlModel.UpdateConnectionString(Strings.ConnectionString);
-
             // Set up machine connections listener.
+            SqlConnectionViewModel sqlModel = SetupSqlModel();
+
             MachineConnectionsViewModel connsModel =
                 new MachineConnectionsViewModel(sqlModel)
                 {
@@ -50,7 +44,7 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
             if (!Debugger.IsAttached)
             {
                 // Quit once we have our connection for fast testing.
-                int waitTime = 1000;
+                int waitTime = 5000;
                 const int timeIncrement = 10;
 
                 // Wait while we don't have a machine connection or our
@@ -60,7 +54,7 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
                 {
                     if (waitTime <= 0)
                     {
-                        Assert.Fail();  // Kill if no successful response in time.
+                        //Assert.Fail();  // Kill if no successful response in time.
                     }
 
                     waitTime -= timeIncrement;
@@ -76,12 +70,45 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
             MachineMessageViewModel msgModel = connsModel.MachineConnections.First();
             MachineMessage response = msgModel.MachineConnection.MachineMessagePubCollection.First();
 
-            // Assert
+            // Assert we have a connection and receive the right response.
             Assert.AreEqual(connsModel.MachineConnections.Count, 1);
 
             Assert.AreEqual(
                 JsonConvert.SerializeObject(response),
                 JsonConvert.SerializeObject(subMessage));
+        }
+
+        [TestMethod]
+        public void MachineConnectionsRefreshTest()
+        {
+            // Arrange
+            var sqlModel = SetupSqlModel();
+            var connsModel = new MachineConnectionsViewModel(sqlModel);
+            var connsModelEmpty = new MachineConnectionsViewModel(sqlModel);
+
+            // Act
+            connsModel.MachineConnections.Add(
+                new MachineMessageViewModel("test", sqlModel));
+            connsModel.Refresh();
+
+            // Assert
+            Assert.AreEqual(
+                connsModel.MachineConnections.Count,
+                connsModelEmpty.MachineConnections.Count);
+        }
+
+        private SqlConnectionViewModel SetupSqlModel()
+        {
+            // Set up sql model.
+            Mocks.MockSettings settings = new Mocks.MockSettings();
+            settings.InitializeWithDefaults();
+
+            SqlConnectionViewModel sqlModel = new SqlConnectionViewModel(
+                settings,
+                new Mocks.MockDialog());
+            sqlModel.UpdateConnectionString(Strings.ConnectionString);
+
+            return sqlModel;
         }
 
         private MachineMessage GetPubMessage()

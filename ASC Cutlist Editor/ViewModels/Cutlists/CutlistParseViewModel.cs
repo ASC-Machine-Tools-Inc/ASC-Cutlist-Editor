@@ -1,5 +1,4 @@
-﻿using AscCutlistEditor.Common;
-using AscCutlistEditor.Frameworks;
+﻿using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Models;
 using AscCutlistEditor.Utility;
 using ExcelDataReader;
@@ -7,6 +6,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
+using AscCutlistEditor.Models.Cutlists;
+using AscCutlistEditor.Utility.Helpers;
 
 namespace AscCutlistEditor.ViewModels.Cutlists
 {
@@ -81,7 +82,7 @@ namespace AscCutlistEditor.ViewModels.Cutlists
                         break;
                     }
 
-                    length = Math.Round(LengthParser.ParseString(reader.GetString(2)), 2);
+                    length = Math.Round(Helpers.ParseString(reader.GetString(2)), 2);
                     cutlist = new Cutlist
                     {
                         ID = int.Parse(reader.GetString(0)),

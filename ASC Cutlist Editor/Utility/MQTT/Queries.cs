@@ -154,6 +154,7 @@ namespace AscCutlistEditor.Utility.MQTT
             string length = builder.QuoteIdentifier(_settings.OrderLengthName);
             string quantity = builder.QuoteIdentifier(_settings.OrderQuantityName);
             string partno = builder.QuoteIdentifier(_settings.OrderPartNumName);
+            string scheduledDate = builder.QuoteIdentifier(_settings.OrderScheduledDateName);
 
             // Table name.
             string orderTableName = builder.QuoteIdentifier(_settings.OrderTableName);
@@ -164,10 +165,10 @@ namespace AscCutlistEditor.Utility.MQTT
             string queryStr =
                 $"SELECT {orderno}, {material}, " +
                 $"SUM({length} * CONVERT(DECIMAL(10,2),{quantity})) AS orderlen, " +
-                $"{partno} " +
+                $"{partno}, {scheduledDate} " +
                 $"FROM {orderTableName} " +
                 $"WHERE {orderno} IS NOT NULL AND {machinenum} LIKE @machineID " +
-                $"GROUP BY {orderno}, {material}, {partno}, {machinenum}";
+                $"GROUP BY {orderno}, {material}, {partno}, {machinenum}, {scheduledDate}";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 

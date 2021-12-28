@@ -6,6 +6,7 @@
         xmlns:viewModels="clr-namespace:AscCutlistEditor.ViewModels"
         xmlns:mqtt="clr-namespace:AscCutlistEditor.Models.MQTT"
         xmlns:ui="http://schemas.modernwpf.com/2019"
+        xmlns:wpfAutoGrid="clr-namespace:WpfAutoGrid;assembly=WpfAutoGrid"
         ui:WindowHelper.UseModernWindowStyle="True"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
         mc:Ignorable="d"
@@ -50,19 +51,8 @@
                             IsChecked="{Binding SqlConnectionViewModel
                                 .UserSqlSettings.UseConnectionString,
                             Converter={StaticResource InverseBoolRadioConverter}}" />
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-
+                        <wpfAutoGrid:AutoGrid Rows="*,*" Columns="*,*">
                             <TextBox
-                                Grid.Row="0"
-                                Grid.Column="0"
                                 Text="{Binding
                                     SqlConnectionViewModel
                                     .UserSqlSettings.DataSource}"
@@ -70,29 +60,23 @@
                                 Margin="10" />
 
                             <TextBox
-                                Grid.Row="0"
-                                Grid.Column="1"
                                 Text="{Binding SqlConnectionViewModel
                                     .UserSqlSettings.DatabaseName}"
                                 ui:ControlHelper.Header="Database Name:"
                                 Margin="10" />
 
                             <TextBox
-                                Grid.Row="1"
-                                Grid.Column="0"
                                 Text="{Binding SqlConnectionViewModel
                                     .UserSqlSettings.Username}"
                                 ui:ControlHelper.Header="Username:"
                                 Margin="10" />
 
                             <TextBox
-                                Grid.Row="1"
-                                Grid.Column="1"
                                 Text="{Binding SqlConnectionViewModel
                                     .UserSqlSettings.Password}"
                                 ui:ControlHelper.Header="Password:"
                                 Margin="10" />
-                        </Grid>
+                        </wpfAutoGrid:AutoGrid>
 
                         <RadioButton
                             Content="Connection String"
@@ -344,6 +328,17 @@
                             Text="{Binding Source={StaticResource settings},
                             Path=OrderBundleName}"
                             Margin="10" />
+
+                                <Label
+                                    Grid.Row="3"
+                                    Grid.Column="4"
+                                    Content="Scheduled Date:" />
+                                <TextBox
+                                    Grid.Row="3"
+                                    Grid.Column="5"
+                                    Text="{Binding Source={StaticResource settings},
+                            Path=OrderScheduledDateName}"
+                                    Margin="10" />
                             </Grid>
                         </Expander>
 

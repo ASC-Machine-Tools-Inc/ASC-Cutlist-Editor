@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using System.Windows.Media;
 
-namespace AscCutlistEditor.Common
+namespace AscCutlistEditor.Utility.Helpers
 {
     public class BoolRadioConverter : IValueConverter
     {
@@ -26,6 +27,26 @@ namespace AscCutlistEditor.Common
             }
 
             return !Inverse;
+        }
+    }
+
+    public class LineRunningColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string lineStatus = value?.ToString();
+
+            return lineStatus switch
+            {
+                "LINE RUNNING" => Brushes.Green,
+                "LINE STOPPED" => Brushes.Red,
+                _ => Brushes.Transparent
+            };
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
         }
     }
 }

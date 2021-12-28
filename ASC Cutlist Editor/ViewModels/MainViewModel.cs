@@ -5,6 +5,7 @@ using AscCutlistEditor.ViewModels.MQTT;
 using AscCutlistEditor.ViewModels.Parts;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using AscCutlistEditor.Utility.Helpers;
 
 namespace AscCutlistEditor.ViewModels
 {
@@ -21,7 +22,7 @@ namespace AscCutlistEditor.ViewModels
 
         public MachineConnectionsViewModel MachineConnectionsViewModel { get; }
 
-        public MockMachineData MockMachineData { get; }
+        public MockMachineClientsController MockMachineClientsController { get; }
 
         public SqlConnectionViewModel SqlConnectionViewModel { get; }
 
@@ -35,7 +36,7 @@ namespace AscCutlistEditor.ViewModels
 
             MachineConnectionsViewModel = new MachineConnectionsViewModel(SqlConnectionViewModel);
 
-            MockMachineData = new MockMachineData(MachineConnectionsViewModel);
+            MockMachineClientsController = new MockMachineClientsController(MachineConnectionsViewModel);
         }
 
         /// <summary>
@@ -75,7 +76,7 @@ namespace AscCutlistEditor.ViewModels
         /// Start listening for new connections under the chosen topic.
         /// </summary>
         public ICommand StartListeningForConnectionsCommand =>
-            new DelegateCommand(async () => await MachineConnectionsViewModel.Start());
+            new DelegateCommand(() => MachineConnectionsViewModel.Start());
 
         /// <summary>
         /// Resets the list of connections (does not stop connection listener!)
@@ -87,14 +88,14 @@ namespace AscCutlistEditor.ViewModels
         /// Create a new mock connection with MockMachineData to listen to.
         /// </summary>
         public ICommand AddMockConnectionCommand =>
-            new DelegateCommand(() => MockMachineData.AddMockClient());
+            new DelegateCommand(() => MockMachineClientsController.AddMockClient());
 
         /// <summary>
         /// Test the current connection string.
         /// </summary>
         public ICommand TestSqlConnectionCommand =>
             new DelegateCommand(async () =>
-                await SqlConnectionViewModel.TestConnection());
+                await SqlConnectionViewModel.TestConnection(showDialog: true));
 
         private void ToggleView(int index)
         {

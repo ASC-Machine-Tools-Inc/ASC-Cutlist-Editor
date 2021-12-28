@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using AscCutlistEditor.Utility.Helpers;
 
 namespace AscCutlistEditorTests.ViewModels.Cutlists
 {
