@@ -328,6 +328,17 @@
                             Text="{Binding Source={StaticResource settings},
                             Path=OrderBundleName}"
                             Margin="10" />
+
+                                <Label
+                                    Grid.Row="3"
+                                    Grid.Column="4"
+                                    Content="Scheduled Date:" />
+                                <TextBox
+                                    Grid.Row="3"
+                                    Grid.Column="5"
+                                    Text="{Binding Source={StaticResource settings},
+                            Path=OrderScheduledDateName}"
+                                    Margin="10" />
                             </Grid>
                         </Expander>
 

@@ -16,7 +16,7 @@
         ui:WindowHelper.UseModernWindowStyle="True"
         Closing="MainWindow_Closed">
     <Grid>
-        <!--<TabControl>
+        <TabControl>
             <TabItem Header="Cutlists">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -85,32 +85,32 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Machines">-->
-        <wpfAutoGrid:AutoGrid Rows="Auto,Auto,*" Columns="*">
-            <Menu VerticalAlignment="Top">
-                <!-- SQL Server connection settings. -->
-                <MenuItem Header="_Settings"
+            <TabItem Header="Machines">
+                <wpfAutoGrid:AutoGrid Rows="Auto,Auto,*" Columns="*">
+                    <Menu VerticalAlignment="Top">
+                        <!-- SQL Server connection settings. -->
+                        <MenuItem Header="_Settings"
                                   Click="OpenSqlSettings">
-                </MenuItem>
+                        </MenuItem>
 
-                <MenuItem Header="_View">
-                    <MenuItem Header="Refresh Connection Tabs"
+                        <MenuItem Header="_View">
+                            <MenuItem Header="Refresh Connection Tabs"
                                       Command="{Binding RefreshConnectionTabsCommand}" />
-                </MenuItem>
+                        </MenuItem>
 
-                <!-- Remove for release -->
-                <MenuItem Header="_Dev Tools">
-                    <MenuItem Header="Add _Mock Connection"
+                        <!-- Remove for release -->
+                        <MenuItem Header="_Dev Tools">
+                            <MenuItem Header="Add _Mock Connection"
                                       Command="{Binding AddMockConnectionCommand }" />
-                </MenuItem>
-            </Menu>
+                        </MenuItem>
+                    </Menu>
 
-            <Border BorderBrush="Gray"
+                    <Border BorderBrush="Gray"
                     BorderThickness="0 0 0 1" />
 
-            <mqtt:MachineListControl />
-        </wpfAutoGrid:AutoGrid>
-        <!--</TabItem>
-        </TabControl>-->
+                    <mqtt:MachineListControl />
+                </wpfAutoGrid:AutoGrid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

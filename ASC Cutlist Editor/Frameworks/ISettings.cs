@@ -46,6 +46,8 @@
 
         string OrderBundleName { get; set; }
 
+        string OrderScheduledDateName { get; set; }
+
         string BundleTableName { get; set; }
 
         string BundleOrderNumName { get; set; }

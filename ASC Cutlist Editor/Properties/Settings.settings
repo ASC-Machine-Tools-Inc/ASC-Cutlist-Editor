@@ -95,5 +95,8 @@
     <Setting Name="UseConnectionString" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="OrderScheduledDateName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">schedate</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

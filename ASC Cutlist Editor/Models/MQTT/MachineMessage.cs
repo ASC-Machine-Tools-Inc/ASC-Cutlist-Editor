@@ -53,6 +53,7 @@ namespace AscCutlistEditor.Models.MQTT
         public string EmergencyStopped { get; set; }
         public string JobNumber { get; set; }
         public string LineRunning { get; set; }
+        public string OrderDatFilters { get; set; }
         public string OrderDatReq { get; set; }
         public string OrderNo { get; set; }
         public string ScanCoilID { get; set; }
