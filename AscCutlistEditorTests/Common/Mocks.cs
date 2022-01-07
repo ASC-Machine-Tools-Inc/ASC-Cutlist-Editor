@@ -53,6 +53,8 @@ namespace AscCutlistEditorTests.Common
 
             public string OrderBundleName { get; set; }
 
+            public string OrderScheduledDateName { get; set; }
+
             public string BundleTableName { get; set; }
 
             public string BundleOrderNumName { get; set; }

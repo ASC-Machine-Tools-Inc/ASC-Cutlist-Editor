@@ -41,6 +41,7 @@ namespace AscCutlistEditorTests.Utility.MQTT
                 OrderNumName = "orderno",
                 OrderPartNumName = "partno",
                 OrderQuantityName = "quantity",
+                OrderScheduledDateName = "schedate",
                 BundleColumns =
                     "material, prodcode, user1, user2, user3, user4, custname, custaddr1, custaddr2, custcity, custstate, custzip",
                 BundleOrderNumName = "orderno",
@@ -120,8 +121,8 @@ namespace AscCutlistEditorTests.Utility.MQTT
         }
 
         [TestMethod]
-        [DataRow("", 23)]
-        [DataRow("1", 15)]
+        [DataRow("", 24)]
+        [DataRow("1", 16)]
         [DataRow("5", 10)]
         [DataRow("Bad num", 0)]
         public async Task GetOrdersByMachineNumTest(string machineNum, int count)
