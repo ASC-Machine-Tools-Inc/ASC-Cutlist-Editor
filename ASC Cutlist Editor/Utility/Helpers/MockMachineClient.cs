@@ -147,6 +147,7 @@ namespace AscCutlistEditor.Utility.Helpers
                         {
                             JobNumber = $"JN_MOCK_{Id}",
                             LineRunning = _lineStatus,
+                            OrderDatFilters = "",
                             OrderDatReq = "FALSE"
                         },
                         PlantData = new PlantData
