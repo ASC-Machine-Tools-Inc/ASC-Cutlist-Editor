@@ -1,4 +1,5 @@
-﻿using AscCutlistEditor.Frameworks;
+﻿using System;
+using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Properties;
 using System.Configuration;
 
@@ -12,6 +13,8 @@ namespace AscCutlistEditor.Models.MQTT
         /// </summary>
         public static void Save()
         {
+            Settings.Default.Save();
+
             string sectionName = "userSettings/AscCutlistEditor.Properties.Settings";
             string protectionProvider = "DataProtectionConfigurationProvider";
 
@@ -21,7 +24,6 @@ namespace AscCutlistEditor.Models.MQTT
             userSettings.SectionInformation.ProtectSection(protectionProvider);
 
             config.Save();
-            Settings.Default.Save();
         }
 
         /// <summary>
