@@ -1,5 +1,4 @@
-﻿using System;
-using AscCutlistEditor.Frameworks;
+﻿using AscCutlistEditor.Frameworks;
 using AscCutlistEditor.Properties;
 using System.Configuration;
 
@@ -265,6 +264,16 @@ namespace AscCutlistEditor.Models.MQTT
             }
         }
 
+        public string OrderDeleteSentName
+        {
+            get => (string)Settings.Default["OrderDeleteSentName"];
+            set
+            {
+                Settings.Default["OrderDeleteSentName"] = value;
+                RaisePropertyChangedEvent("OrderDeleteSentName");
+            }
+        }
+
         public string BundleTableName
         {
             get => (string)Settings.Default["BundleTableName"];
@@ -352,6 +361,16 @@ namespace AscCutlistEditor.Models.MQTT
             {
                 Settings.Default["UsageDateName"] = value;
                 RaisePropertyChangedEvent("UsageDateName");
+            }
+        }
+
+        public string UsageScrapName
+        {
+            get => (string)Settings.Default["UsageScrapName"];
+            set
+            {
+                Settings.Default["UsageScrapName"] = value;
+                RaisePropertyChangedEvent("UsageScrapName");
             }
         }
     }

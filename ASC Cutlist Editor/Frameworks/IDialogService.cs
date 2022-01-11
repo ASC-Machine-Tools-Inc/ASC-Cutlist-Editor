@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace AscCutlistEditor.Frameworks
+﻿namespace AscCutlistEditor.Frameworks
 {
     /// <summary>
     /// Interface for displaying message boxes.

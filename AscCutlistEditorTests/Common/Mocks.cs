@@ -55,6 +55,8 @@ namespace AscCutlistEditorTests.Common
 
             public string OrderScheduledDateName { get; set; }
 
+            public string OrderDeleteSentName { get; set; }
+
             public string BundleTableName { get; set; }
 
             public string BundleOrderNumName { get; set; }
@@ -72,6 +74,8 @@ namespace AscCutlistEditorTests.Common
             public string UsageLengthName { get; set; }
 
             public string UsageDateName { get; set; }
+
+            public string UsageScrapName { get; set; }
 
             /// <summary>
             /// Use testing values for settings.
@@ -96,6 +100,8 @@ namespace AscCutlistEditorTests.Common
                 OrderItemIdName = "item_id";
                 OrderLengthName = "length";
                 OrderBundleName = "bundle";
+                OrderScheduledDateName = "schedate";
+                OrderDeleteSentName = "delsent";
                 BundleTableName = "amsbundle";
                 BundleOrderNumName = "orderno";
                 BundleColumns =
@@ -106,6 +112,7 @@ namespace AscCutlistEditorTests.Common
                 UsageItemIdName = "itemid";
                 UsageLengthName = "totallength";
                 UsageDateName = "adddate";
+                UsageScrapName = "scrap";
             }
         }
 

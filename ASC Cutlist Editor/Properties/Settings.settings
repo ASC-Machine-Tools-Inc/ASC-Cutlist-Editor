@@ -1,102 +1,108 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="AscCutlistEditor.Properties" GeneratedClassName="Settings">
-  <Profiles />
-  <Settings>
-    <Setting Name="DataSource" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="DatabaseName" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="Username" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="Password" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="CoilTableName" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="CoilStartLengthName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">startlength</Value>
-    </Setting>
-    <Setting Name="CoilLengthUsedName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">lengthused</Value>
-    </Setting>
-    <Setting Name="CoilMaterialName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">material</Value>
-    </Setting>
-    <Setting Name="CoilNumberName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">coilnumber</Value>
-    </Setting>
-    <Setting Name="CoilDescriptionName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">description</Value>
-    </Setting>
-    <Setting Name="CoilDateName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">dateout</Value>
-    </Setting>
-    <Setting Name="OrderTableName" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="OrderNumName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">orderno</Value>
-    </Setting>
-    <Setting Name="OrderMaterialName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">material</Value>
-    </Setting>
-    <Setting Name="OrderQuantityName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">quantity</Value>
-    </Setting>
-    <Setting Name="OrderPartNumName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">partno</Value>
-    </Setting>
-    <Setting Name="OrderMachineNumName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">machinenum</Value>
-    </Setting>
-    <Setting Name="OrderItemIdName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">item_id</Value>
-    </Setting>
-    <Setting Name="OrderLengthName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">length</Value>
-    </Setting>
-    <Setting Name="OrderBundleName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">bundle</Value>
-    </Setting>
-    <Setting Name="BundleTableName" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="BundleOrderNumName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">orderno</Value>
-    </Setting>
-    <Setting Name="BundleColumns" Type="System.String" Scope="User">
-      <Value Profile="(Default)">material, prodcode, user1, user2, user3, user4, custname, custaddr1, custaddr2, custcity, custstate, custzip</Value>
-    </Setting>
-    <Setting Name="UsageTableName" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="UsageOrderNumName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">orderno</Value>
-    </Setting>
-    <Setting Name="UsageMaterialName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">material</Value>
-    </Setting>
-    <Setting Name="UsageItemIdName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">itemid</Value>
-    </Setting>
-    <Setting Name="UsageLengthName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">totallength</Value>
-    </Setting>
-    <Setting Name="UsageDateName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">adddate</Value>
-    </Setting>
-    <Setting Name="ConnectionString" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="UseConnectionString" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="OrderScheduledDateName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">schedate</Value>
-    </Setting>
-  </Settings>
+	<Profiles />
+	<Settings>
+		<Setting Name="ConnectionString" Type="System.String" Scope="User">
+			<Value Profile="(Default)" />
+		</Setting>
+		<Setting Name="UseConnectionString" Type="System.Boolean" Scope="User">
+			<Value Profile="(Default)">False</Value>
+		</Setting>
+		<Setting Name="DataSource" Type="System.String" Scope="User">
+			<Value Profile="(Default)" />
+		</Setting>
+		<Setting Name="DatabaseName" Type="System.String" Scope="User">
+			<Value Profile="(Default)" />
+		</Setting>
+		<Setting Name="Username" Type="System.String" Scope="User">
+			<Value Profile="(Default)" />
+		</Setting>
+		<Setting Name="Password" Type="System.String" Scope="User">
+			<Value Profile="(Default)" />
+		</Setting>
+		<Setting Name="CoilTableName" Type="System.String" Scope="User">
+			<Value Profile="(Default)" />
+		</Setting>
+		<Setting Name="CoilStartLengthName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">startlength</Value>
+		</Setting>
+		<Setting Name="CoilLengthUsedName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">lengthused</Value>
+		</Setting>
+		<Setting Name="CoilMaterialName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">material</Value>
+		</Setting>
+		<Setting Name="CoilNumberName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">coilnumber</Value>
+		</Setting>
+		<Setting Name="CoilDescriptionName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">description</Value>
+		</Setting>
+		<Setting Name="CoilDateName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">dateout</Value>
+		</Setting>
+		<Setting Name="OrderTableName" Type="System.String" Scope="User">
+			<Value Profile="(Default)" />
+		</Setting>
+		<Setting Name="OrderNumName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">orderno</Value>
+		</Setting>
+		<Setting Name="OrderMaterialName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">material</Value>
+		</Setting>
+		<Setting Name="OrderQuantityName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">quantity</Value>
+		</Setting>
+		<Setting Name="OrderPartNumName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">partno</Value>
+		</Setting>
+		<Setting Name="OrderMachineNumName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">machinenum</Value>
+		</Setting>
+		<Setting Name="OrderItemIdName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">item_id</Value>
+		</Setting>
+		<Setting Name="OrderLengthName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">length</Value>
+		</Setting>
+		<Setting Name="OrderBundleName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">bundle</Value>
+		</Setting>
+		<Setting Name="OrderScheduledDateName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">schedate</Value>
+		</Setting>
+		<Setting Name="OrderDeleteSentName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">delsent</Value>
+		</Setting>
+		<Setting Name="BundleTableName" Type="System.String" Scope="User">
+			<Value Profile="(Default)" />
+		</Setting>
+		<Setting Name="BundleOrderNumName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">orderno</Value>
+		</Setting>
+		<Setting Name="BundleColumns" Type="System.String" Scope="User">
+			<Value Profile="(Default)">material, prodcode, user1, user2, user3, user4, custname, custaddr1, custaddr2, custcity, custstate, custzip</Value>
+		</Setting>
+		<Setting Name="UsageTableName" Type="System.String" Scope="User">
+			<Value Profile="(Default)" />
+		</Setting>
+		<Setting Name="UsageOrderNumName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">orderno</Value>
+		</Setting>
+		<Setting Name="UsageMaterialName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">material</Value>
+		</Setting>
+		<Setting Name="UsageItemIdName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">itemid</Value>
+		</Setting>
+		<Setting Name="UsageLengthName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">totallength</Value>
+		</Setting>
+		<Setting Name="UsageDateName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">adddate</Value>
+		</Setting>
+		<Setting Name="UsageScrapName" Type="System.String" Scope="User">
+			<Value Profile="(Default)">scrap</Value>
+		</Setting>
+	</Settings>
 </SettingsFile>
