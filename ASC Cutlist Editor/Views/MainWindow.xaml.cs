@@ -1,5 +1,4 @@
 ﻿using AscCutlistEditor.ViewModels;
-using AscCutlistEditor.ViewModels.MQTT;
 using System;
 using System.Windows;
 using AscCutlistEditor.Models.MQTT;

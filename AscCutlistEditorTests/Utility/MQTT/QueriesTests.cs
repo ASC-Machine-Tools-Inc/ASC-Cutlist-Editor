@@ -11,7 +11,7 @@ namespace AscCutlistEditorTests.Utility.MQTT
     [TestClass]
     public class QueriesTests
     {
-        private static Queries _queries;
+        private static Mocks.MockSettings _settings;
 
         // Set the connection string for testing before running our tests.
         [AssemblyInitialize]
@@ -19,40 +19,8 @@ namespace AscCutlistEditorTests.Utility.MQTT
         {
             // Writing these in so if the default fields change later, this
             // will still work with our test database.
-            Mocks.MockSettings settings = new Mocks.MockSettings
-            {
-                ConnectionString = Strings.ConnectionString,
-                UseConnectionString = true,
-                CoilTableName = "amscoil",
-                OrderTableName = "amsorder",
-                BundleTableName = "amsbundle",
-                UsageTableName = "amsproduct",
-                CoilStartLengthName = "startlength",
-                CoilLengthUsedName = "lengthused",
-                CoilMaterialName = "material",
-                CoilNumberName = "coilnumber",
-                CoilDescriptionName = "description",
-                CoilDateName = "dateout",
-                OrderMaterialName = "material",
-                OrderMachineNumName = "machinenum",
-                OrderBundleName = "bundle",
-                OrderItemIdName = "item_id",
-                OrderLengthName = "length",
-                OrderNumName = "orderno",
-                OrderPartNumName = "partno",
-                OrderQuantityName = "quantity",
-                OrderScheduledDateName = "schedate",
-                BundleColumns =
-                    "material, prodcode, user1, user2, user3, user4, custname, custaddr1, custaddr2, custcity, custstate, custzip",
-                BundleOrderNumName = "orderno",
-                UsageDateName = "adddate",
-                UsageItemIdName = "itemid",
-                UsageLengthName = "totallength",
-                UsageMaterialName = "material",
-                UsageOrderNumName = "orderno"
-            };
-
-            _queries = new Queries(settings);
+            _settings = new Mocks.MockSettings();
+            _settings.InitializeWithDefaults();
         }
 
         /// <summary>
@@ -77,7 +45,7 @@ namespace AscCutlistEditorTests.Utility.MQTT
         {
             // Act
             SetConnectionString();
-            DataTable results = await _queries.GetCoilData(coilId);
+            DataTable results = await Coils.GetCoilData(_settings, coilId);
 
             /*
             Debug.WriteLine($"Getting coil data for id {coilId}, expected count {count}");
@@ -98,7 +66,7 @@ namespace AscCutlistEditorTests.Utility.MQTT
         {
             // Act
             SetConnectionString();
-            DataTable results = await _queries.GetNonDepletedCoils();
+            DataTable results = await Coils.GetNonDepletedCoils(_settings);
 
             // Assert
             Assert.AreEqual(results.Rows.Count, 202);
@@ -114,7 +82,7 @@ namespace AscCutlistEditorTests.Utility.MQTT
         {
             // Act
             SetConnectionString();
-            DataTable results = await _queries.GetOrdersById(orderNum);
+            DataTable results = await Orders.GetOrdersById(_settings, orderNum);
 
             // Assert
             Assert.AreEqual(results.Rows.Count, count);
@@ -129,7 +97,7 @@ namespace AscCutlistEditorTests.Utility.MQTT
         {
             // Act
             SetConnectionString();
-            DataTable results = await _queries.GetOrdersByMachineNum(machineNum);
+            DataTable results = await Orders.GetOrdersByMachineNum(_settings, machineNum);
 
             // Assert
             Assert.AreEqual(results.Rows.Count, count);
@@ -147,7 +115,7 @@ namespace AscCutlistEditorTests.Utility.MQTT
         {
             // Act
             SetConnectionString();
-            DataTable results = await _queries.GetOrdersByIdAndMachine(orderNum, machineNum);
+            DataTable results = await Orders.GetOrdersByIdAndMachine(_settings, orderNum, machineNum);
 
             // Assert
             Assert.AreEqual(results.Rows.Count, count);
@@ -161,7 +129,7 @@ namespace AscCutlistEditorTests.Utility.MQTT
         {
             // Act
             SetConnectionString();
-            DataTable results = await _queries.GetBundle(orderNum);
+            DataTable results = await Bundles.GetBundle(_settings, orderNum);
 
             // Assert
             Assert.AreEqual(results.Rows.Count, count);
@@ -182,7 +150,7 @@ namespace AscCutlistEditorTests.Utility.MQTT
 
             // Act
             SetConnectionString();
-            string tableString = _queries.DataTableToString(table);
+            string tableString = AscCutlistEditor.Utility.MQTT.Utility.DataTableToString(table);
 
             // Assert
             Assert.AreEqual(

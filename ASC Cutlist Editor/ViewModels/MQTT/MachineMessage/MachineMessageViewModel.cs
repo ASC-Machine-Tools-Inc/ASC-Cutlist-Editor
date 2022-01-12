@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,9 +11,6 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using Newtonsoft.Json;
-using OxyPlot;
-using OxyPlot.Axes;
-using OxyPlot.Series;
 
 namespace AscCutlistEditor.ViewModels.MQTT.MachineMessage
 {
@@ -194,21 +189,25 @@ namespace AscCutlistEditor.ViewModels.MQTT.MachineMessage
             // Update the UI.
             UpdateMachineTab(message);
 
-            MessageFlagHandlers handlers = new MessageFlagHandlers(_sqlConn);
-
             try
             {
+                // Retrieve the list of table/col name settings.
+                ISettings settings = _sqlConn.UserSqlSettings;
+
                 // Handle the order data requested flag (getting the orders and bundles).
-                await handlers.OrderDatReqFlagHandler(message, returnMessage);
+                await Orders.OrderDatReqFlagHandler(settings, message, returnMessage);
+
+                // Check to see if the current order has a deletion request.
+                await Orders.OrderDatDelFlagHandler(settings, message, returnMessage);
 
                 // Handle the coil data requested flag (running a specific coil and order).
-                await handlers.CoilDatReqFlagHandler(message, returnMessage);
+                await Coils.CoilDatReqFlagHandler(settings, message, returnMessage);
 
                 // Handle the coil list requested flag (all non-depleted coils).
-                await handlers.CoilStoreReqFlagHandler(message, returnMessage);
+                await Coils.CoilStoreReqFlagHandler(settings, message, returnMessage);
 
                 // Handle the coil usage sending requested flag (write to database).
-                rowsAdded = await handlers.CoilUsageSendFlagHandler(message, returnMessage);
+                rowsAdded = await Usage.CoilUsageSendFlagHandler(settings, message, returnMessage);
             }
             catch (Exception ex)
             {

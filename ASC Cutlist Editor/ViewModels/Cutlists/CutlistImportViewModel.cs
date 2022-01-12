@@ -1,5 +1,4 @@
 ﻿using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.Models;
 using ExcelDataReader;
 using Microsoft.Win32;
 using System;

@@ -1,6 +1,4 @@
 ﻿using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.Models;
-using AscCutlistEditor.Utility;
 using ExcelDataReader;
 using System;
 using System.Collections.ObjectModel;

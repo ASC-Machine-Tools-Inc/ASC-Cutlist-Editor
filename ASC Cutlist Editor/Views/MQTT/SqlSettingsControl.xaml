@@ -222,6 +222,7 @@
                                     <RowDefinition></RowDefinition>
                                     <RowDefinition></RowDefinition>
                                     <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -339,6 +340,17 @@
                                     Text="{Binding Source={StaticResource settings},
                             Path=OrderScheduledDateName}"
                                     Margin="10" />
+
+                                <Label
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    Content="Delete Sent:" />
+                                <TextBox
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    Text="{Binding Source={StaticResource settings},
+                            Path=OrderDeleteSentName}"
+                                    Margin="10" />
                             </Grid>
                         </Expander>
 
@@ -410,6 +422,7 @@
 
                             <Grid>
                                 <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
                                     <RowDefinition></RowDefinition>
                                     <RowDefinition></RowDefinition>
                                     <RowDefinition></RowDefinition>
@@ -485,6 +498,28 @@
                                     Grid.Column="3"
                                     Text="{Binding Source={StaticResource settings},
                                     Path=UsageDateName}"
+                                    Margin="10" />
+
+                                <Label
+                                    Grid.Row="2"
+                                    Grid.Column="4"
+                                    Content="Scrap:" />
+                                <TextBox
+                                    Grid.Row="2"
+                                    Grid.Column="5"
+                                    Text="{Binding Source={StaticResource settings},
+                                    Path=UsageScrapName}"
+                                    Margin="10" />
+
+                                <Label
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    Content="Type:" />
+                                <TextBox
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Text="{Binding Source={StaticResource settings},
+                                    Path=UsageTypeName}"
                                     Margin="10" />
                             </Grid>
                         </Expander>

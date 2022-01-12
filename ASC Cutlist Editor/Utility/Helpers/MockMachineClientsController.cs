@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using AscCutlistEditor.ViewModels.MQTT;
 using AscCutlistEditor.ViewModels.MQTT.MachineMessage;

@@ -26,6 +26,30 @@ namespace AscCutlistEditor.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ConnectionString {
+            get {
+                return ((string)(this["ConnectionString"]));
+            }
+            set {
+                this["ConnectionString"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseConnectionString {
+            get {
+                return ((bool)(this["UseConnectionString"]));
+            }
+            set {
+                this["UseConnectionString"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string DataSource {
             get {
                 return ((string)(this["DataSource"]));
@@ -265,6 +289,30 @@ namespace AscCutlistEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("schedate")]
+        public string OrderScheduledDateName {
+            get {
+                return ((string)(this["OrderScheduledDateName"]));
+            }
+            set {
+                this["OrderScheduledDateName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("delsent")]
+        public string OrderDeleteSentName {
+            get {
+                return ((string)(this["OrderDeleteSentName"]));
+            }
+            set {
+                this["OrderDeleteSentName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string BundleTableName {
             get {
@@ -374,37 +422,25 @@ namespace AscCutlistEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ConnectionString {
+        [global::System.Configuration.DefaultSettingValueAttribute("scrap")]
+        public string UsageScrapName {
             get {
-                return ((string)(this["ConnectionString"]));
+                return ((string)(this["UsageScrapName"]));
             }
             set {
-                this["ConnectionString"] = value;
+                this["UsageScrapName"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UseConnectionString {
+        [global::System.Configuration.DefaultSettingValueAttribute("type")]
+        public string UsageTypeName {
             get {
-                return ((bool)(this["UseConnectionString"]));
+                return ((string)(this["UsageTypeName"]));
             }
             set {
-                this["UseConnectionString"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("schedate")]
-        public string OrderScheduledDateName {
-            get {
-                return ((string)(this["OrderScheduledDateName"]));
-            }
-            set {
-                this["OrderScheduledDateName"] = value;
+                this["UsageTypeName"] = value;
             }
         }
     }

@@ -31,51 +31,58 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
             MachineConnectionsViewModel.PubTopic = "testing";
             await connsModel.Start(false);
 
-            MachineMessage pubMessage = GetPubMessage();
-            MachineMessage subMessage = GetSubMessage();
-
-            // Act
-            MachineMessageViewModel.PublishMessage(
-                connsModel.Listener,
-                "testing/test_topic",
-                JsonConvert.SerializeObject(pubMessage));
-
-            // Wait for connsModel to detect test_topic & respond accordingly.
-            if (!Debugger.IsAttached)
+            // Loop through test messages.
+            for (int i = 0; i < TestMessagePairs.PubMessages.Count; i++)
             {
-                // Quit once we have our connection for fast testing.
-                int waitTime = 5000;
-                const int timeIncrement = 10;
+                MachineMessage pubMessage = TestMessagePairs.PubMessages[i];
+                MachineMessage subMessage = TestMessagePairs.SubMessages[i];
 
-                // Wait while we don't have a machine connection or our
-                // connection has no sent messages yet.
-                while (connsModel.MachineConnections.FirstOrDefault() == null ||
-                       connsModel.MachineConnections.First().MachineConnection.MachineMessagePubCollection.Count == 0)
+                // Act
+                MachineMessageViewModel.PublishMessage(
+                    connsModel.Listener,
+                    "testing/test_topic",
+                    JsonConvert.SerializeObject(pubMessage));
+
+                // Wait for connsModel to detect test_topic & respond accordingly.
+                if (!Debugger.IsAttached)
                 {
-                    if (waitTime <= 0)
+                    // Quit once we have our connection for fast testing.
+                    int waitTime = 5000;
+                    const int timeIncrement = 10;
+
+                    // Wait while we don't have a machine connection or our
+                    // response message hasn't arrived.
+                    while (connsModel.MachineConnections.FirstOrDefault() == null ||
+                           connsModel.MachineConnections.First().MachineConnection
+                               .MachineMessagePubCollection.Count != i + 1)
                     {
-                        //Assert.Fail();  // Kill if no successful response in time.
+                        if (waitTime <= 0)
+                        {
+                            // Kill if no successful response in time.
+                            Assert.Fail("Current message count: " +
+                                        $"{connsModel.MachineConnections.First().MachineConnection.MachineMessagePubCollection.Count}");
+                        }
+
+                        waitTime -= timeIncrement;
+                        await Task.Delay(timeIncrement);
                     }
-
-                    waitTime -= timeIncrement;
-                    await Task.Delay(timeIncrement);
                 }
+                else
+                {
+                    // Default delay while debugging to ensure connection.
+                    await Task.Delay(500);
+                }
+
+                MachineMessageViewModel msgModel = connsModel.MachineConnections.First();
+                MachineMessage response = msgModel.MachineConnection.MachineMessagePubCollection.Last();
+
+                // Assert we have a connection and receive the right response.
+                Assert.AreEqual(1, connsModel.MachineConnections.Count);
+
+                Assert.AreEqual(
+                    JsonConvert.SerializeObject(subMessage),
+                    JsonConvert.SerializeObject(response));
             }
-            else
-            {
-                // Default delay while debugging to ensure connection.
-                await Task.Delay(500);
-            }
-
-            MachineMessageViewModel msgModel = connsModel.MachineConnections.First();
-            MachineMessage response = msgModel.MachineConnection.MachineMessagePubCollection.First();
-
-            // Assert we have a connection and receive the right response.
-            Assert.AreEqual(connsModel.MachineConnections.Count, 1);
-
-            Assert.AreEqual(
-                JsonConvert.SerializeObject(response),
-                JsonConvert.SerializeObject(subMessage));
         }
 
         [TestMethod]
@@ -109,83 +116,6 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
             sqlModel.UpdateConnectionString(Strings.ConnectionString);
 
             return sqlModel;
-        }
-
-        private MachineMessage GetPubMessage()
-        {
-            return new MachineMessage
-            {
-                connected = "true",
-                tags = new Tags
-                {
-                    set1 = new Set1
-                    {
-                        MachineStatistics = new MachineStatistics
-                        {
-                            UserPrime = 3292.49,
-                            UserScrap = 16.53,
-                            UserUsage = 3309.01
-                        },
-                        MqttPub = new MqttPub
-                        {
-                            CoilDatReq = "TRUE",
-                            CoilStoreReq = "TRUE",
-                            CoilUsageDat = "TEST-ORDERNO1,TEST-COILID,TEST-MAT,TEST-ITEMID,5|TEST-ORDERNO2,TEST-COILID,TEST-MAT,TEST-ITEMID,10",
-                            CoilUsageSend = "TRUE",
-                            EmergencyStopped = "LINE IS ACTIVE",
-                            JobNumber = "JN28174",
-                            LineRunning = "LINE STOPPED",
-                            OrderDatReq = "TRUE",
-                            OrderNo = "10152",
-                            ScanCoilID = "H2215"
-                        },
-                        PlantData = new PlantData
-                        {
-                            COIL = new COIL
-                            {
-                                COIL_CALCS = new COILCALCS
-                                {
-                                    ActiveData = new ActiveData()
-                                },
-                                DESCRIPTION = "",
-                                LOG_COMMENT = ""
-                            },
-                            KPI = new KPI(),
-                            WORKORDER = new WORKORDER()
-                        }
-                    },
-                    set3 = new Set3()
-                },
-                timestamp = DateTime.Now
-            };
-        }
-
-        private MachineMessage GetSubMessage()
-        {
-            return new MachineMessage
-            {
-                tags = new Tags
-                {
-                    set2 = new Set2
-                    {
-                        MqttSub = new MqttSub
-                        {
-                            MqttDest = "JN28174",
-                            MqttString = null,
-                            OrderDatAck = "TRUE",
-                            OrderDatRecv = Strings.ExpectedOrderData,
-                            BundleDatRecv = Strings.ExpectedBundleData,
-                            OrderNo = "10152",
-                            CoilDatAck = "TRUE",
-                            CoilDatRecv = Strings.ExpectedCoilData,
-                            CoilDatValidAck = "FALSE",
-                            CoilUsageRecvAck = "TRUE",
-                            CoilStoreAck = "TRUE",
-                            CoilStoreRecv = Strings.ExpectedCoilStore
-                        }
-                    }
-                }
-            };
         }
     }
 }

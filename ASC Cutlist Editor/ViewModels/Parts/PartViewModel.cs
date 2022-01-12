@@ -1,6 +1,4 @@
 ﻿using AscCutlistEditor.Frameworks;
-using AscCutlistEditor.Models;
-using AscCutlistEditor.Utility;
 using AscCutlistEditor.Views.Bundles;
 using AscCutlistEditor.Views.FlatParts;
 using System.Collections.ObjectModel;

@@ -12,7 +12,7 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
     public class SqlConnectionViewModelTests
     {
         [TestMethod]
-        public async Task TestGoodConnectionTest()
+        public async Task GoodConnectionTest()
         {
             // Arrange
             SqlConnectionViewModel model = new SqlConnectionViewModel(
@@ -21,7 +21,7 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
             model.UpdateConnectionString(Strings.ConnectionString);
 
             // Act
-            bool connResult = await model.TestConnection(false, false);
+            bool connResult = await model.TestConnection(false, false, true);
 
             // Assert
             Assert.IsTrue(connResult);
@@ -56,7 +56,7 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
         // Removed for now - pain to get working and took a while to finish.
 
         [TestMethod]
-        public async Task TestCreatingMissingFieldConnectionString()
+        public async Task MissingFieldConnectionTest()
         {
             // Arrange
             Mocks.MockSettings settings = new Mocks.MockSettings
@@ -64,6 +64,46 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
                 DataSource = "test",
                 DatabaseName = "test",
                 Username = "test"
+            };
+            SqlConnectionViewModel model = new SqlConnectionViewModel(
+                settings,
+                new Mocks.MockDialog());
+
+            // Act
+            bool connResult = await model.TestConnection(toggleCursor: false);
+
+            // Assert
+            Assert.IsFalse(connResult);
+        }
+
+        [TestMethod]
+        public async Task NullConnectionStringTest()
+        {
+            // Arrange
+            Mocks.MockSettings settings = new Mocks.MockSettings
+            {
+                UseConnectionString = true,
+                ConnectionString = null
+            };
+            SqlConnectionViewModel model = new SqlConnectionViewModel(
+                settings,
+                new Mocks.MockDialog());
+
+            // Act
+            bool connResult = await model.TestConnection(toggleCursor: false);
+
+            // Assert
+            Assert.IsFalse(connResult);
+        }
+
+        [TestMethod]
+        public async Task InvalidConnectionStringTest()
+        {
+            // Arrange
+            Mocks.MockSettings settings = new Mocks.MockSettings
+            {
+                UseConnectionString = true,
+                ConnectionString = "BAD_CONN_STRING"
             };
             SqlConnectionViewModel model = new SqlConnectionViewModel(
                 settings,

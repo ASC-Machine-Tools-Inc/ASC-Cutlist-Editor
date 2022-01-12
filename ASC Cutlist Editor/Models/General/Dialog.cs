@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using AscCutlistEditor.Frameworks;
+﻿using AscCutlistEditor.Frameworks;
 using ModernWpf.Controls;
 
 namespace AscCutlistEditor.Models.General

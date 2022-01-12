@@ -2,6 +2,12 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="AscCutlistEditor.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
+    <Setting Name="ConnectionString" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UseConnectionString" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
     <Setting Name="DataSource" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -62,6 +68,12 @@
     <Setting Name="OrderBundleName" Type="System.String" Scope="User">
       <Value Profile="(Default)">bundle</Value>
     </Setting>
+    <Setting Name="OrderScheduledDateName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">schedate</Value>
+    </Setting>
+    <Setting Name="OrderDeleteSentName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">delsent</Value>
+    </Setting>
     <Setting Name="BundleTableName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -89,14 +101,11 @@
     <Setting Name="UsageDateName" Type="System.String" Scope="User">
       <Value Profile="(Default)">adddate</Value>
     </Setting>
-    <Setting Name="ConnectionString" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="UsageScrapName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">scrap</Value>
     </Setting>
-    <Setting Name="UseConnectionString" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="OrderScheduledDateName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">schedate</Value>
+    <Setting Name="UsageTypeName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">type</Value>
     </Setting>
   </Settings>
 </SettingsFile>

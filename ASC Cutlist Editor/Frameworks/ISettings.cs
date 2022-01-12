@@ -48,6 +48,8 @@
 
         string OrderScheduledDateName { get; set; }
 
+        string OrderDeleteSentName { get; set; }
+
         string BundleTableName { get; set; }
 
         string BundleOrderNumName { get; set; }
@@ -65,5 +67,9 @@
         string UsageLengthName { get; set; }
 
         string UsageDateName { get; set; }
+
+        string UsageScrapName { get; set; }
+
+        string UsageTypeName { get; set; }
     }
 }
