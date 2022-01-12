@@ -159,5 +159,6 @@ namespace AscCutlistEditor.Models.MQTT
         public string ItemID { get; set; }
         public decimal Length { get; set; }
         public DateTime Time { get; set; }
+        public string Type { get; set; }
     }
 }

@@ -425,6 +425,7 @@
                                     <RowDefinition></RowDefinition>
                                     <RowDefinition></RowDefinition>
                                     <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -508,6 +509,17 @@
                                     Grid.Column="5"
                                     Text="{Binding Source={StaticResource settings},
                                     Path=UsageScrapName}"
+                                    Margin="10" />
+
+                                <Label
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    Content="Type:" />
+                                <TextBox
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Text="{Binding Source={StaticResource settings},
+                                    Path=UsageTypeName}"
                                     Margin="10" />
                             </Grid>
                         </Expander>

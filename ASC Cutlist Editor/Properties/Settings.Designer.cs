@@ -431,5 +431,17 @@ namespace AscCutlistEditor.Properties {
                 this["UsageScrapName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("type")]
+        public string UsageTypeName {
+            get {
+                return ((string)(this["UsageTypeName"]));
+            }
+            set {
+                this["UsageTypeName"] = value;
+            }
+        }
     }
 }

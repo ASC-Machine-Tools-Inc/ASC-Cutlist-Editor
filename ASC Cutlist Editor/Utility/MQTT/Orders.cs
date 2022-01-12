@@ -121,6 +121,50 @@ namespace AscCutlistEditor.Utility.MQTT
         }
 
         /// <summary>
+        /// Check and see if we have an order number requested for deletion.
+        /// </summary>
+        internal static async Task OrderDatDelFlagHandler(
+            ISettings settings,
+            MachineMessage message,
+            MachineMessage returnMessage)
+        {
+            string orderNoImported = message.tags.set1.MqttPub.OrderNoImported;
+            if (string.IsNullOrEmpty(orderNoImported))
+            {
+                return;
+            }
+
+            await using SqlConnection conn =
+                new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
+
+            SqlCommandBuilder builder = new SqlCommandBuilder();
+
+            // Selected columns.
+            string orderNo = builder.QuoteIdentifier(settings.OrderNumName);
+            string delSent = builder.QuoteIdentifier(settings.OrderDeleteSentName);
+
+            // Table name.
+            string orderTableName = builder.QuoteIdentifier(settings.OrderTableName);
+
+            string queryStr =
+                $"SELECT {orderNo} " +
+                $"FROM {orderTableName} " +
+                $"WHERE {orderNo} LIKE @orderNoImported AND {delSent} = 'Y'";
+
+            await using SqlCommand cmd = new SqlCommand(queryStr, conn);
+
+            // Filter parameters.
+            cmd.Parameters.AddWithValue("@orderNoImported", "%" + orderNoImported + "%");
+
+            DataTable result = await Utility.SelectHelper(conn, cmd);
+
+            if (result.Rows.Count != 0)
+            {
+                returnMessage.tags.set2.MqttSub.OrderDatDelSent = "TRUE";
+            }
+        }
+
+        /// <summary>
         /// Get the order numbers, material type, and total run length of the
         /// orders for a specific order number.
         /// </summary>

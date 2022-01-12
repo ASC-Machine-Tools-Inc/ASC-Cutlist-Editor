@@ -373,5 +373,15 @@ namespace AscCutlistEditor.Models.MQTT
                 RaisePropertyChangedEvent("UsageScrapName");
             }
         }
+
+        public string UsageTypeName
+        {
+            get => (string)Settings.Default["UsageTypeName"];
+            set
+            {
+                Settings.Default["UsageTypeName"] = value;
+                RaisePropertyChangedEvent("UsageTypeName");
+            }
+        }
     }
 }

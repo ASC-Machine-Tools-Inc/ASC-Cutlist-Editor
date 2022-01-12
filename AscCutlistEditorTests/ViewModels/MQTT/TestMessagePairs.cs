@@ -82,8 +82,9 @@ namespace AscCutlistEditorTests.ViewModels.MQTT
                             JobNumber = "1",
                             LineRunning = "LINE STOPPED",
                             OrderDatReq = "FALSE",
-                            OrderDatFilters = "CoilMatlID:COIL4824-WZ,OrderLen:LS",
+                            OrderDatFilters = "OrderLen:LS",
                             OrderNo = "",
+                            OrderNoImported = "NON-EXISTENT ORDER NO",
                             ScanCoilID = ""
                         },
                         PlantData = new PlantData

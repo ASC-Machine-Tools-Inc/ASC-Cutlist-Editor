@@ -64,7 +64,8 @@ namespace AscCutlistEditor.Utility.MQTT
                             CoilMatl = firstFields[0],
                             ItemID = key.itemId,
                             Length = totalLength,
-                            Time = DateTime.Now
+                            Time = DateTime.Now,
+                            Type = "1"
                         };
                     })
                 .ToList();
@@ -96,25 +97,25 @@ namespace AscCutlistEditor.Utility.MQTT
             SqlCommandBuilder builder = new SqlCommandBuilder();
 
             // Selected columns.
-            string ordernoCol = builder.QuoteIdentifier(settings.UsageOrderNumName);
+            string orderNoCol = builder.QuoteIdentifier(settings.UsageOrderNumName);
             string materialCol = builder.QuoteIdentifier(settings.OrderMaterialName);
             string itemIdCol = builder.QuoteIdentifier(settings.UsageItemIdName);
             string totalLengthCol = builder.QuoteIdentifier(settings.UsageLengthName);
             string addDateCol = builder.QuoteIdentifier(settings.UsageDateName);
+            string typeCol = builder.QuoteIdentifier(settings.UsageTypeName);
 
             // Table name.
             string usageTableName = builder.QuoteIdentifier(settings.UsageTableName);
 
             string queryStr =
                 $"INSERT INTO {usageTableName} " +
-                $"({ordernoCol}, {materialCol}, {itemIdCol}, {totalLengthCol}, {addDateCol}) " +
+                $"({orderNoCol}, {materialCol}, {itemIdCol}, {totalLengthCol}, {addDateCol}, {typeCol}) " +
                 "VALUES ";
 
             // Append the fields to add from our DataTable to our SqlCommand text.
             foreach (CoilUsage coil in usageData)
             {
-                queryStr += $"('{coil.orderno}', '{coil.CoilMatl}', " +
-                            $"'{coil.ItemID}', '{coil.Length}', '{coil.Time}')";
+                queryStr += $"('{coil.orderno}', '{coil.CoilMatl}', '{coil.ItemID}', '{coil.Length}', '{coil.Time}', '{coil.Type}')";
             }
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);

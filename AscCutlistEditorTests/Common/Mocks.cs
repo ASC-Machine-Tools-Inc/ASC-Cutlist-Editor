@@ -77,6 +77,8 @@ namespace AscCutlistEditorTests.Common
 
             public string UsageScrapName { get; set; }
 
+            public string UsageTypeName { get; set; }
+
             /// <summary>
             /// Use testing values for settings.
             /// </summary>
@@ -113,6 +115,7 @@ namespace AscCutlistEditorTests.Common
                 UsageLengthName = "totallength";
                 UsageDateName = "adddate";
                 UsageScrapName = "scrap";
+                UsageTypeName = "type";
             }
         }
 

@@ -197,6 +197,9 @@ namespace AscCutlistEditor.ViewModels.MQTT.MachineMessage
                 // Handle the order data requested flag (getting the orders and bundles).
                 await Orders.OrderDatReqFlagHandler(settings, message, returnMessage);
 
+                // Check to see if the current order has a deletion request.
+                await Orders.OrderDatDelFlagHandler(settings, message, returnMessage);
+
                 // Handle the coil data requested flag (running a specific coil and order).
                 await Coils.CoilDatReqFlagHandler(settings, message, returnMessage);
 

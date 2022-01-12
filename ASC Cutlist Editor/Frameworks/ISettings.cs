@@ -69,5 +69,7 @@
         string UsageDateName { get; set; }
 
         string UsageScrapName { get; set; }
+
+        string UsageTypeName { get; set; }
     }
 }
