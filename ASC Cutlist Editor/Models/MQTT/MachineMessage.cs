@@ -58,8 +58,6 @@ namespace AscCutlistEditor.Models.MQTT
         public string OrderNo { get; set; }
         public string OrderNoImported { get; set; }
         public string ScanCoilID { get; set; }
-        public string ScrapUsageDat { get; set; }
-        public string ScrapUsageSend { get; set; }
     }
 
     public class MqttSub
@@ -77,7 +75,6 @@ namespace AscCutlistEditor.Models.MQTT
         public string CoilUsageRecvAck { get; set; }
         public string CoilStoreAck { get; set; }
         public string CoilStoreRecv { get; set; }
-        public string ScrapUsageAck { get; set; }
     }
 
     public class ActiveData

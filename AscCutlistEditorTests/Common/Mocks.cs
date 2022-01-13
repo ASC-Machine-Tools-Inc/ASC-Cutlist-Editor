@@ -114,7 +114,7 @@ namespace AscCutlistEditorTests.Common
                 UsageItemIdName = "itemid";
                 UsageLengthName = "totallength";
                 UsageDateName = "adddate";
-                UsageScrapName = "scrap";
+                UsageScrapName = "scrapfoot";
                 UsageTypeName = "type";
             }
         }
