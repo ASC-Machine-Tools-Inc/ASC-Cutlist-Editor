@@ -26,7 +26,7 @@ namespace AscCutlistEditor.Utility.MQTT
 
             // Check if we have coil usage data requesting to be added.
             if (pub.CoilUsageSend != "TRUE" ||
-                pub.CoilUsageDat == null)
+                string.IsNullOrEmpty(pub.CoilUsageDat))
             {
                 return 0;
             }
@@ -73,7 +73,18 @@ namespace AscCutlistEditor.Utility.MQTT
             sub.CoilUsageRecvAck = "TRUE";
 
             // Update the database.
-            return await SetUsageData(settings, coilUsageList);
+            int rowsAdded = await SetUsageData(settings, coilUsageList);
+
+            // Update the database with scrap usage.
+            List<string> scrapUsageFields = coilUsageFields.Last();
+            CoilUsage scrapUsage = new CoilUsage
+            {
+                Length = Convert.ToDecimal(scrapUsageFields[4]) / 12, // Convert length to ft.
+                Type = "1"
+            };
+            rowsAdded += await SetScrapData(settings, scrapUsage);
+
+            return rowsAdded;
         }
 
         /// <summary>
@@ -117,6 +128,39 @@ namespace AscCutlistEditor.Utility.MQTT
             {
                 queryStr += $"('{coil.orderno}', '{coil.CoilMatl}', '{coil.ItemID}', '{coil.Length}', '{coil.Time}', '{coil.Type}')";
             }
+
+            await using SqlCommand cmd = new SqlCommand(queryStr, conn);
+
+            conn.Open();
+            return await cmd.ExecuteNonQueryAsync();
+        }
+
+        /// <summary>
+        /// Update the usage table by inserting the contents of scrapData.
+        /// </summary>
+        /// <param name="settings">Settings containing table/column names to use.</param>
+        /// <param name="scrapData">The scrap footage to add to the usage table.</param>
+        /// <returns>The number of rows added to the usage table.</returns>
+        public static async Task<int> SetScrapData(
+            ISettings settings,
+            CoilUsage scrapData)
+        {
+            await using SqlConnection conn =
+                new SqlConnection(SqlConnectionViewModel.Builder.ConnectionString);
+
+            SqlCommandBuilder builder = new SqlCommandBuilder();
+
+            // Selected columns.
+            string scrapLengthCol = builder.QuoteIdentifier(settings.UsageScrapName);
+            string typeCol = builder.QuoteIdentifier(settings.UsageTypeName);
+
+            // Table name.
+            string usageTableName = builder.QuoteIdentifier(settings.UsageTableName);
+
+            string queryStr =
+                $"INSERT INTO {usageTableName} " +
+                $"({scrapLengthCol}, {typeCol}) " +
+                $"VALUES ('{scrapData.Length}', '{scrapData.Type}')";
 
             await using SqlCommand cmd = new SqlCommand(queryStr, conn);
 
